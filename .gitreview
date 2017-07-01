@@ -1,0 +1,5 @@
+[gerrit]
+host=gerrit.suse.provo.cloud
+port=29418
+project=ardana/ardana-service.git
+defaultremote=gozer
