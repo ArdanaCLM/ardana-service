@@ -76,9 +76,9 @@ def get_all_files():
     # Establish descriptions for those files that are shipped in any of the
     # templates
     well_known_files = {
-        'cloudConfig': 'Cloud',
+        'cloudConfig': 'Cloud Configuration',
         'control_plane': 'Control Planes',
-        'designate_config': 'Designate',
+        'designate_config': 'Designate Configuration',
         'disks_compute': 'Disks (Compute)',
         'disks_control_common_600GB': 'Disks (600GB Control Common)',
         'disks_controller_1TB': 'Disks (1TB Controller)',
@@ -94,18 +94,18 @@ def get_all_files():
         'disks_swpac': 'Disks (SWPAC)',
         'disks_vsa': 'Disks (VSA)',
         'firewall_rules': 'Firewall Rules',
-        'ironic_config': 'Ironic',
+        'ironic_config': 'Ironic Configuration',
         'net_interfaces': 'Network Interfaces',
         'network_groups': 'Network Groups',
         'networks': 'Networks',
-        'neutron_config': 'Neutron',
+        'neutron_config': 'Neutron Configuration',
         'nic_mappings': 'NIC Mappings',
-        'octavia_config': 'Octavia',
+        'octavia_config': 'Octavia Configuration',
         'pass_through': 'Pass-through',
         'server_groups': 'Server Groups',
         'server_roles': 'Server Roles',
         'servers': 'Servers',
-        'swift_config': 'Swift',
+        'swift_config': 'Swift Configuration',
     }
 
     # Now read and process all yml files in the dir tree below
