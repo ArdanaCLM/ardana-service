@@ -1,0 +1,10 @@
+---
+  product:
+    version: 2
+
+  pass-through:
+    global:
+      install-env: cs
+      thirdparty-volder: /home/stack/stage/thirdparty
+      test:
+        test2: 1
