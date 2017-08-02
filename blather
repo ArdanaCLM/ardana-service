@@ -1,0 +1,11 @@
+#!/bin/bash
+
+count=${1:-100}
+burst=10
+naptime=1
+
+for((i=1; i<=count; i+=burst)) ; do 
+    ((last=i+burst-1))
+    seq $i $last
+    sleep $naptime
+done
