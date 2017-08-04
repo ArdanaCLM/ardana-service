@@ -19,9 +19,9 @@ Then start the server with::
 
     tox -e runserver
 
-it will listend on port 5000.  
+it will listen on port 9085.  
 You can verify that it is running properly by using::
 
-    curl http://localhost:5000/api/v2/heartbeat
+    curl http://localhost:9085/api/v2/heartbeat
 
 which will return the current epoch time
