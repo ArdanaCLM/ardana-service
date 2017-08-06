@@ -13,8 +13,8 @@ import subprocess
 import threading
 import time
 
+from . import config
 from . import socketio
-import config.config as config
 
 LOG = logging.getLogger(__name__)
 

@@ -1,4 +1,5 @@
 from ardana_service import admin
+from ardana_service import config
 from ardana_service import config_processor
 from ardana_service import cp_output
 from ardana_service import model
@@ -8,7 +9,6 @@ from ardana_service import socketio
 from ardana_service import tasks
 from ardana_service import templates
 from ardana_service import versions
-from config import config
 from flask import Flask
 from flask_cors import CORS
 import logging

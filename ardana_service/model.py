@@ -10,7 +10,8 @@ import os
 import random
 import yaml
 
-import config.config as config
+from . import config
+
 
 LOG = logging.getLogger(__name__)
 
