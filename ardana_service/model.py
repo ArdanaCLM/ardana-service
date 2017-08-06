@@ -32,13 +32,13 @@ PASS_THROUGH = 'pass-through'
 
 @bp.route("/api/v2/model", methods=['GET'])
 def get_model():
-    return jsonify(read_model(MODEL_DIR))
+    return jsonify(read_model())
 
 
 @bp.route("/api/v2/model", methods=['GET', 'POST'])
 def update_model():
     model = request.get_json() or {}
-    write_model(model, MODEL_DIR)
+    write_model(model)
     return 'Success'
 
 
@@ -50,7 +50,7 @@ def get_encrypted():
 @bp.route("/api/v2/model/entities", methods=['GET'])
 def get_entity_operations():
 
-    model = read_model(MODEL_DIR)
+    model = read_model()
     entity_operations = {}
     for key, val in model['inputModel'].iteritems():
         ops = {}
@@ -77,7 +77,7 @@ def get_entity_operations():
 @bp.route("/api/v2/model/entities/<entity_name>", methods=['GET'])
 def get_entities(entity_name):
 
-    model = read_model(MODEL_DIR)
+    model = read_model()
     try:
         return jsonify(model['inputModel'][entity_name])
     except KeyError:
@@ -87,13 +87,13 @@ def get_entities(entity_name):
 @bp.route("/api/v2/model/entities/<entity_name>", methods=['PUT'])
 def update_entities(entity_name):
 
-    model = read_model(MODEL_DIR)
+    model = read_model()
     if entity_name not in model['inputModel']:
         abort(404)
     new_entity = request.get_json()
 
     model['inputModel'][entity_name] = new_entity
-    write_model(model, MODEL_DIR)
+    write_model(model)
     return 'Success'
 
 
@@ -114,7 +114,7 @@ def get_entity_index(entities, id):
 @bp.route("/api/v2/model/entities/<entity_name>/<id>", methods=['GET'])
 def get_entity_by_id(entity_name, id):
 
-    model = read_model(MODEL_DIR)
+    model = read_model()
     try:
         entities = model['inputModel'][entity_name]
         index = get_entity_index(entities, id)
@@ -127,13 +127,13 @@ def get_entity_by_id(entity_name, id):
 @bp.route("/api/v2/model/entities/<entity_name>/<id>", methods=['PUT'])
 def update_entity_by_id(entity_name, id):
 
-    model = read_model(MODEL_DIR)
+    model = read_model()
     new_entity = request.get_json()
     try:
         entities = model['inputModel'][entity_name]
         index = get_entity_index(entities, id)
         entities[index] = new_entity
-        write_model(model, MODEL_DIR)
+        write_model(model)
         return 'Success'
 
     except (KeyError, IndexError):
@@ -143,12 +143,12 @@ def update_entity_by_id(entity_name, id):
 @bp.route("/api/v2/model/entities/<entity_name>/<id>", methods=['DELETE'])
 def delete_entity_by_id(entity_name, id):
 
-    model = read_model(MODEL_DIR)
+    model = read_model()
     try:
         entities = model['inputModel'][entity_name]
         index = get_entity_index(entities, id)
         del(entities[index])
-        write_model(model, MODEL_DIR)
+        write_model(model)
         return 'Success'
 
     except (KeyError, IndexError):
@@ -158,7 +158,7 @@ def delete_entity_by_id(entity_name, id):
 @bp.route("/api/v2/model/entities/<entity_name>", methods=['POST'])
 def create_entity(entity_name):
 
-    model = read_model(MODEL_DIR)
+    model = read_model()
     new_entity = request.get_json()
 
     key_field = get_key_field(new_entity)
@@ -172,7 +172,7 @@ def create_entity(entity_name):
         abort(404)
 
     entities.append(new_entity)
-    write_model(model, MODEL_DIR)
+    write_model(model)
     return 'Success'
 
 
@@ -287,7 +287,7 @@ def get_key_field(obj):
                 return key
 
 
-def read_model(model_dir):
+def read_model(model_dir=MODEL_DIR):
     """Reads the input model directory structure into a big dictionary
 
     Reads all of the yaml files from the given directory and loads them into a
@@ -444,7 +444,7 @@ def update_pass_through(model):
 #
 
 # This function is long and should be modularized
-def write_model(in_model, model_dir, dry_run=False):  # noqa: C901
+def write_model(in_model, model_dir=MODEL_DIR, dry_run=False):  # noqa: C901
 
     # Create a deep copy of the model to avoid munging the model that was
     # passed in

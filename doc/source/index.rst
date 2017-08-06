@@ -33,6 +33,9 @@ The REST API:
 .. automodule:: ardana_service.templates
     :members:
 
+.. automodule:: ardana_service.config_processor
+    :members:
+
 
 WebSocket API
 -------------

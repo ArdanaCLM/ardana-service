@@ -1,3 +1,4 @@
+from ConfigParser import NoOptionError
 from ConfigParser import SafeConfigParser
 import logging
 import os
@@ -52,7 +53,10 @@ def get(*args, **argv):
 
 
 def get_dir(dir_name):
-    path = parser.get('paths', dir_name)
+    try:
+        path = parser.get('paths', dir_name)
+    except NoOptionError:
+        return
 
     # Relative paths are resolved relative to the top-level directory
     if not path.startswith('/'):
