@@ -4,6 +4,7 @@ from flask import abort
 from flask import Blueprint
 from flask import jsonify
 from flask import request
+from flask import url_for
 import logging
 import os
 import random
@@ -28,23 +29,16 @@ ADDED = 'added'
 PASS_THROUGH = 'pass-through'
 
 
-@bp.route("/api/v2/model", methods=['GET', 'POST'])
-def model():
-    if request.method == 'GET':
-        try:
-            return jsonify(read_model(MODEL_DIR))
-        except Exception as e:
-            LOG.exception(e)
-            abort(500)
+@bp.route("/api/v2/model", methods=['GET'])
+def get_model():
+    return jsonify(read_model(MODEL_DIR))
 
-    else:
-        model = request.get_json() or {}
-        try:
-            write_model(model, MODEL_DIR)
-        except Exception as e:
-            LOG.exception(e)
-            abort(500)
-        return 'Success'
+
+@bp.route("/api/v2/model", methods=['GET', 'POST'])
+def update_model():
+    model = request.get_json() or {}
+    write_model(model, MODEL_DIR)
+    return 'Success'
 
 
 @bp.route("/api/v2/model/is_encrypted", methods=['GET'])
@@ -53,18 +47,131 @@ def get_encrypted():
 
 
 @bp.route("/api/v2/model/entities", methods=['GET'])
-def get_all_entities():
+def get_entity_operations():
+
+    model = read_model(MODEL_DIR)
+    entity_operations = {}
+    for key, val in model['inputModel'].iteritems():
+        ops = {}
+        ops['get'] = 'GET ' + \
+            url_for('model.get_entities', entity_name=key)
+        ops['update'] = 'PUT ' + \
+            url_for('model.update_entities', entity_name=key)
+
+        if isinstance(val, list):
+            ops['add'] = 'POST ' + \
+                url_for('model.create_entity', entity_name=key)
+            ops['getById'] = 'GET ' + \
+                url_for('model.get_entity_by_id', entity_name=key, id=':id')
+            ops['updateById'] = 'PUT ' + \
+                url_for('model.update_entity_by_id', entity_name=key, id=':id')
+            ops['deleteById'] = 'DELETE ' + \
+                url_for('model.delete_entity_by_id', entity_name=key, id=':id')
+
+        entity_operations[key] = ops
+
+    return jsonify(entity_operations)
+
+
+@bp.route("/api/v2/model/entities/<entity_name>", methods=['GET'])
+def get_entities(entity_name):
+
+    model = read_model(MODEL_DIR)
+    try:
+        return jsonify(model['inputModel'][entity_name])
+    except KeyError:
+        abort(404)
+
+
+@bp.route("/api/v2/model/entities/<entity_name>", methods=['PUT'])
+def update_entities(entity_name):
+
+    model = read_model(MODEL_DIR)
+    if entity_name not in model['inputModel']:
+        abort(404)
+    new_entity = request.get_json()
+
+    model['inputModel'][entity_name] = new_entity
+    write_model(model, MODEL_DIR)
     return 'Success'
 
 
-@bp.route("/api/v2/model/entities/<entity>", methods=['GET', 'POST', 'PUT'])
-def whole_entity(entity):
-    return 'Success'
+def get_entity_index(entities, id):
+    # Find the index of the given id in the entities list
+    try:
+        key_field = get_key_field(entities[0])
+        for index, e in enumerate(entities):
+            if e[key_field] == id:
+                return index
+        else:
+            abort(404)
+
+    except (KeyError, IndexError):
+        abort(404)
 
 
-@bp.route("/api/v2/model/entities/<entity>/<id>",
-          methods=['DELETE', 'GET', 'PUT'])
-def entry(entity, id):
+@bp.route("/api/v2/model/entities/<entity_name>/<id>", methods=['GET'])
+def get_entity_by_id(entity_name, id):
+
+    model = read_model(MODEL_DIR)
+    try:
+        entities = model['inputModel'][entity_name]
+        index = get_entity_index(entities, id)
+        return jsonify(entities[index])
+
+    except (KeyError, IndexError):
+        abort(404)
+
+
+@bp.route("/api/v2/model/entities/<entity_name>/<id>", methods=['PUT'])
+def update_entity_by_id(entity_name, id):
+
+    model = read_model(MODEL_DIR)
+    new_entity = request.get_json()
+    try:
+        entities = model['inputModel'][entity_name]
+        index = get_entity_index(entities, id)
+        entities[index] = new_entity
+        write_model(model, MODEL_DIR)
+        return 'Success'
+
+    except (KeyError, IndexError):
+        abort(404)
+
+
+@bp.route("/api/v2/model/entities/<entity_name>/<id>", methods=['DELETE'])
+def delete_entity_by_id(entity_name, id):
+
+    model = read_model(MODEL_DIR)
+    try:
+        entities = model['inputModel'][entity_name]
+        index = get_entity_index(entities, id)
+        del(entities[index])
+        write_model(model, MODEL_DIR)
+        return 'Success'
+
+    except (KeyError, IndexError):
+        abort(404)
+
+
+@bp.route("/api/v2/model/entities/<entity_name>", methods=['POST'])
+def create_entity(entity_name):
+
+    model = read_model(MODEL_DIR)
+    new_entity = request.get_json()
+
+    key_field = get_key_field(new_entity)
+    entities = model['inputModel'][entity_name]
+    try:
+        # Make sure it does not already exist
+        for e in entities:
+            if e[key_field] == new_entity[key_field]:
+                abort(400)
+    except (KeyError, IndexError):
+        abort(404)
+
+    entities.append(new_entity)
+    write_model(model, MODEL_DIR)
     return 'Success'
 
 
