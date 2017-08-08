@@ -38,8 +38,11 @@ def get_model():
 @bp.route("/api/v2/model", methods=['GET', 'POST'])
 def update_model():
     model = request.get_json() or {}
-    write_model(model)
-    return 'Success'
+    try:
+        write_model(model)
+        return 'Success'
+    except Exception:
+        abort(400)
 
 
 @bp.route("/api/v2/model/is_encrypted", methods=['GET'])
@@ -270,7 +273,7 @@ def model_file(name):
                 f.write(data)
             return 'Success'
         except Exception:
-            abort(500)
+            abort(400)
 
 
 def get_key_field(obj):
@@ -701,7 +704,6 @@ def write_file(model_dir, filename, new_content, dry_run):
     # Avoid writing the file if the contents have not changes.  This preserves
     # any comments that may exist in the old file
     if new_content == old_content:
-        LOG.info("Ignoring unchanged file %s", filename)
         return IGNORED
     else:
         LOG.info("Writing file %s", filename)
