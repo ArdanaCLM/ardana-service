@@ -141,7 +141,6 @@ def run_playbook(name):
     return jsonify(opts)
 
 
-# TODO(gary): support (and require), maxSize parameter
 @bp.route("/api/v2/plays/<id>/log")
 def get_log(id):
     # For security, send_from_directory avoids sending any files

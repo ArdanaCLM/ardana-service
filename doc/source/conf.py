@@ -62,6 +62,9 @@ pygments_style = 'sphinx'
 # html_theme_path = ["."]
 # html_theme = '_theme'
 # html_static_path = ['static']
+html_theme_options = {
+    'page_width': 'auto',   # The default is a very narrow 960px
+}
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'doc'

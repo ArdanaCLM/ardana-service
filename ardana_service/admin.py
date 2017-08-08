@@ -15,4 +15,4 @@ def version():
 @bp.route("/api/v2/heartbeat")
 def heartbeat():
     # return ms since epoch
-    return jsonify(int(1000 * time.time()))
+    return jsonify(int(time.time()))
