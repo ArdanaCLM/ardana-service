@@ -47,29 +47,7 @@ def run_config_processor(force_result=None):
 
     .. sourcecode:: http
 
-       HTTP/1.1 200 OK
-       Content-Type: application/json
-
-       {
-         "data": {
-           "2.0": {
-             "configuration-data": ["..."],
-             "control-planes": ["..."],
-             "disk-models": ["..."],
-             "firewall-rules": ["..."],
-             "interface-models": ["..."],
-             "network-groups": ["..."],
-             "networks": ["..."],
-             "ring-specifications": ["..."],
-             "server-groups": ["..."],
-             "server-roles": ["..."],
-             "servers": ["..."],
-             "service-components": ["..."],
-             "services": ["..."]
-           },
-           "internal": {"..."}
-         }
-       }
+       HTTP/1.1 201 CREATED
 
     **Example invalid response**:
 
@@ -92,7 +70,7 @@ def run_config_processor(force_result=None):
         error = {"log": "woops", "errorCode": 254}
         abort(make_response(jsonify(error), 400))
     elif force_result is False or (req and "want_pass" in req):
-        return jsonify({'data': {'2.0': {'servers': []}}})
+        return '', 201
 
     python = config.get_dir('cp_python_path') or sys.executable
     tempdir = tempfile.mkdtemp()
@@ -126,11 +104,14 @@ def run_config_processor(force_result=None):
     input_model = model.read_model()
     cloud_name = input_model['inputModel']['cloud']['name']
 
-    filename = os.path.join(output_dir, cloud_name, '2.0', 'stage', 'info')
-    try:
-        with open(filename) as f:
-            lines = f.readlines()
-        return ''.join(lines)
-
-    except IOError:
-        return "{}"
+    generated = os.path.join(output_dir, cloud_name, '2.0', 'stage', 'info')
+    if os.path.exists(generated):
+        return '', 201
+    else:
+        error = {
+            'startTime': start_time,
+            'endTime': int(time.time()),
+            'log': 'Unknown error',
+            'errorCode': 127
+        }
+        abort(make_response(jsonify(error), 400))
