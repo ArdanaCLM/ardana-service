@@ -1,3 +1,6 @@
+..
+ (c) Copyright 2017 SUSE LLC
+
 =================================
 Ardana-Server (Lifecycle Manager)
 =================================

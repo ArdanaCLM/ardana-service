@@ -29,13 +29,13 @@ def run_config_processor(force_result=None):
     No body is required
 
     This will run the configuration processor directly, not the playbook. This
-    is a synchronous call which takes around 7 seconds. The HTTP response will
-    be sent once the config processor has finished. If the model was deemed
-    valid, the response will have a status code of 200 and the body will be the
-    output of the config processor (Note: this is in fact the expanded input
-    model and is quite large). If the model was invalid, the status code will
-    be 400 and the body of the response will be contain the log of the Config
-    Processor explaining why things failed.
+    is a synchronous call which takes up to about 20 seconds. The HTTP response
+    will be sent once the config processor has finished. If the model was
+    deemed valid, the response will have a status code of 200 and the body will
+    be the output of the config processor (Note: this is in fact the expanded
+    input model and is quite large). If the model was invalid, the status code
+    will be 400 and the body of the response will be contain the log of the
+    Config Processor explaining why things failed.
 
     **Example Request**:
 
