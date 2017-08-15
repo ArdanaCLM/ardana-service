@@ -44,23 +44,18 @@ The REST API:
 ----------------------------------- -------- --------------------------------------------------------------------------------------
  ``/playbooks/{playbook}``           POST     Create and start an ansible-playbook process for the playbook specified.
                                               Supported playbooks are listed and described in a GET to /playbooks
+
+                                              **Partially implemented**
 ----------------------------------- -------- --------------------------------------------------------------------------------------
  ``/plays``                          GET      List metadata about all ansible plays (live and finished). Limit number of returned
                                               results with query parameters: ``maxNumber=<N>`` and/or ``maxAge=<seconds>``. If
                                               only live plays are desired use the parameter ``live=true``
-
-                                              **Not yet implemented**
 ----------------------------------- -------- --------------------------------------------------------------------------------------
- ``/plays/{pref}``                   GET      Get metadata about the specified ansible play reference.
-
-                                              **Not yet implemented**
+ ``/plays/{id}``                     GET      Get metadata about the specified ansible play
 ----------------------------------- -------- --------------------------------------------------------------------------------------
- ``/plays/{pref}/log``               GET      Gets the log for the specified ansible play reference.
+ ``/plays/{id}/log``                 GET      Gets the log for the specified ansible play
 ----------------------------------- -------- --------------------------------------------------------------------------------------
- ``/plays/{pref}``                   DELETE   Kills the ansible play process identified by the specified process reference if
-                                              it is active.
-
-                                              **Not yet implemented**
+ ``/plays/{id}``                     DELETE   Kills the ansible play process identified by the specified id if it is active.
 ----------------------------------- -------- --------------------------------------------------------------------------------------
  ``/model``                          GET      Returns the current Input Model. The returned JSON include metadata about the model
                                               as well as the Input Model data.
@@ -163,6 +158,13 @@ Model Operations
 """"""""""""""""
 
 .. automodule:: ardana_service.versions
+    :members:
+
+
+Playbook Operations
+"""""""""""""""""""
+
+.. automodule:: ardana_service.playbooks
     :members:
 
 

@@ -4,3 +4,4 @@ flask-socketio    # MIT
 flask-cors        # MIT
 PyYAML>=3.10.0    # MIT
 gitpython>=2.0    # BSD-3
+filelock          # Public Domain
