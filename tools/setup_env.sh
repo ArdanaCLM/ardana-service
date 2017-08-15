@@ -14,6 +14,15 @@ mkdir -p \
 
 cd data
 
+if [ ! -d my_cloud/.git ] ; then
+    cd my_cloud
+    git init 
+    git add -A
+    git commit -m "Initial commit"
+    git checkout -b site
+    cd -
+fi
+
 if [ ! -d hlm-ansible ] ; then
     git clone https://git.suse.provo.cloud/hp/hlm-ansible -b hp/prerelease/ocata
 fi
