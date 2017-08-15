@@ -114,22 +114,6 @@ The REST API:
 
                                               **Not yet implemented**
 ----------------------------------- -------- --------------------------------------------------------------------------------------
- ``/model/config/{path}``            GET      List config entities available in the customer's config directory. A path can be
-                                              specified to drill down into the filesystem. Returns a JSON tree of editable
-                                              entities. If path is not specified you get the entire config tree, else you get
-                                              the subtree rooted at path. If the path reaches a a leaf you get the file
-                                              contents as plain text.
-
-                                              **Not yet implemented**
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/model/config/{path}``            PUT      Update a config entity in the customer's config directory. The path to the editable
-                                              entity must be specified. The body must be directly the new text for the file
-                                              (no envelope).  An example path would be glance/glance_api_conf_j2. See the
-                                              Postman collection for real examples. Note that this will result in a model
-                                              change that needs to committed and readied.
-
-                                              **Not yet implemented**
------------------------------------ -------- --------------------------------------------------------------------------------------
  ``/osinstall``                      POST     Start installation of OS on specified nodes. Details provided in request body.
 
                                               **Not yet implemented**
