@@ -6,3 +6,4 @@ dist
 build
 /data
 log
+local.cfg

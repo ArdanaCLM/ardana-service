@@ -1,8 +1,8 @@
 from ConfigParser import NoOptionError
+from ConfigParser import NoSectionError
 from ConfigParser import SafeConfigParser
 import logging
 import os
-import sys
 
 LOG = logging.getLogger(__name__)
 
@@ -12,8 +12,10 @@ default_config = os.path.normpath(os.path.join(os.path.dirname(__file__),
                                                'defaults.cfg'))
 
 config_files = [default_config]
-if len(sys.argv) > 1:
-    config_files.append(sys.argv[1])
+local_config = os.path.normpath(os.path.join(os.path.dirname(__file__), '..',
+                                             'local.cfg'))
+if os.path.exists(local_config):
+    config_files.append(local_config)
 
 LOG.info("Loading config files %s", config_files)
 # This will fail with an exception if the config file cannot be loaded
@@ -48,8 +50,11 @@ def get_flask_config():
     return {k.upper(): normalize(v) for k, v in parser.items('flask')}
 
 
-def get(*args, **argv):
-    return normalize(parser.get(*args, **argv))
+def get(section, item, default=None):
+    try:
+        return parser.get(section, item)
+    except (NoOptionError, NoSectionError):
+        return default
 
 
 def get_dir(dir_name):

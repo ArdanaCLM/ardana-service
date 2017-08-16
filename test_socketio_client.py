@@ -5,7 +5,6 @@ import requests
 from socketIO_client import LoggingNamespace
 from socketIO_client import SocketIO
 
-
 logging.getLogger('socketIO-client').setLevel(logging.DEBUG)
 logging.basicConfig()
 
@@ -19,13 +18,12 @@ def on_message(message):
     print(args[1],)
 
 
-socketIO = SocketIO('localhost', 5000, LoggingNamespace)
+socketIO = SocketIO('localhost', 9085, LoggingNamespace)
+socketIO.on('message', on_message)
 
-socketIO.on('message', on_message)  # , path='/log')
-
-r = requests.post("http://localhost:5000/api/v2/playbooks/blather")
+r = requests.post("http://localhost:9085/api/v2/playbooks/venv-edit")
 id = r.headers['Location'].split('/')[-1]
 
-socketIO.emit('join', id)   # , path="/log")
+socketIO.emit('join', id)
 
 socketIO.wait(seconds=4)

@@ -2,49 +2,87 @@ from flask import abort
 from flask import Blueprint
 from flask import jsonify
 from flask import request
-from flask import send_from_directory
 from flask import url_for
 from flask_socketio import emit
 from flask_socketio import join_room
 import filelock
+import functools
 import json
 import logging
 import os
-import signal
 import subprocess
-import sys
-import threading
+import tempfile
 import time
 
 from . import config
 from . import socketio
+from .plays import get_metadata_file
+from .plays import get_metadata_lockfile
 
 LOG = logging.getLogger(__name__)
 
 bp = Blueprint('playbooks', __name__)
 
 PLAYBOOKS_DIR = config.get_dir("playbooks_dir")
+PRE_PLAYBOOKS_DIR = config.get_dir("pre_playbooks_dir")
 LOGS_DIR = config.get_dir("log_dir")
-METADATA = os.path.join(LOGS_DIR, "plays.yml")
-LOCKFILE = os.path.join(LOGS_DIR, "plays.yml.lock")
 
 # Dictionary of all running tasks
 tasks = {}
 
+# These playbooks are run from a directory that exists even before
+# the ready-deployment has been done (PRE_PLAYBOOKS_DIR)
+STATIC_PLAYBOOKS = {
+    'config-processor-run',
+    'config-processor-clean',
+    'ready-deployment'}
+
+# TODO(gary) Consider creating a function to archive old plays (create a tgz
+#    of log and metadata).  This feature is not mentioned anywhere, but the
+#    old version did something similar to this
+
 
 @bp.route("/api/v2/playbooks")
 def playbooks():
+    """List available playbooks
 
-    playbooks = {'config-processor-run',
-                 'config-processor-clean',
-                 'ready-deployment'}
+    Lists the playbook names (without the trailing ``.yml`` extension) of the
+    playbooks that are available to run.
 
+    **Example Request**:
+
+    .. sourcecode:: http
+
+       GET /api/v2/playbooks HTTP/1.1
+       Content-Type: application/json
+
+    **Example Reponse**:
+
+    .. sourcecode:: http
+
+       HTTP/1.1 200 OK
+
+       [
+          "ansible-init",
+          "check-apt-configuration",
+          "...",
+          "venv-edit"
+       ]
+
+    **Changed for v2**:
+
+    No mapping between '_' and '-' will take place; the playbook names
+    returned match the names that are stored on disk.
+    """
+
+    playbooks = set(STATIC_PLAYBOOKS)
     try:
         for filename in os.listdir(PLAYBOOKS_DIR):
             if filename[0] != '_' and filename.endswith('.yml'):
                 # Strip off extension
                 playbooks.add(filename[:-4])
-    except OSError:
+    except OSError as e:
+        LOG.exception(e)
         LOG.warning("Playbooks directory %s doesn't exist. This could indicate"
                     " that the ready_deployment playbook hasn't been run yet. "
                     "The list of playbooks available will be reduced",
@@ -53,283 +91,302 @@ def playbooks():
     return jsonify(sorted(playbooks))
 
 
-def get_extra_vars(opts):
-
-    # In the JSON request payload, the special key extraVars wil be converted
-    # to the --extra-vars playbook argument, and it undergoes special
-    # processing.  The supplied value will either be an array of key value
-    # pairs, e.g.  ["key1=val1", "key2=val2"], or a nested object, e.g.,
-    # { "key1": "val1", "key2": "val2" }
-    if type(opts.get("extraVars")) is list:
-        d = {}
-        for keyval in opts["extraVars"]:
-            try:
-                (key, val) = keyval.split("=", 1)
-                d[key] = val
-            except ValueError:
-                pass
-        return d
-    else:
-        return opts.get("extraVars", {})
-
-
-def run_site(opts, client_id):
-
-    # Normalize the extraVars entry
-    opts['extraVars'] = get_extra_vars(opts)
-
-    # Extract relevant options
-    # keep_dayzero = opts['extraVars'].pop('keep_dayzero', None)
-    # destroy_on_success = opts.pop('destroyDayZeroOnSuccess', None)
-
-    # TODO(gary): Handle things like reading passwords from an encrypted vault
-    # TODO(gary): if successful and destory_on_success, then invoke
-    # dayzero-stop playbook
-
-
-def run_config_processor_clean(opts, client_id):
-    pass
-
-
-def run_config_processor(opts, client_id):
-    pass
-
-
-def run_ready_deployment(opts, client_id):
-    pass
-
-
 @bp.route("/api/v2/playbooks/<name>", methods=['POST'])
 def run_playbook(name):
     """Run an ansible playbook
 
     JSON payload is an object that may contain key/value pairs that will be
-    passed as command-line arguments to the ansible playbook.
+    passed as command-line arguments to ``ansible playbook``.
+    To simplify things a bit for the caller, the key may omit the leading
+    dashes. For example::
 
-    If the http header "clientid" is supplied, it will be passed as
-    a command-line argument named ClientId.
-    """
-    opts = request.get_json() or {}
+       { 'limit' : 100 }
 
-    client_id = request.headers.get('clientid')   # TODO(gary) Remove "hlm"
-
-    if name == "site":
-        return run_site(opts, client_id)
-    elif name == "config-processor-run":
-        return run_config_processor(opts, client_id)
-    elif name == "config-processor-clean":
-        return run_config_processor_clean(opts, client_id)
-    elif name == "ready-deployment":
-        return run_ready_deployment(opts, client_id)
-    elif name == "blather":
-        temp_name = os.path.join(os.curdir, 'blather')
-        return spawn_process(temp_name)
-    else:
-        try:
-            name += ".yml"
-            for filename in os.listdir(PLAYBOOKS_DIR):
-                if filename == name:
-                    break
-            else:
-                abort(404)
-
-            playbook_name = os.path.join(PLAYBOOKS_DIR, name)
-            return spawn_process('ansible-playbook', [playbook_name])
-
-        except OSError:
-            LOG.warning("Playbooks directory %s doesn't exist. This could "
-                        "indicate that the ready_deployment playbook hasn't "
-                        "been run yet. The list of playbooks available will "
-                        "be reduced", PLAYBOOKS_DIR)
-
-    return jsonify(opts)
-
-
-@bp.route("/api/v2/plays/<id>/log")
-def get_log(id):
-    """Returns the log for the given ansible plays.
+    will be converted to the command arguments ``--limit 100``
 
     **Example Request**:
 
     .. sourcecode:: http
 
-       GET /api/v2/plays/345835/log HTTP/1.1
-
-    **Example Reponse**:
-
-    .. sourcecode:: http
-
-       HTTP/1.1 200 OK
-
-       ... log file from the given play ...
-    """
-    # For security, send_from_directory avoids sending any files
-    # outside of the specified directory
-    return send_from_directory(LOGS_DIR, id + ".log")
-
-
-@bp.route("/api/v2/plays")
-def get_plays():
-    """Returns the metadata about all ansible plays.
-
-       The results can be limited with query parameters:
-       * maxNumber=<N>
-       * maxAge=<seconds>
-       * live=true
-
-    **Example Request**:
-
-    .. sourcecode:: http
-
-       GET /api/v2/plays HTTP/1.1
-
-    **Example Reponse**:
-
-    .. sourcecode:: http
-
-       HTTP/1.1 200 OK
-       Content-Type: application/json
-
-       [
-         {
-           "code": 254,
-           "commandString": "validate input model",
-           "endTime": 1502161466109,
-           "killed": false,
-           "logSize": 2735,
-           "id": 18697,
-           "startTime": 1502161460385
-         },
-         {
-           "code": 2,
-           "commandString":
-               "ansible-playbook -i hosts/localhost config-processor-run.yml",
-           "endTime": 1501782351315,
-           "killed": false,
-           "logSize": 1905,
-           "id": 23795,
-           "startTime": 1501782349242
-         }
-       ]
-    """
-    max_number = int(request.args.get("maxNumber", sys.maxsize))
-    max_age = int(request.args.get("maxAge", sys.maxsize))
-    live_only = request.args.get("live") == "true"
-
-    earliest_end_time = int(time.time()) - max_age
-
-    results = []
-    try:
-        with open(METADATA) as f:
-            plays = json.load(f)
-
-        for play in plays:
-            end_time = play.get('endTime')
-
-            if live_only and end_time:
-                continue
-
-            if end_time and end_time < earliest_end_time:
-                continue
-
-            results.append(play)
-
-            if len(results) >= max_number:
-                break
-    except IOError:
-        pass
-
-    return jsonify(results)
-
-
-@bp.route("/api/v2/plays/<id>")
-def get_play(id):
-    """Returns the metadata about the given play
-
-    **Example Request**:
-
-    .. sourcecode:: http
-
-       GET /api/v2/plays/3587323 HTTP/1.1
-
-    **Example Reponse**:
-
-    .. sourcecode:: http
-
-       HTTP/1.1 200 OK
+       POST /api/v2/playbooks/show-hooks HTTP/1.1
        Content-Type: application/json
 
        {
-         "code": 254,
-         "commandString": "validate input model",
-         "endTime": 1502161466109,
-         "killed": false,
-         "logSize": 2735,
-         "id": 3587323,
-         "startTime": 1502161460385
+          "limit": 100
        }
-    """
-    req_id = int(id)
-    try:
-        with open(METADATA) as f:
-            plays = json.load(f)
-
-        matches = [p for p in plays if p['id'] == req_id]
-        if matches:
-            return jsonify(matches[0])
-    except IOError:
-        pass
-
-    abort(404)
-
-
-@bp.route("/api/v2/plays/<id>", methods=['DELETE'])
-def kill_play(id):
-    """Kills the playbook with the given id, if it is still running
-
-    **Example Request**:
-
-    .. sourcecode:: http
-
-       DELETE /api/v2/plays/3587323 HTTP/1.1
 
     **Example Reponse**:
 
     .. sourcecode:: http
 
-       HTTP/1.1 200 OK
+       HTTP/1.1 202 ACCEPTED
        Content-Type: application/json
+       Location: http://localhost:9085/api/v2/plays/6858
+
+       {
+           "id": 6858
+       }
+
+    When running the ``config-processor-run`` playbook, no body is required
+    unless you desire encryption.  If you want to enable encryption, pass the
+    encryption and re-encryption keys in the extra-vars portion of the body:
+
+    .. sourcecode:: http
+
+       POST /api/v2/playbooks/config-processor-run HTTP/1.1
+       Content-Type: application/json
+
+       {
+           "extra-vars": {
+               "encrypt": "admin123456!",
+               "rekey": ""
+           }
+       }
+
+    If it is the first time you use encryption, you only need to set the
+    ``encrypt`` value and leave ``rekey`` empty.  This will encrypt all ansible
+    host and group variables on disk using Ansible vault.  Once an encrypted
+    config processor output has been readied (by running the
+    ``ready-deployment`` playbook) you can change the encryption key by
+    specifying ``encrypt`` as your old key and ``rekey`` as the new key.
+    Once encryption has been enabled, all other playbooks (e.g. ``status``,
+    ``site``, etc.) will need to be tol the encryption key:
+
+    .. sourcecode:: http
+
+       POST /api/v2/playbooks/site HTTP/1.1
+       Content-Type: application/json
+
+       {
+           "encryption-key": "admin123456!",
+       }
+
+    **Changes for v2**:
+
+    * No mapping between '_' and '-' will take place in playbook names; the
+      playbook names specified must match the name that is stored on disk.
+    * The `clientid` header field is no longer supported
+    * In the past, the server converted a few special arguments like
+      remove_deleted_servers, free_unused_addresses, encrypt, and rekey
+      into extra-vars arguments.  Clients are now required to specify these
+      as part of extra-vars directly
+    * A successful POST will return a json structure containing the ``id`` of
+      the play, which can be used by the caller to obtain the log, etc.  The
+      former version returned the value in a field called ``pRef``
+    * The use of camel-case ``extraVars``, ``encryptionKey``, and
+      ``inventoryFile`` are deprecated and will be removed in a future version.
+      Use ``extra-vars``, ``encryption-key`` and ``inventory`` instead.
     """
-    req_id = int(id)
-    lock = filelock.FileLock(LOCKFILE)
-    # Timeout after at most a brief wait.  Writes should be very fast
+    args = get_command_args()
+
+    if name in STATIC_PLAYBOOKS:
+        cwd = PRE_PLAYBOOKS_DIR
+    else:
+        cwd = PLAYBOOKS_DIR
+
+    # Prevent some special playbooks from multiple concurrent invocations
+    if name in ("site", "config-processor-run", "config-processor-clean",
+                "ready-deployment"):
+        if is_playbook_running(name):
+            abort(403, "Already running")
 
     try:
-        with lock.acquire(timeout=3):
-            with open(METADATA) as f:
-                plays = json.load(f)
+        name += ".yml"
+        for filename in os.listdir(PLAYBOOKS_DIR):
+            if filename == name:
+                break
+        else:
+            abort(404, "Playbook not found")
 
-            for p in plays:
-                if p['id'] == req_id:
-                    os.kill(req_id, signal.SIGINT)
-                    p['killed'] = True
-                    with open(METADATA, "w") as f:
-                        json.dump(plays, f)
-                    return "Success"
+        playbook_name = os.path.join(PLAYBOOKS_DIR, name)
 
-    except (IOError, OSError, filelock.Timeout):
+        # If we created a vault password file (in get_commands_args), then make
+        # sure that it gets cleaned up after the playbook has run.
+        # functools.partial is used to bind the vault_file to the function
+        # parameter here since the place where the cleanup is called does not
+        # have ready access to that filename
+        cleanup = None
+        vault_file = args.get('--vault-password-file')
+        if vault_file:
+            cleanup = functools.partial(remove_temp_vault_pwd_file, vault_file)
+
+        return start_playbook(playbook_name,
+                              args=args,
+                              cwd=cwd,
+                              cleanup=cleanup)
+
+    except OSError as e:
+        LOG.exception(e)
+        abort(404)
+
+
+def get_command_args(payload={}):
+    # Process the body of the http request and extract and build the command
+    # line arguments for the invocation of the ansible-playbook command.  For
+    # testing, the payload can be given as an arg to this function
+    body = payload or request.get_json() or {}
+
+    # Normalize the keys by removing all of the leading dashes from the keys,
+    # since they are optional
+    body = {k.lstrip('-'): v for k, v in body.iteritems()}
+
+    # Handle a couple of old key formats for backward compatibility
+    if 'extraVars' in body:
+        body['extra-vars'] = body.pop('extraVars')
+    if 'inventoryFile' in body:
+        body['inventory'] = body.pop('inventoryFile')
+    if 'encryptionKey' in body:
+        body['encryption-key'] = body.pop('encryptionKey')
+
+    # The value of the extra-vars can be supplied either as a list of key-value
+    # pairs, e.g.  ["key1=val1", "key2=val2"], or a nested object,
+    # e.g., { "key1": "val1", "key2": "val2" }.  If it is in the former,
+    # convert it to the latter.  In either case, the final version is
+    # converted into a string for passing to `ansible-playbook`
+
+    if 'extra-vars' in body:
+        if type(body.get("extra-vars")) is list:
+            extra_vars = {}
+            for keyval in body["extra-vars"]:
+                try:
+                    (key, val) = keyval.split("=", 1)
+                    extra_vars[key] = val
+                except ValueError:
+                    pass
+            body["extra-vars"] = extra_vars
+
+        # Convert to a json string
+        body["extra-vars"] = json.dumps(body["extra-vars"])
+
+    # Permit inventory file to be overriden
+    if 'inventory' in body:
+        if body['inventory'] is None:
+            body.pop('inventory')
+    else:
+        body['inventory'] = "hosts/verb_hosts"
+
+    # TODO(gary): Consider supporting force-color, which used to set the
+    # env ANSIBLE_FORCE_COLOR=true and pop from args.  Since the installer
+    # will now process the logs more intelligently, the need to supply
+    # color-coded logs in the UI is diminished
+
+    # If encryption-key is specified, store it in a temp file and adjust the
+    # args accordingly
+    if 'encryption-key' in body:
+        encryption_key = body.pop('encryption-key')
+        with tempfile.NamedTemporaryFile(suffix='', prefix='.vault-pwd',
+                                         dir=PLAYBOOKS_DIR, delete=False) as f:
+            f.write(encryption_key)
+        body['vault-password-file'] = f.name
+
+    # Finally normalize all keys to have the leading --
+    args = {'--' + k: v for k, v in body.iteritems()}
+
+    return args
+
+
+def remove_temp_vault_pwd_file(filename):
+    try:
+        os.unlink(filename)
+    except OSError as e:
+        LOG.exception(e)
         pass
 
-    abort(404)
+
+def start_playbook(playbook, args={}, cwd=None, cleanup=None):
+
+    # Create processes with the subprocess module rather
+    # than using a more advanced mechanism like Celery
+    # (http://www.celeryproject.org/) in order to avoid introducing run-time
+    # requirements on external systems (like REDIS, rabbitmq, etc.), since
+    # this program will be used in an installation scenario where those sytems
+    # are not yet running.
+
+    cmd = build_command_line('ansible-playbook', playbook, args)
+
+    # Prevent python programs from buffering their output.  Buffering causes
+    # the output to be delayed, making it more difficult to determine the
+    # real progress of the playbook
+    env = {'PYTHONUNBUFFERED': '1'}
+
+    ps = subprocess.Popen(cmd, cwd=cwd, env=env,
+                          stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+    start_time = int(1000 * time.time())
+    id = ps.pid
+    meta_file = get_metadata_file(id)
+
+    scrubbed = scrub_passwords(args)
+    logged_cmd = build_command_line('ansible-playbook', playbook, scrubbed)
+
+    play = {
+        "id": id,
+        "startTime": start_time,
+        "commandString": ' '.join(logged_cmd),
+        'killed': False
+    }
+    try:
+        with open(meta_file, "w") as f:
+            json.dump(play, f)
+    except (IOError, OSError) as e:
+        LOG.exception(e)
+        abort(500, "Unable to write metadata")
+
+    # Use a thread to read the pipe to avoid blocking this process.  Since
+    # the thread will interact with socketio, we have to use that library's
+    # function for creating threads
+    tasks[id] = {'task': socketio.start_background_task(monitor_output,
+                                                        ps, id, cleanup),
+                 'playbook': playbook}
+
+    LOG.debug("Spawned thread with task %s", id)
+
+    return jsonify({"id": id}), 202, {'Location': url_for('plays.get_play',
+                                                          id=id)}
 
 
-def get_log_file(id):
-    return os.path.join(LOGS_DIR, id + ".log")
+def build_command_line(command, playbook, args={}):
+    # Build the command line to be creating an array of the command, playbook
+    # name, an
+
+    cmdLine = []
+
+    # For dev/testing, support using a mock script
+    alt_command = config.get("testing", "mock_cmd")
+    if alt_command:
+        cmdLine.append(alt_command)
+
+    cmdLine.append(command)
+    cmdLine.append(playbook)
+
+    for k, v in args.iteritems():
+        cmdLine.append(k)
+        cmdLine.append(v)
+
+    return cmdLine
 
 
-def process_output(ps, id):
+def scrub_passwords(args):
+    # Build a sanitized version of the args list that has passwords replaced
+    # with asterisks.  This resulting list can be saved in files that are
+    # readable
 
-    with open(get_log_file(id), 'w') as f:
+    scrubbed = {}
+    for k, v in args.iteritems():
+        if k in ('--encrypt', '--rekey'):
+            scrubbed[k] = "****"
+        else:
+            scrubbed[k] = v
+    return scrubbed
+
+
+def monitor_output(ps, id, cleanup):
+    # Monitor the piped output of the running process, forwarding each message
+    # received to listening socketIO clients
+
+    log_file = get_log_file(id)
+
+    with open(log_file, 'w') as f:
         with ps.stdout:
             # Can use this in python3: for line in ps.stdout:
             # Using iter() per https://stackoverflow.com/a/17698359/190597
@@ -340,62 +397,35 @@ def process_output(ps, id):
 
                 f.write(line)
                 f.flush()
-                msg = id + " " + line
+                msg = str(id) + " " + line
                 socketio.emit("log", msg, room=id)
 
     socketio.close_room(id)
     ps.wait()
 
-    # TODO(gary): Need to read from stdout AND stderr
-    # TODO(gary): write final state to status file
-
-
-def spawn_process(command, args=[], cwd=None, opts={}):
-
-    # The code explicitly create processes with the subprocess module rather
-    # than using a more advanced mechanism like Celery
-    # (http://www.celeryproject.org/) in order to avoid introducing run-time
-    # requirements on external systems (like REDIS, rabbitmq, etc.), since
-    # this program will be used in an installation scenario where those sytems
-    # are not yet running.
-
-    # TODO(gary): Add logic to avoid spawning duplicate playbooks when
-    # indicated, by looking at all running playbooks for one with the same
-    # command line
-
-    cmdArgs = [command]
-    if args:
-        cmdArgs.extend(args)
+    # Update the metadata now that the process has finished.
+    meta_file = get_metadata_file(id)
+    lock = filelock.SoftFileLock(get_metadata_lockfile(id))
+    del tasks[id]
 
     try:
-        ps = subprocess.Popen(cmdArgs, cwd=cwd, env=opts.get('env', None),
-                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    except OSError:
+        # Writes should be very fast
+        with lock.acquire(timeout=3):
+            with open(meta_file) as f:
+                play = json.load(f)
+
+            play['endTime'] = int(1000 * time.time())
+            play['code'] = ps.returncode
+            play['logSize'] = os.stat(log_file).st_size
+            with open(meta_file, "w") as f:
+                json.dump(play, f)
+
+        # Call the cleanup function passed in, if any
+        if cleanup:
+            cleanup()
+
+    except (IOError, OSError, filelock.Timeout):
         pass
-
-    start_time = int(1000 * time.time())
-
-    id = "%d_%d" % (start_time, ps.pid)
-
-    # Use a thread to read the pipe to avoid blocking this process.  Since
-    # the thread will interact with socketio, we have to use that library's
-    # function for creating threads
-
-    # Use a thread to read the pipe to avoid blocking this process
-    use_threading = False
-    if use_threading:
-        tasks[id] = {'task': threading.Thread(target=process_output,
-                                              args=(ps, id)),
-                     'start_time': start_time}
-        tasks[id]['task'].start()
-    else:
-        tasks[id] = {'task': socketio.start_background_task(process_output,
-                                                            ps, id),
-                     'start_time': start_time}
-
-    LOG.debug("Spwaned thread with task %s", id)
-
-    return '', 202, {'Location': url_for('tasks.get_task', id=id)}
 
 
 @socketio.on('connect')
@@ -420,7 +450,7 @@ def on_join(id):
             msg = id + " " + line + "from file"
             emit("log", msg)
 
-    # If it is critical not to miss any messages, then thread synchronizcation
+    # If it is critical not to miss any messages, then thread synchronization
     # needs to be introduced so that if any thread is in this function, the
     # pipe reader will pause.  That comes at a cost in code complexity and
     # performance
@@ -428,3 +458,17 @@ def on_join(id):
     LOG.info("Joining room %s", id)
 
     join_room(id)
+
+
+def get_log_file(id):
+    return os.path.join(LOGS_DIR, str(id) + ".log")
+
+
+def is_playbook_running(playbook):
+    # Determine whether the given playbook is running by looking through the
+    # tasks dictionary
+
+    wanted = os.path.join(PLAYBOOKS_DIR, playbook + ".yml")
+    for task in tasks.values():
+        if task['playbook'] == wanted:
+            return True

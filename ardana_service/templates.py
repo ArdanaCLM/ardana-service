@@ -124,4 +124,4 @@ def get_template(name):
         return jsonify(model.read_model(model_dir))
     except Exception as e:
         LOG.exception(e)
-        abort(400)
+        abort(400, "Unable to read model")

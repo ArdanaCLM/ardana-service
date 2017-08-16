@@ -1,0 +1,45 @@
+#!/usr/bin/python
+from ConfigParser import SafeConfigParser
+from ConfigParser import NoOptionError
+from ConfigParser import NoSectionError
+import os
+import sys
+import time
+
+parser = SafeConfigParser()
+
+default_config = os.path.normpath(os.path.join(
+    os.path.dirname(__file__), "..", "ardana_service", 'defaults.cfg'))
+
+config_files = [default_config]
+local_config = os.path.normpath(os.path.join(
+    os.path.dirname(__file__), '..', 'local.cfg'))
+
+if os.path.exists(local_config):
+    config_files.append(local_config)
+
+parser.read(config_files)
+
+
+def get(section, item, default=None):
+    try:
+        return parser.get(section, item)
+    except (NoOptionError, NoSectionError):
+        return default
+
+bursts = get("testing", "mock_cmd_burst", None)
+
+# Printing bursts of messages is a way to emulate the kind of output that may occur
+# when a playbook runs.  Printing numbers makes it easy to spot gaps.
+if bursts:
+    (total, burst, naptime) = map(lambda x: float(x), bursts.split(","))
+
+    for x in xrange(1,int(total)+1):
+        print x
+        if x % int(burst) == 0:
+            time.sleep(naptime)
+
+print "Mock: ", str(sys.argv)
+
+exit_code = int(get("testing", "mock_cmd_exit", 0))
+sys.exit(exit_code)

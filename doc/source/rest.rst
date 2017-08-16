@@ -42,10 +42,8 @@ The REST API:
  ``/playbooks``                      GET      List Ansible playbooks we can run. In addition    to site ready_deployment and
                                               config_processor_run, all playbooks that don't start with '_' are available.
 ----------------------------------- -------- --------------------------------------------------------------------------------------
- ``/playbooks/{playbook}``           POST     Create and start an ansible-playbook process for the playbook specified.
-                                              Supported playbooks are listed and described in a GET to /playbooks
-
-                                              **Partially implemented**
+ ``/playbooks/{playbook}``           POST     Launch an ansible-playbook process for the playbook specified.  Supported playbooks
+                                              are listed and described in a ``GET`` to ``/playbooks``
 ----------------------------------- -------- --------------------------------------------------------------------------------------
  ``/plays``                          GET      List metadata about all ansible plays (live and finished). Limit number of returned
                                               results with query parameters: ``maxNumber=<N>`` and/or ``maxAge=<seconds>``. If
@@ -61,7 +59,6 @@ The REST API:
                                               as well as the Input Model data.
 ----------------------------------- -------- --------------------------------------------------------------------------------------
  ``/model/is_encrypted``             GET      Indicates whether the readied config processor output was encrypted or not.
-
                                               **Not yet implemented**
 ----------------------------------- -------- --------------------------------------------------------------------------------------
  ``/model``                          POST     Replaces the input model on disk with the supplied JSON. The provided JSON is
@@ -100,47 +97,37 @@ The REST API:
  ``/model/cp_output``                GET      Returns an object with a key for each of the info files in the config processor
                                               output.  The value of each entry is null.  If the ready query parameter is specified
                                               (e.g. ?ready=true) we look in the "ready" directory instead.
-
                                               **Not yet implemented**
 ----------------------------------- -------- --------------------------------------------------------------------------------------
  ``/model/cp_output/{path}``         GET      Returns the file contents of the indicated file as JSON if a YAML file was
                                               successfully parsed or as plain text otherwise.  If the ready query parameter is
                                               specified (e.g. ?ready=true) we look in the "ready" directory instead.
-
                                               **Not yet implemented**
 ----------------------------------- -------- --------------------------------------------------------------------------------------
  ``/osinstall``                      POST     Start installation of OS on specified nodes. Details provided in request body.
-
                                               **Not yet implemented**
 ----------------------------------- -------- --------------------------------------------------------------------------------------
  ``/osinstall``                      GET      Get status of OS installation for all servers having the OS installed.
-
                                               **Not yet implemented**
 ----------------------------------- -------- --------------------------------------------------------------------------------------
  ``/servers``                        GET      Get the portions of the inputModel that contain servers, including baremetal servers
-
                                               **Not yet implemented**
 ----------------------------------- -------- --------------------------------------------------------------------------------------
  ``/servers``                        POST     Add a new server to the model after validating that it has the necessary attributes
                                               (id, ip address, role) and that it does not already exist.
-
                                               **Not yet implemented**
 ----------------------------------- -------- --------------------------------------------------------------------------------------
  ``/servers{id}``                    DELETE   Delete the server from the input model
-
                                               **Not yet implemented**
 ----------------------------------- -------- --------------------------------------------------------------------------------------
  ``/servers{id}``                    PUT      Update a server in the inputModel.  This effectively deletes and re-adds the server
-
                                               **Not yet implemented**
 ----------------------------------- -------- --------------------------------------------------------------------------------------
  ``/servers/process``                POST     Add a new server, commit the model, run the config process, ready deployment, and
                                               deploy the server.
-
                                               **Not yet implemented**
 ----------------------------------- -------- --------------------------------------------------------------------------------------
  ``/servers/{id}/process``           DELETE   Delete the server and deactivate it using the appropriate playbook(s)
-
                                               **Not yet implemented**
 =================================== ======== ======================================================================================
 
@@ -168,6 +155,13 @@ Playbook Operations
     :members:
 
 
+Play Operations
+"""""""""""""""
+
+.. automodule:: ardana_service.plays
+    :members:
+
+
 Input Model Templates
 """""""""""""""""""""
 
@@ -182,9 +176,17 @@ Validating the input model
     :members:
 
 
-WebSocket API
--------------
+SocketIO API
+------------
 
-The web socket API provides the log-file streaming capability.
+The socketIO API provides the log-file streaming capability.  The Ardana Service accepts SocketIO
+connections to the same port as its REST interface (``9085`` by default).  While a play is
+alive, the service will emit an event for each message received from the running playbook on
+a room whose name is the play ``id``.  A socketIO client can join the room and expect a
+read these messages.
 
+The following is an example program that illustrates calling a playbook, and
+openeng up a socketIO connection to capture and display its output in real-time:
 
+.. include:: ../../test_socketio_client.py
+    :literal:

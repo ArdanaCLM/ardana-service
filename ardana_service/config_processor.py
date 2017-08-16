@@ -12,6 +12,7 @@ import time
 
 from . import config
 from . import model
+from . import playbooks
 
 LOG = logging.getLogger(__name__)
 bp = Blueprint('config_processor', __name__)
@@ -73,22 +74,23 @@ def run_config_processor(force_result=None):
         return '', 201
 
     python = config.get_dir('cp_python_path') or sys.executable
+
     tempdir = tempfile.mkdtemp()
 
     output_dir = os.path.join(tempdir, "clouds")
 
-    args = [
-        python, CP_SCRIPT_PATH,
+    cmd = playbooks.build_command_line(python, [
+        CP_SCRIPT_PATH,
         '-l', os.path.join(tempdir, "log"),
         '-c', os.path.join(MODEL_DIR, 'cloudConfig.yml'),
         '-s', CP_SERVICES_DIR,
         '-r', CP_SCHEMA_DIR,
-        '-o', os.path.join(tempdir, output_dir)]
+        '-o', os.path.join(tempdir, output_dir)])
 
     start_time = int(time.time())
 
     try:
-        subprocess.check_output(args, stderr=subprocess.STDOUT)
+        subprocess.check_output(cmd, stderr=subprocess.STDOUT)
     except Exception as e:
         # Cannot get except subprocess.CalledProcessError to be caught
         error = {
