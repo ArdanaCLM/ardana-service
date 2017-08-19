@@ -16,6 +16,7 @@ from . import config
 LOG = logging.getLogger(__name__)
 
 MODEL_DIR = config.get_dir("model_dir")
+PLAYBOOKS_DIR = config.get_dir("playbooks_dir")
 
 CLOUD_CONFIG = "cloudConfig.yml"
 
@@ -47,7 +48,32 @@ def update_model():
 
 @bp.route("/api/v2/model/is_encrypted", methods=['GET'])
 def get_encrypted():
-    return jsonify({"isEncrypted": False})
+    """Returns whether the readied config processor output was encrypted.
+    If the config processor has not been run, it will return a 404 http error
+
+    **Example Reponse**:
+
+    .. sourcecode:: http
+
+       HTTP/1.1 200 OK
+       Content-Type: application/json
+
+       {
+           "isEncrypted": false
+       }
+    """
+
+    VAULT_MARKER = '$ANSIBLE_VAULT'
+    try:
+        vault_file = os.path.join(PLAYBOOKS_DIR, 'group_vars', 'all')
+        with open(vault_file) as f:
+            marker = f.read(len(VAULT_MARKER))
+        encrypted = (marker == VAULT_MARKER)
+        return jsonify({"isEncrypted": encrypted})
+
+    except Exception as e:
+        LOG.exception(e)
+        abort(404)
 
 
 @bp.route("/api/v2/model/entities", methods=['GET'])

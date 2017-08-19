@@ -58,8 +58,7 @@ The REST API:
  ``/model``                          GET      Returns the current Input Model. The returned JSON include metadata about the model
                                               as well as the Input Model data.
 ----------------------------------- -------- --------------------------------------------------------------------------------------
- ``/model/is_encrypted``             GET      Indicates whether the readied config processor output was encrypted or not.
-                                              **Not yet implemented**
+ ``/model/is_encrypted``             GET      Indicates whether the readied config processor output was encrypted.
 ----------------------------------- -------- --------------------------------------------------------------------------------------
  ``/model``                          POST     Replaces the input model on disk with the supplied JSON. The provided JSON is
                                               analyzed and written back to disk using the same file YAML structure as when
@@ -143,6 +142,9 @@ Administrative Info
 
 Model Operations
 """"""""""""""""
+
+.. automodule:: ardana_service.model
+    :members:
 
 .. automodule:: ardana_service.versions
     :members:
