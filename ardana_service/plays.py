@@ -1,9 +1,9 @@
+import filelock
 from flask import abort
 from flask import Blueprint
 from flask import jsonify
 from flask import request
 from flask import send_from_directory
-import filelock
 import json
 import logging
 import os
@@ -36,7 +36,7 @@ def get_log(id):
 
        GET /api/v2/plays/345835/log HTTP/1.1
 
-    **Example Reponse**:
+    **Example Response**:
 
     .. sourcecode:: http
 
@@ -65,7 +65,7 @@ def get_plays():
 
        GET /api/v2/plays HTTP/1.1
 
-    **Example Reponse**:
+    **Example Response**:
 
     .. sourcecode:: http
 
@@ -143,7 +143,7 @@ def get_play(id):
 
        GET /api/v2/plays/3587323 HTTP/1.1
 
-    **Example Reponse**:
+    **Example Response**:
 
     .. sourcecode:: http
 
@@ -173,7 +173,7 @@ def kill_play(id):
 
        DELETE /api/v2/plays/3587323 HTTP/1.1
 
-    **Example Reponse**:
+    **Example Response**:
 
     .. sourcecode:: http
 

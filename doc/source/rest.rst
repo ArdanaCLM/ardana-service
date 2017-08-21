@@ -93,15 +93,13 @@ The REST API:
 ----------------------------------- -------- --------------------------------------------------------------------------------------
  ``/model/files/{path}``             POST     Replace the contents of the given model file with the request body
 ----------------------------------- -------- --------------------------------------------------------------------------------------
- ``/model/cp_output``                GET      Returns an object with a key for each of the info files in the config processor
-                                              output.  The value of each entry is null.  If the ready query parameter is specified
-                                              (e.g. ?ready=true) we look in the "ready" directory instead.
-                                              **Not yet implemented**
+ ``/model/cp_output``                GET      Returns a list of the files in the config processor output. If the ready query
+                                              parameter is specified (e.g. ``?ready=true``) it returns the listing from the "ready"
+                                              directory instead.
 ----------------------------------- -------- --------------------------------------------------------------------------------------
- ``/model/cp_output/{path}``         GET      Returns the file contents of the indicated file as JSON if a YAML file was
-                                              successfully parsed or as plain text otherwise.  If the ready query parameter is
-                                              specified (e.g. ?ready=true) we look in the "ready" directory instead.
-                                              **Not yet implemented**
+ ``/model/cp_output/{path}``         GET      Returns the file contents of the indicated file in the config processor output as
+                                              JSON.  If the ready query parameter is specified (e.g. ``?ready=true``) we look in
+                                              the "ready" directory instead.
 ----------------------------------- -------- --------------------------------------------------------------------------------------
  ``/osinstall``                      POST     Start installation of OS on specified nodes. Details provided in request body.
                                               **Not yet implemented**

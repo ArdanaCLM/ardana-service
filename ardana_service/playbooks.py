@@ -1,3 +1,4 @@
+import filelock
 from flask import abort
 from flask import Blueprint
 from flask import jsonify
@@ -5,7 +6,6 @@ from flask import request
 from flask import url_for
 from flask_socketio import emit
 from flask_socketio import join_room
-import filelock
 import functools
 import json
 import logging
@@ -56,7 +56,7 @@ def playbooks():
        GET /api/v2/playbooks HTTP/1.1
        Content-Type: application/json
 
-    **Example Reponse**:
+    **Example Response**:
 
     .. sourcecode:: http
 
@@ -115,7 +115,7 @@ def run_playbook(name):
           "limit": 100
        }
 
-    **Example Reponse**:
+    **Example Response**:
 
     .. sourcecode:: http
 

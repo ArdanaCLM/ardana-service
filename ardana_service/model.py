@@ -17,6 +17,8 @@ LOG = logging.getLogger(__name__)
 
 MODEL_DIR = config.get_dir("model_dir")
 PLAYBOOKS_DIR = config.get_dir("playbooks_dir")
+CP_OUTPUT_DIR = config.get_dir("cp_output_dir")
+CP_READY_DIR = config.get_dir("cp_ready_output_dir")
 
 CLOUD_CONFIG = "cloudConfig.yml"
 
@@ -44,36 +46,6 @@ def update_model():
         return 'Success'
     except Exception:
         abort(400)
-
-
-@bp.route("/api/v2/model/is_encrypted", methods=['GET'])
-def get_encrypted():
-    """Returns whether the readied config processor output was encrypted.
-    If the config processor has not been run, it will return a 404 http error
-
-    **Example Reponse**:
-
-    .. sourcecode:: http
-
-       HTTP/1.1 200 OK
-       Content-Type: application/json
-
-       {
-           "isEncrypted": false
-       }
-    """
-
-    VAULT_MARKER = '$ANSIBLE_VAULT'
-    try:
-        vault_file = os.path.join(PLAYBOOKS_DIR, 'group_vars', 'all')
-        with open(vault_file) as f:
-            marker = f.read(len(VAULT_MARKER))
-        encrypted = (marker == VAULT_MARKER)
-        return jsonify({"isEncrypted": encrypted})
-
-    except Exception as e:
-        LOG.exception(e)
-        abort(404)
 
 
 @bp.route("/api/v2/model/entities", methods=['GET'])
@@ -301,6 +273,167 @@ def model_file(name):
         except Exception:
             abort(400)
 
+
+@bp.route("/api/v2/model/is_encrypted")
+def get_encrypted():
+    """Returns whether the readied config processor output was encrypted.
+
+    If the config processor has not been run, it will return a 404 http error
+
+    **Example Response**:
+
+    .. sourcecode:: http
+
+       HTTP/1.1 200 OK
+       Content-Type: application/json
+
+       {
+           "isEncrypted": false
+       }
+    """
+
+    VAULT_MARKER = '$ANSIBLE_VAULT'
+    try:
+        vault_file = os.path.join(PLAYBOOKS_DIR, 'group_vars', 'all')
+        with open(vault_file) as f:
+            marker = f.read(len(VAULT_MARKER))
+        encrypted = (marker == VAULT_MARKER)
+        return jsonify({"isEncrypted": encrypted})
+
+    except Exception as e:
+        LOG.exception(e)
+        abort(404)
+
+
+@bp.route("/api/v2/model/cp_output")
+def list_cp_output():
+    """Lists the config processor output files
+
+    Returns a list of the config processor output filenames, stripped of the
+    .yml extension. If the ready query parameter is specified (e.g.
+    ``?ready=true``) it returns the listing from the "ready" directory instead.
+
+    **Changed for v2**:
+
+    The return from this structure is a list of filenames rather than an object
+    with null values and keys containing filenames without extensions.
+
+    **Example Response**:
+
+    .. sourcecode:: http
+
+       HTTP/1.1 200 OK
+       Content-Type: application/json
+
+       [
+           "address_info.yml",
+           "control_plane_topology.yml",
+           "firewall_info.yml",
+           "net_info.yml",
+           "network_topology.yml",
+           "region_topology.yml",
+           "route_info.yml",
+           "server_info.yml",
+           "service_info.yml",
+           "service_topology.yml"
+       ]
+    """
+
+    if request.args.get("ready") == "true":
+        output_dir = CP_READY_DIR
+    else:
+        output_dir = CP_OUTPUT_DIR
+
+    try:
+        results = [name for name in os.listdir(output_dir)
+                   if name.endswith(".yml")]
+        return jsonify(results)
+    except OSError:
+        LOG.error("Unable to read %s directory", output_dir)
+        abort(404)
+
+
+@bp.route("/api/v2/model/cp_output/<path:name>")
+def get_cp_output_file(name):
+    """Returns the contents of the given path from the config
+
+    processor output directory.
+
+    Returns the content as JSON. If the ready query parameter is
+    specified (e.g. ``?ready=true``) it returns the file from the "ready"
+    directory instead.
+
+    **Changed for v2**:
+
+    This function will accept filenames with or without the .yml extension.
+    The contents are always returned as JSON.
+
+    **Example Request**:
+
+    .. sourcecode:: http
+
+       GET /api/v2/model/cp_output/address_info.yml?ready=true HTTP/1.1
+       Content-Type: application/json
+
+    **Example Response**:
+
+    .. sourcecode:: http
+
+       HTTP/1.1 200 OK
+       Content-Type: application/json
+
+       {
+           "EXTERNAL-API": {
+               "EXTERNAL-API-NET": {
+                   "192.168.14.2": [
+                       "helion-ccp-c1-m1-extapi"
+                   ],
+                   "192.168.14.3": [
+                       "helion-ccp-c1-m2-extapi"
+                   ],
+                   "192.168.14.4": [
+                       "helion-ccp-c1-m3-extapi"
+                   ],
+                   "192.168.14.5": [
+                       "helion-ccp-vip-public-CEI-API-extapi",
+                       "... and so on"
+                   ]
+               }
+           }
+       }
+    """
+
+    if request.args.get("ready") == "true":
+        output_dir = CP_READY_DIR
+    else:
+        output_dir = CP_OUTPUT_DIR
+
+    filename = os.path.join(output_dir, name)
+    if not filename.endswith(".yml"):
+        filename += ".yml"
+
+    try:
+        with open(filename) as f:
+            lines = f.readlines()
+        raw = ''.join(lines)
+
+        contents = yaml.safe_load(raw)
+        return jsonify(contents)
+
+    except (OSError, IOError):
+        LOG.error("Unable to read %s", filename)
+        abort(404)
+
+    except yaml.YAMLError:
+        # If the generated file is not valid yml, there is some problem with
+        # the config processor
+        LOG.error("%s is not a valid yaml file", filename)
+        abort(500)
+
+
+#
+# Functions to read the model
+#
 
 def get_key_field(obj):
 

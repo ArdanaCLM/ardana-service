@@ -22,7 +22,7 @@ def get_all_templates():
 
        GET /api/v2/templates HTTP/1.1
 
-    **Example Reponse**:
+    **Example Response**:
 
     .. sourcecode:: http
 
@@ -75,7 +75,7 @@ def get_template(name):
 
        GET /api/v2/entry-scale-kvm-vsa HTTP/1.1
 
-    **Example Reponse**:
+    **Example Response**:
 
     .. sourcecode:: http
 

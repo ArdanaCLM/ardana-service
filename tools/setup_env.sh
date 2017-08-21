@@ -10,6 +10,8 @@ mkdir -p \
    data/my_cloud/model \
    data/my_cloud/config \
    data/scratch \
+   data/cp/output \
+   data/cp/ready \
    log
 
 cd data

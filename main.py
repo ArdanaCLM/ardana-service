@@ -1,13 +1,11 @@
 from ardana_service import admin
 from ardana_service import config
 from ardana_service import config_processor
-from ardana_service import cp_output
 from ardana_service import model
 from ardana_service import osinstall
 from ardana_service import playbooks
 from ardana_service import plays
 from ardana_service import socketio
-from ardana_service import tasks
 from ardana_service import templates
 from ardana_service import versions
 import datetime
@@ -21,10 +19,8 @@ LOG = logging.getLogger('ardana_service')
 app = Flask('ardana_service')
 app.register_blueprint(admin.bp)
 app.register_blueprint(config_processor.bp)
-app.register_blueprint(cp_output.bp)
 app.register_blueprint(playbooks.bp)
 app.register_blueprint(plays.bp)
-app.register_blueprint(tasks.bp)
 app.register_blueprint(model.bp)
 app.register_blueprint(osinstall.bp)
 app.register_blueprint(templates.bp)

@@ -27,7 +27,7 @@ def reset(dir=GIT_DIR):
 
        DELETE /api/v2/model/changes HTTP/1.1
 
-    **Example Reponse**:
+    **Example Response**:
 
     .. sourcecode:: http
 
@@ -65,7 +65,7 @@ def commit(dir=GIT_DIR):
           "message": "This is the commit message"
        }
 
-    **Example Reponse**:
+    **Example Response**:
 
     .. sourcecode:: http
 
