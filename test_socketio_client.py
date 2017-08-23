@@ -1,11 +1,16 @@
 import json
 import logging
 import requests
-
 from socketIO_client import LoggingNamespace
 from socketIO_client import SocketIO
+import sys
 
-logging.getLogger('socketIO-client').setLevel(logging.DEBUG)
+HOST = "localhost"
+PORT = 9085
+BASE_URL = "http://%s:%d/api/v2" % (HOST, PORT)
+
+# Uncomment the next line to enable debugging messages
+# logging.getLogger('socketIO-client').setLevel(logging.DEBUG)
 logging.basicConfig()
 
 
@@ -15,15 +20,31 @@ def on_message(message):
     # the message is in the /log namespace, it will be in the format
     # 2/log["the message"]
     args = json.loads(message.lstrip('2'))
-    print(args[1],)
+    if args[0] == "end":
+        # Disconnect the socket.  This will also interrupt the wait(),
+        # causing the program to end
+        socketIO.disconnect()
+    else:
+        print args[1],
 
 
-socketIO = SocketIO('localhost', 9085, LoggingNamespace)
+r = requests.get(BASE_URL + "/playbooks")
+playbooks = r.json()
+if not playbooks:
+    print "No playbooks found"
+    sys.exit(0)
+
+socketIO = SocketIO(HOST, PORT, LoggingNamespace)
 socketIO.on('message', on_message)
 
-r = requests.post("http://localhost:9085/api/v2/playbooks/venv-edit")
+# Start the first playbook found in the list
+r = requests.post(BASE_URL + "/playbooks/" + playbooks[0])
+
+# Extract the play id from the response
 id = r.headers['Location'].split('/')[-1]
 
+# Join the room where the log messages will be broadcast
 socketIO.emit('join', id)
 
-socketIO.wait(seconds=4)
+# Wait indefinitely
+socketIO.wait()
