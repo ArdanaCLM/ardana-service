@@ -350,9 +350,9 @@ def start_playbook(playbook, args={}, cwd=None, cleanup=None):
                                                           id=id)}
 
 
-def build_command_line(command, playbook, args={}):
-    # Build the command line to be creating an array of the command, playbook
-    # name, an
+def build_command_line(command, playbook=None, args={}):
+
+    # Build the command line as a list of arguments to be passed to the
 
     cmdLine = []
 
@@ -362,17 +362,24 @@ def build_command_line(command, playbook, args={}):
         cmdLine.append(alt_command)
 
     cmdLine.append(command)
-    cmdLine.append(playbook)
 
-    for k, v in args.iteritems():
-        cmdLine.append(k)
-        cmdLine.append(v)
+    if playbook:
+        cmdLine.append(playbook)
+
+    if isinstance(args, list):
+        cmdLine.extend(args)
+    elif isinstance(args, dict):
+        for k, v in args.iteritems():
+            cmdLine.append(k)
+            cmdLine.append(v)
+    elif args:
+        cmdLine.append(args)
 
     return cmdLine
 
 
 def scrub_passwords(args):
-    # Build a sanitized version of the args list that has passwords replaced
+    # Build a sanitized version of the args dict that has passwords replaced
     # with asterisks.  This resulting list can be saved in files that are
     # readable
 
@@ -447,6 +454,7 @@ def monitor_output(ps, id, cleanup):
 @socketio.on('join')  # , namespace='/log')
 def on_join(id):
 
+    id = str(id)
     logfile = get_log_file(id)
 
     # replay existing log as messages before joining the room

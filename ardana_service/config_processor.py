@@ -79,8 +79,7 @@ def run_config_processor(force_result=None):
 
     output_dir = os.path.join(tempdir, "clouds")
 
-    cmd = playbooks.build_command_line(python, [
-        CP_SCRIPT_PATH,
+    cmd = playbooks.build_command_line(python, CP_SCRIPT_PATH, [
         '-l', os.path.join(tempdir, "log"),
         '-c', os.path.join(MODEL_DIR, 'cloudConfig.yml'),
         '-s', CP_SERVICES_DIR,
@@ -95,7 +94,7 @@ def run_config_processor(force_result=None):
         # Cannot get except subprocess.CalledProcessError to be caught
         error = {
             'startTime': start_time,
-            'endTime': int(time.time()),
+            'endTime': int(time.time())
         }
         if hasattr(e, 'output'):
             error['log'] = e.output
@@ -113,7 +112,7 @@ def run_config_processor(force_result=None):
         error = {
             'startTime': start_time,
             'endTime': int(time.time()),
-            'log': 'Unknown error',
+            'log': 'Unable to locate config processor output',
             'errorCode': 127
         }
         abort(make_response(jsonify(error), 400))
