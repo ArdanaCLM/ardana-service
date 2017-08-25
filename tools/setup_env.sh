@@ -29,8 +29,8 @@ if [ ! -d hlm-ansible ] ; then
     git clone https://git.suse.provo.cloud/hp/hlm-ansible -b hp/prerelease/ocata
 fi
 
-if [ ! -d hlm-input-model ] ; then
-    git clone https://git.suse.provo.cloud/hp/hlm-input-model -b hp/prerelease/ocata
+if [ ! -d ardana-input-model ] ; then
+    git clone https://git.suse.provo.cloud/ardana/ardana-input-model -b hp/opensource
 fi
 
 # Setup config processor.  This process basically automates the steps needed to
