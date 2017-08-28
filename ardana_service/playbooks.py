@@ -357,8 +357,13 @@ def build_command_line(command, playbook=None, args={}):
     cmdLine = []
 
     # For dev/testing, support using a mock script
+    use_mock = config.get("testing", "use_mock")
     alt_command = config.get("testing", "mock_cmd")
-    if alt_command:
+    if use_mock and alt_command:
+        # Relative path should be resolve w.r.t. the top-level dir
+        if not os.path.isabs(alt_command):
+            alt_command = os.path.normpath(
+                os.path.join(os.path.dirname(__file__), "..", alt_command))
         cmdLine.append(alt_command)
 
     cmdLine.append(command)

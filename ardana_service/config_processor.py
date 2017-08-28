@@ -24,7 +24,7 @@ CP_SCRIPT_PATH = config.get_dir("cp_python_script_path")
 
 
 @bp.route("/api/v2/config_processor", methods=['POST'])
-def run_config_processor(force_result=None):
+def run_config_processor():
     """Validate the current input model
 
     No body is required
@@ -65,12 +65,12 @@ def run_config_processor(force_result=None):
        }
 
     """
-    # Hook for unit and/or integration testing
+    # TODO(gary): Remove this and modify the UI to avoid calling the back end
     req = request.json
-    if force_result is True or (req and "want_fail" in req):
+    if req and "want_fail" in req:
         error = {"log": "woops", "errorCode": 254}
         abort(make_response(jsonify(error), 400))
-    elif force_result is False or (req and "want_pass" in req):
+    elif req and "want_pass" in req:
         return '', 201
 
     python = config.get_dir('cp_python_path') or sys.executable
@@ -91,7 +91,8 @@ def run_config_processor(force_result=None):
     try:
         subprocess.check_output(cmd, stderr=subprocess.STDOUT)
     except Exception as e:
-        # Cannot get except subprocess.CalledProcessError to be caught
+        # Cannot get except subprocess.CalledProcessError to be caught, so
+        # catch Exception
         error = {
             'startTime': start_time,
             'endTime': int(time.time())

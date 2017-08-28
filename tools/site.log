@@ -1,0 +1,287 @@
+
+PLAY [localhost] ************************************************************** 
+
+GATHERING FACTS *************************************************************** 
+$$22448: ok: [localhost]
+
+TASK: [guard-runtime-location | guard-runtime-location | main | Ensure we're running in an expected location.] *** 
+$$22477: skipping: [localhost]
+
+PLAY [localhost] ************************************************************** 
+
+TASK: [osconfig | setup-resolv-conf | Update /etc/resolv.conf] **************** 
+$$22498: skipping: [localhost]
+
+TASK: [osconfig | create_hlm_version_file | copy version file from deployer] *** 
+$$23765: ok: [localhost]
+
+PLAY [resources] ************************************************************** 
+
+GATHERING FACTS *************************************************************** 
+$$25417: ok: [padawan-ccp-c0-m1-mgmt]
+$$25562: ok: [padawan-ccp-comp0004-mgmt]
+$$25573: ok: [padawan-ccp-comp0003-mgmt]
+$$25615: ok: [padawan-ccp-comp0002-mgmt]
+ok: [padawan-ccp-comp0001-mgmt]
+$$26047: ok: [padawan-ccp-c1-m3-mgmt]
+$$26191: ok: [padawan-ccp-c1-m2-mgmt]
+$$26247: ok: [padawan-ccp-c1-m1-mgmt]
+
+TASK: [package-constants | include_vars /home/stack/scratch/ansible/next/hos/ansible/hlm_version.yml] *** 
+$$26328: ok: [padawan-ccp-c0-m1-mgmt]
+$$26344: ok: [padawan-ccp-c1-m3-mgmt]
+ok: [padawan-ccp-c1-m1-mgmt]
+$$26349: ok: [padawan-ccp-comp0001-mgmt]
+$$26355: ok: [padawan-ccp-c1-m2-mgmt]
+$$26363: ok: [padawan-ccp-comp0004-mgmt]
+$$26364: ok: [padawan-ccp-comp0002-mgmt]
+$$26368: ok: [padawan-ccp-comp0003-mgmt]
+
+TASK: [osconfig | check-for-apt-repo | Checking for apt-repo] ***************** 
+$$26561: ok: [padawan-ccp-comp0003-mgmt -> localhost]
+$$26597: ok: [padawan-ccp-c1-m3-mgmt -> localhost]
+$$26613: ok: [padawan-ccp-comp0001-mgmt -> localhost]
+$$26619: ok: [padawan-ccp-comp0004-mgmt -> localhost]
+$$26620: ok: [padawan-ccp-c1-m1-mgmt -> localhost]
+$$26621: ok: [padawan-ccp-c0-m1-mgmt -> localhost]
+$$26623: ok: [padawan-ccp-c1-m2-mgmt -> localhost]
+$$26641: ok: [padawan-ccp-comp0002-mgmt -> localhost]
+
+TASK: [set_fact ] ************************************************************* 
+$$26696: ok: [padawan-ccp-c0-m1-mgmt]
+$$26702: ok: [padawan-ccp-c1-m1-mgmt]
+$$26703: ok: [padawan-ccp-c1-m2-mgmt]
+$$26705: ok: [padawan-ccp-c1-m3-mgmt]
+$$26706: ok: [padawan-ccp-comp0002-mgmt]
+$$26709: ok: [padawan-ccp-comp0001-mgmt]
+$$26709: ok: [padawan-ccp-comp0003-mgmt]
+$$26710: ok: [padawan-ccp-comp0004-mgmt]
+
+TASK: [cobbler | set variables | Get baremetal server information] ************ 
+$$26983: ok: [padawan-ccp-c1-m3-mgmt -> 127.0.0.1]
+$$27001: ok: [padawan-ccp-c1-m2-mgmt -> 127.0.0.1]
+$$27013: ok: [padawan-ccp-c0-m1-mgmt -> 127.0.0.1]
+$$27021: ok: [padawan-ccp-c1-m1-mgmt -> 127.0.0.1]
+$$27037: ok: [padawan-ccp-comp0004-mgmt -> 127.0.0.1]
+$$27043: ok: [padawan-ccp-comp0001-mgmt -> 127.0.0.1]
+$$27054: ok: [padawan-ccp-comp0002-mgmt -> 127.0.0.1]
+$$27057: ok: [padawan-ccp-comp0003-mgmt -> 127.0.0.1]
+
+TASK: [cobbler | set variables | Set baremetal network subnet] **************** 
+$$27105: ok: [padawan-ccp-c0-m1-mgmt]
+$$27114: ok: [padawan-ccp-c1-m3-mgmt]
+$$27120: ok: [padawan-ccp-comp0001-mgmt]
+$$27124: ok: [padawan-ccp-comp0003-mgmt]
+$$27131: ok: [padawan-ccp-c1-m1-mgmt]
+ok: [padawan-ccp-comp0004-mgmt]
+$$27133: ok: [padawan-ccp-comp0002-mgmt]
+$$27138: ok: [padawan-ccp-c1-m2-mgmt]
+
+TASK: [cobbler | set variables | Set baremetal network netmask] *************** 
+$$27201: ok: [padawan-ccp-c0-m1-mgmt]
+$$27209: ok: [padawan-ccp-c1-m3-mgmt]
+$$27215: ok: [padawan-ccp-comp0001-mgmt]
+$$27218: ok: [padawan-ccp-comp0002-mgmt]
+$$27221: ok: [padawan-ccp-comp0003-mgmt]
+$$27226: ok: [padawan-ccp-c1-m1-mgmt]
+$$27236: ok: [padawan-ccp-comp0004-mgmt]
+$$27243: ok: [padawan-ccp-c1-m2-mgmt]
+
+TASK: [cobbler | set variables | Set baremetal network cidr] ****************** 
+$$27289: ok: [padawan-ccp-c0-m1-mgmt]
+$$27295: ok: [padawan-ccp-c1-m2-mgmt]
+$$27302: ok: [padawan-ccp-c1-m3-mgmt]
+$$27304: ok: [padawan-ccp-c1-m1-mgmt]
+$$27309: ok: [padawan-ccp-comp0001-mgmt]
+$$27310: ok: [padawan-ccp-comp0002-mgmt]
+$$27312: ok: [padawan-ccp-comp0003-mgmt]
+$$27313: ok: [padawan-ccp-comp0004-mgmt]
+
+TASK: [cobbler | set variables | List available nics] ************************* 
+$$27510: changed: [padawan-ccp-c1-m1-mgmt -> 127.0.0.1]
+$$27520: changed: [padawan-ccp-c1-m3-mgmt -> 127.0.0.1]
+$$27525: changed: [padawan-ccp-c1-m2-mgmt -> 127.0.0.1]
+$$27526: changed: [padawan-ccp-c0-m1-mgmt -> 127.0.0.1]
+$$27540: changed: [padawan-ccp-comp0003-mgmt -> 127.0.0.1]
+$$27540: changed: [padawan-ccp-comp0002-mgmt -> 127.0.0.1]
+$$27547: changed: [padawan-ccp-comp0001-mgmt -> 127.0.0.1]
+$$27583: changed: [padawan-ccp-comp0004-mgmt -> 127.0.0.1]
+
+TASK: [cobbler | set variables | Find baremetal nic] ************************** 
+$$27784: ok: [padawan-ccp-c0-m1-mgmt]
+$$27797: ok: [padawan-ccp-comp0001-mgmt]
+$$27797: ok: [padawan-ccp-comp0002-mgmt]
+$$27802: ok: [padawan-ccp-c1-m3-mgmt]
+$$27813: ok: [padawan-ccp-c1-m1-mgmt]
+$$27821: ok: [padawan-ccp-comp0003-mgmt]
+$$27826: ok: [padawan-ccp-comp0004-mgmt]
+$$27870: ok: [padawan-ccp-c1-m2-mgmt]
+
+TASK: [debug var=_selected] *************************************************** 
+$$27927: ok: [padawan-ccp-c0-m1-mgmt] => {
+    "var": {
+        "_selected": {
+            "changed": false, 
+            "cidr": "192.168.10.0/24", 
+            "invocation": {
+                "module_args": "cidr=\"192.168.10.0/24\" ips=\"lo 127.0.0.1/8\neth0 192.168.121.19/24\neth1 192.168.245.2/24\neth2 192.168.10.254/24\"", 
+                "module_name": "match-cidr"
+            }, 
+            "ip": "192.168.10.254", 
+            "mask": "0xffffff00", 
+            "stdout": "eth2", 
+            "stdout_lines": [
+                "eth2"
+            ], 
+            "subnet": "0xc0a80a00"
+        }
+    }
+}
+$$27931: ok: [padawan-ccp-c1-m2-mgmt] => {
+    "var": {
+        "_selected": {
+            "changed": false, 
+            "cidr": "192.168.10.0/24", 
+            "invocation": {
+                "module_args": "cidr=\"192.168.10.0/24\" ips=\"lo 127.0.0.1/8\neth0 192.168.121.19/24\neth1 192.168.245.2/24\neth2 192.168.10.254/24\"", 
+                "module_name": "match-cidr"
+            }, 
+            "ip": "192.168.10.254", 
+            "mask": "0xffffff00", 
+            "stdout": "eth2", 
+            "stdout_lines": [
+                "eth2"
+            ], 
+            "subnet": "0xc0a80a00"
+        }
+    }
+}
+$$27932: ok: [padawan-ccp-c1-m1-mgmt] => {
+    "var": {
+        "_selected": {
+            "changed": false, 
+            "cidr": "192.168.10.0/24", 
+            "invocation": {
+                "module_args": "cidr=\"192.168.10.0/24\" ips=\"lo 127.0.0.1/8\neth0 192.168.121.19/24\neth1 192.168.245.2/24\neth2 192.168.10.254/24\"", 
+                "module_name": "match-cidr"
+            }, 
+            "ip": "192.168.10.254", 
+            "mask": "0xffffff00", 
+            "stdout": "eth2", 
+            "stdout_lines": [
+                "eth2"
+            ], 
+            "subnet": "0xc0a80a00"
+        }
+    }
+}
+$$27942: ok: [padawan-ccp-comp0003-mgmt] => {
+    "var": {
+        "_selected": {
+            "changed": false, 
+            "cidr": "192.168.10.0/24", 
+            "invocation": {
+                "module_args": "cidr=\"192.168.10.0/24\" ips=\"lo 127.0.0.1/8\neth0 192.168.121.19/24\neth1 192.168.245.2/24\neth2 192.168.10.254/24\"", 
+                "module_name": "match-cidr"
+            }, 
+            "ip": "192.168.10.254", 
+            "mask": "0xffffff00", 
+            "stdout": "eth2", 
+            "stdout_lines": [
+                "eth2"
+            ], 
+            "subnet": "0xc0a80a00"
+        }
+    }
+}
+$$27946: ok: [padawan-ccp-comp0002-mgmt] => {
+    "var": {
+        "_selected": {
+            "changed": false, 
+            "cidr": "192.168.10.0/24", 
+            "invocation": {
+                "module_args": "cidr=\"192.168.10.0/24\" ips=\"lo 127.0.0.1/8\neth0 192.168.121.19/24\neth1 192.168.245.2/24\neth2 192.168.10.254/24\"", 
+                "module_name": "match-cidr"
+            }, 
+            "ip": "192.168.10.254", 
+            "mask": "0xffffff00", 
+            "stdout": "eth2", 
+            "stdout_lines": [
+                "eth2"
+            ], 
+            "subnet": "0xc0a80a00"
+        }
+    }
+}
+$$27948: ok: [padawan-ccp-comp0001-mgmt] => {
+    "var": {
+        "_selected": {
+            "changed": false, 
+            "cidr": "192.168.10.0/24", 
+            "invocation": {
+                "module_args": "cidr=\"192.168.10.0/24\" ips=\"lo 127.0.0.1/8\neth0 192.168.121.19/24\neth1 192.168.245.2/24\neth2 192.168.10.254/24\"", 
+                "module_name": "match-cidr"
+            }, 
+            "ip": "192.168.10.254", 
+            "mask": "0xffffff00", 
+            "stdout": "eth2", 
+            "stdout_lines": [
+                "eth2"
+            ], 
+            "subnet": "0xc0a80a00"
+        }
+    }
+}
+$$27952: ok: [padawan-ccp-c1-m3-mgmt] => {
+    "var": {
+        "_selected": {
+            "changed": false, 
+            "cidr": "192.168.10.0/24", 
+            "invocation": {
+                "module_args": "cidr=\"192.168.10.0/24\" ips=\"lo 127.0.0.1/8\neth0 192.168.121.19/24\neth1 192.168.245.2/24\neth2 192.168.10.254/24\"", 
+                "module_name": "match-cidr"
+            }, 
+            "ip": "192.168.10.254", 
+            "mask": "0xffffff00", 
+            "stdout": "eth2", 
+            "stdout_lines": [
+                "eth2"
+            ], 
+            "subnet": "0xc0a80a00"
+        }
+    }
+}
+$$27953: ok: [padawan-ccp-comp0004-mgmt] => {
+    "var": {
+        "_selected": {
+            "changed": false, 
+            "cidr": "192.168.10.0/24", 
+            "invocation": {
+                "module_args": "cidr=\"192.168.10.0/24\" ips=\"lo 127.0.0.1/8\neth0 192.168.121.19/24\neth1 192.168.245.2/24\neth2 192.168.10.254/24\"", 
+                "module_name": "match-cidr"
+            }, 
+            "ip": "192.168.10.254", 
+            "mask": "0xffffff00", 
+            "stdout": "eth2", 
+            "stdout_lines": [
+                "eth2"
+            ], 
+            "subnet": "0xc0a80a00"
+        }
+    }
+}
+
+PLAY RECAP ******************************************************************** 
+KEY-API | status | Register keystone status ---------------------------- 23.06s
+KEY-API | status | Register keystone status ---------------------------- 20.62s
+CEI-API | start | Make sure ceilometer api is up and responding -------- 20.49s
+osconfig-ntp-client| configure | Verify ntp servers are accessible ----- 18.87s
+-------------------------------------------------------------------------------
+Total: --------------------------------------------------------------- 1570.97s
+localhost                  : ok=128  changed=7    unreachable=0    failed=0   
+padawan-ccp-c0-m1-mgmt     : ok=149  changed=33   unreachable=0    failed=0   
+padawan-ccp-c1-m1-mgmt     : ok=2390 changed=454  unreachable=0    failed=0   
+padawan-ccp-c1-m2-mgmt     : ok=2266 changed=434  unreachable=0    failed=0   
+padawan-ccp-comp0003-mgmt  : ok=518  changed=133  unreachable=0    failed=0   
+padawan-ccp-comp0004-mgmt  : ok=520  changed=271  unreachable=0    failed=0   
+
