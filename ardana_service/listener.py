@@ -80,6 +80,6 @@ def add_listener_connection(id, room, host, port):
     connect_time = time.time()
     connections[id] = {'socket': SocketIO('http://' + host, port),
                        'connect_time': connect_time}
-    connections[id].get('socket').emit('ardanasocketjoin', room)
+    connections[id].get('socket').emit('socketjoin', room)
     opts = request.get_json() or {}
     return jsonify(opts)
