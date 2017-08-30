@@ -28,9 +28,9 @@ PRE_PLAYBOOKS_DIR = config.get_dir("pre_playbooks_dir")
 LOGS_DIR = config.get_dir("log_dir")
 
 # Quiet down the socketIO library, which is far too chatty
-logging.getLogger('socketio').setLevel(logging.WARNING)
-logging.getLogger('engineio').setLevel(logging.WARNING)
-logging.getLogger('filelock').setLevel(logging.WARNING)
+# logging.getLogger('socketio').setLevel(logging.WARNING)
+# logging.getLogger('engineio').setLevel(logging.WARNING)
+# logging.getLogger('filelock').setLevel(logging.WARNING)
 
 # Dictionary of all running tasks
 tasks = {}
@@ -309,16 +309,19 @@ def start_playbook(playbook, args={}, cwd=None, cleanup=None):
 
     cmd = build_command_line('ansible-playbook', playbook, args)
 
+    start_time = int(1000 * time.time())
+    id = str(start_time)
+
     # Prevent python programs from buffering their output.  Buffering causes
     # the output to be delayed, making it more difficult to determine the
     # real progress of the playbook
-    env = {'PYTHONUNBUFFERED': '1'}
+    env = os.environ.copy()
+    env['PYTHONUNBUFFERED'] = '1'
+    env['PLAY_ID'] = str(id)
 
     ps = subprocess.Popen(cmd, cwd=cwd, env=env,
                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
-    start_time = int(1000 * time.time())
-    id = str(ps.pid)
     meta_file = get_metadata_file(id)
 
     scrubbed = scrub_passwords(args)
@@ -416,7 +419,7 @@ def monitor_output(ps, id, cleanup):
                 f.flush()
                 socketio.emit("log", line, room=id)
 
-    # Notify listeners that the playbook has ended
+    # Notify listeners that the process has ended
     socketio.emit("end", room=id)
     socketio.close_room(id)
     ps.wait()
@@ -446,17 +449,17 @@ def monitor_output(ps, id, cleanup):
         pass
 
 
-# @socketio.on('connect')
-# def on_connect():
-#     LOG.info("Client connected")
+@socketio.on('connect')
+def on_connect():
+    LOG.info("Client connected. sid: %s", request.sid)
 
 
-# @socketio.on('disconnect')
-# def on_disconnect():
-#     LOG.info("Client disconnected")
+@socketio.on('disconnect')
+def on_disconnect():
+    LOG.info("Client disconnected. sid: %s", request.sid)
 
 
-@socketio.on('join')  # , namespace='/log')
+@socketio.on('join')
 def on_join(id):
 
     id = str(id)

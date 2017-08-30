@@ -93,6 +93,7 @@ def run_config_processor():
     except Exception as e:
         # Cannot get except subprocess.CalledProcessError to be caught, so
         # catch Exception
+        LOG.exception(e)
         error = {
             'startTime': start_time,
             'endTime': int(time.time())

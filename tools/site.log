@@ -1402,6 +1402,7 @@ $$88196: changed: [padawan-ccp-c1-m3-mgmt]
 
 PLAY [resources] ************************************************************** 
 
+$$EVENT: start network_interface-deploy.yml
 TASK: [network_interface | Add the OS specific variables] ********************* 
 $$88253: ok: [padawan-ccp-c0-m1-mgmt]
 $$88262: ok: [padawan-ccp-c1-m1-mgmt]
@@ -1860,6 +1861,7 @@ $$122765: ok: [padawan-ccp-c1-m3-mgmt]
 $$122769: ok: [padawan-ccp-comp0004-mgmt]
 $$122770: ok: [padawan-ccp-c1-m2-mgmt]
 
+$$EVENT: stop network_interface-deploy.yml
 PLAY [resources] ************************************************************** 
 
 TASK: [osconfig | patch-openvswitch | Patch Openvswitch init] ***************** 
@@ -10443,6 +10445,7 @@ TASK: [swift-monitor  | monasca_alarms | Remove old monasca alarm definitions] *
 $$642911: ok: [padawan-ccp-c1-m1-mgmt]
 
 PLAY [NOV-CND] **************************************************************** 
+$$EVENT: start nova-deploy.yml
 
 TASK: [NOV-CND | install | Update installed packager cache] ******************* 
 $$643248: ok: [padawan-ccp-c1-m1-mgmt]
