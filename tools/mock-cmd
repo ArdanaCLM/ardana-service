@@ -6,7 +6,6 @@ import os
 import re
 import sys
 import time
-import yaml
 
 parser = SafeConfigParser()
 
@@ -29,10 +28,11 @@ def get(section, item, default=None):
     except (NoOptionError, NoSectionError):
         return default
 
+
 cmd_name = ''
 
 if len(sys.argv) > 1:
-   cmd_name = os.path.basename(sys.argv[1])
+    cmd_name = os.path.basename(sys.argv[1])
 
 # Config processor invocation
 if len(sys.argv) > 2 and cmd_name.startswith('python') and \
@@ -49,14 +49,28 @@ if len(sys.argv) > 2 and cmd_name.startswith('python') and \
 
         # Do the minimal amount of work to fake the config processor: create
         # a dir with the proper name into the output dir
-        with open(cloud_config, 'r') as f:
-            data = yaml.load(f)
+        try:
+            import yaml
 
-        outdir = os.path.join(out_topdir, data['cloud']['name'], '2.0',
-            'stage', 'info')
+            with open(cloud_config, 'r') as f:
+                data = yaml.load(f)
+            cloud_name = data['cloud']['name']
+
+        except ImportError:
+
+            # Use regex parsing if yaml lib not available
+            with open(cloud_config, 'r') as f:
+                lines = f.readlines()
+
+            pattern = re.compile(r'^\s*name:\s*(\S+)')
+            for line in lines:
+                match = re.search(pattern, line)
+                if match:
+                    cloud_name = match.group(1)
+                    break
+
+        outdir = os.path.join(out_topdir, cloud_name, '2.0', 'stage', 'info')
         os.makedirs(outdir)
-
-        print "created ", outdir
 
     else:
         real_cmd = ' '.join(sys.argv[1:])
@@ -68,7 +82,7 @@ elif cmd_name == 'ansible-playbook':
         replay_speed = float(get("testing", "mock_replay_speed", 0))
 
         log = os.path.normpath(os.path.join(os.path.dirname(__file__),
-            "site.log"))
+                               "site.log"))
 
         with open(log) as f:
             lines = f.readlines()
