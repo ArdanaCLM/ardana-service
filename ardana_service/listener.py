@@ -30,7 +30,8 @@ def playbook_has_started(name):
     opts = request.get_json() or {}
     connection_expiry_check()
     for connection in connections.values():
-        connection.get('socket').emit('playbookstatus', 'playbook-start', name)
+        connection.get('socket').emit('playbookstatus', 'playbook-start',
+                                      name, connection.get('room'))
 
     return jsonify(opts)
 
@@ -45,7 +46,8 @@ def playbook_has_stopped(name):
     opts = request.get_json() or {}
     connection_expiry_check()
     for connection in connections.values():
-        connection.get('socket').emit('playbookstatus', 'playbook-stop', name)
+        connection.get('socket').emit('playbookstatus', 'playbook-stop',
+                                      name, connection.get('room'))
 
     return jsonify(opts)
 
@@ -60,7 +62,8 @@ def playbook_has_error(name):
     opts = request.get_json() or {}
     connection_expiry_check()
     for connection in connections.values():
-        connection.get('socket').emit('playbookstatus', 'playbook-error', name)
+        connection.get('socket').emit('playbookstatus', 'playbook-error',
+                                      name, connection.get('room'))
 
     return jsonify(opts)
 
@@ -74,12 +77,17 @@ def connection_expiry_check():
             del connections[connection_id]
 
 
-@bp.route("/api/v2/listener/addconnection/<id>/<room>/<host>/<port>",
+@bp.route("/api/v2/listener/addconnection/<room>/<host>/<port>",
           methods=['POST', 'GET'])
-def add_listener_connection(id, room, host, port):
+def add_listener_connection(room, host, port):
     connect_time = time.time()
-    connections[id] = {'socket': SocketIO('http://' + host, port),
-                       'connect_time': connect_time}
+    id = host + ':' + port
+    if connections.get(id) is None:
+        connections[id] = {'socket': SocketIO('http://' + host, port),
+                           'connect_time': connect_time,
+                           'room': room}
+    else:
+        connections[id]['connect_time'] = connect_time
     connections[id].get('socket').emit('socketjoin', room)
     opts = request.get_json() or {}
     return jsonify(opts)
