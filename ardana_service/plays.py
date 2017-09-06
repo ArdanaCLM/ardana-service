@@ -23,6 +23,9 @@ META_EXT = ".json"
 # Functions to deal with "plays".  Every time an ansible playbook is run,
 # a play is created to track the progress and output of the run.
 
+# Dictionary of all running plays
+plays = {}
+
 
 @bp.route("/api/v2/plays/<id>/log")
 def get_log(id):
@@ -58,6 +61,7 @@ def get_plays():
        * maxNumber=<N>
        * maxAge=<seconds>
        * live=true
+       * playbook=<name>
 
     **Example Request**:
 
@@ -79,7 +83,8 @@ def get_plays():
            "endTime": 1502161466109,
            "killed": false,
            "logSize": 2735,
-           "id": 18697,
+           "id": 1502161460385,
+           "pid": 18697,
            "startTime": 1502161460385
          },
          {
@@ -89,7 +94,7 @@ def get_plays():
            "endTime": 1501782351315,
            "killed": false,
            "logSize": 1905,
-           "id": 23795,
+           "id": 1501782349242,
            "startTime": 1501782349242
          }
        ]
@@ -97,16 +102,31 @@ def get_plays():
     max_number = int(request.args.get("maxNumber", sys.maxsize))
     max_age = int(request.args.get("maxAge", sys.maxsize))
     live_only = request.args.get("live") == "true"
+    want_playbook = request.args.get("playbook")
+
+    if want_playbook:
+        want_playbook = basename(want_playbook)
 
     earliest_end_time = int(time.time()) - max_age
 
     results = []
+    meta_files = []
     try:
-        for filename in os.listdir(LOGS_DIR):
-            if not filename.endswith(META_EXT):
-                continue
+        if live_only:
+            for id, play in get_running_plays().iteritems():
+                if not want_playbook or \
+                        basename(play['playbook']) == want_playbook:
+                    meta_files.append(get_metadata_file(id))
 
-            path = os.path.join(LOGS_DIR, filename)
+        else:
+            for filename in os.listdir(LOGS_DIR):
+                if not filename.endswith(META_EXT):
+                    continue
+
+                path = os.path.join(LOGS_DIR, filename)
+                meta_files.append(path)
+
+        for path in meta_files:
 
             with open(path) as f:
                 play = json.load(f)
@@ -117,6 +137,10 @@ def get_plays():
                 continue
 
             if end_time and end_time < earliest_end_time:
+                continue
+
+            if want_playbook and \
+                    want_playbook != basename(play.get('playbook')):
                 continue
 
             results.append(play)
@@ -206,3 +230,15 @@ def get_metadata_lockfile(id):
 
 def get_metadata_file(id):
     return os.path.join(LOGS_DIR, str(id) + META_EXT)
+
+
+def get_running_plays():
+    return plays
+
+
+def basename(playbook):
+    # Handle playbooks that are missing or None
+    if not playbook:
+        return playbook
+
+    return os.path.basename(playbook.rstrip(".yml"))

@@ -17,8 +17,7 @@ import time
 
 from . import config
 from . import socketio
-from .plays import get_metadata_file
-from .plays import get_metadata_lockfile
+from . import plays
 
 LOG = logging.getLogger(__name__)
 
@@ -29,12 +28,9 @@ PRE_PLAYBOOKS_DIR = config.get_dir("pre_playbooks_dir")
 LOGS_DIR = config.get_dir("log_dir")
 
 # Quiet down the socketIO library, which is far too chatty
-# logging.getLogger('socketio').setLevel(logging.WARNING)
-# logging.getLogger('engineio').setLevel(logging.WARNING)
-# logging.getLogger('filelock').setLevel(logging.WARNING)
-
-# Dictionary of all running tasks
-tasks = {}
+logging.getLogger('socketio').setLevel(logging.WARNING)
+logging.getLogger('engineio').setLevel(logging.WARNING)
+logging.getLogger('filelock').setLevel(logging.WARNING)
 
 # These playbooks are run from a directory that exists even before
 # the ready-deployment has been done (PRE_PLAYBOOKS_DIR)
@@ -193,7 +189,7 @@ def run_playbook(name):
     # Prevent some special playbooks from multiple concurrent invocations
     if name in ("site", "config-processor-run", "config-processor-clean",
                 "ready-deployment"):
-        if is_playbook_running(name):
+        if get_running_playbook_id(name):
             abort(403, "Already running")
 
     try:
@@ -323,7 +319,7 @@ def start_playbook(playbook, args={}, cwd=None, cleanup=None):
     ps = subprocess.Popen(cmd, cwd=cwd, env=env,
                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
-    meta_file = get_metadata_file(id)
+    meta_file = plays.get_metadata_file(id)
 
     scrubbed = scrub_passwords(args)
     logged_cmd = build_command_line('ansible-playbook', playbook, scrubbed)
@@ -332,7 +328,9 @@ def start_playbook(playbook, args={}, cwd=None, cleanup=None):
         "id": id,
         "startTime": start_time,
         "commandString": ' '.join(logged_cmd),
-        'killed': False
+        'killed': False,
+        'pid': ps.pid,
+        'playbook': playbook
     }
     try:
         with open(meta_file, "w") as f:
@@ -344,11 +342,12 @@ def start_playbook(playbook, args={}, cwd=None, cleanup=None):
     # Use a thread to read the pipe to avoid blocking this process.  Since
     # the thread will interact with socketio, we have to use that library's
     # function for creating threads
-    tasks[id] = {'task': socketio.start_background_task(monitor_output,
-                                                        ps, id, cleanup),
-                 'playbook': playbook}
+    running = plays.get_running_plays()
+    running[id] = {'task': socketio.start_background_task(monitor_output,
+                                                          ps, id, cleanup),
+                   'playbook': playbook}
 
-    LOG.debug("Spawned thread with task %s", id)
+    LOG.debug("Spawned thread with play %s", id)
 
     return jsonify({"id": id}), 202, {'Location': url_for('plays.get_play',
                                                           id=id)}
@@ -426,9 +425,10 @@ def monitor_output(ps, id, cleanup):
     ps.wait()
 
     # Update the metadata now that the process has finished.
-    meta_file = get_metadata_file(id)
-    lock = filelock.SoftFileLock(get_metadata_lockfile(id))
-    tasks.pop(id, None)
+    meta_file = plays.get_metadata_file(id)
+    lock = filelock.SoftFileLock(plays.get_metadata_lockfile(id))
+    running = plays.get_running_plays()
+    running.pop(id, None)
 
     try:
         # Writes should be very fast
@@ -500,7 +500,8 @@ def on_join(id):
     # message ever be dropped, then some thread synchronization needs to be
     # introduced (between this thread and the one reading the pipe).  That
     # would come at a cost in code complexity and performance.
-    if id in tasks:
+    running = plays.get_running_plays()
+    if id in running:
         LOG.info("Client joining room %s", id)
         join_room(id)
     else:
@@ -515,11 +516,14 @@ def get_events_file(id):
     return os.path.join(LOGS_DIR, str(id) + ".events")
 
 
-def is_playbook_running(playbook):
+def get_running_playbook_id(playbook):
     # Determine whether the given playbook is running by looking through the
-    # tasks dictionary
+    # plays dictionary
 
-    wanted = os.path.join(PLAYBOOKS_DIR, playbook + ".yml")
-    for task in tasks.values():
-        if task['playbook'] == wanted:
-            return True
+    # Just look at the basename of the playbook (without the the .yml suffix)
+    wanted = plays.basename(playbook)
+
+    running = plays.get_running_plays()
+    for id, play in running.iteritems():
+        if plays.basename(play['playbook']) == wanted:
+            return id

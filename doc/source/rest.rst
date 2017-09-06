@@ -46,8 +46,8 @@ The REST API:
                                               are listed and described in a ``GET`` to ``/playbooks``
 ----------------------------------- -------- --------------------------------------------------------------------------------------
  ``/plays``                          GET      List metadata about all ansible plays (live and finished). Limit number of returned
-                                              results with query parameters: ``maxNumber=<N>`` and/or ``maxAge=<seconds>``. If
-                                              only live plays are desired use the parameter ``live=true``
+                                              results with query parameters: ``maxNumber=<N>``, ``maxAge=<seconds>``, and/or
+                                              ``playbook=<name>``. If only live plays are desired use the parameter ``live=true``
 ----------------------------------- -------- --------------------------------------------------------------------------------------
  ``/plays/{id}``                     GET      Get metadata about the specified ansible play
 ----------------------------------- -------- --------------------------------------------------------------------------------------
