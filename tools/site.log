@@ -1,3 +1,4 @@
+$$EVENT: start site.yml
 
 PLAY [localhost] ************************************************************** 
 
@@ -26274,3 +26275,4 @@ $$1573674: padawan-ccp-comp0002-mgmt  : ok=518  changed=133  unreachable=0    fa
 padawan-ccp-comp0003-mgmt  : ok=518  changed=133  unreachable=0    failed=0   
 padawan-ccp-comp0004-mgmt  : ok=520  changed=271  unreachable=0    failed=0   
 
+$$EVENT: stop site.yml
