@@ -2550,6 +2550,8 @@ $$185424: ok: [padawan-ccp-c1-m2-mgmt]
 
 PLAY [FND-RMQ] **************************************************************** 
 
+$$EVENT: start monasca-agent-deploy.yml
+
 TASK: [monasca-agent | Stop Monasca-Agent] ************************************ 
 $$185492: skipping: [padawan-ccp-c1-m1-mgmt]
 $$185493: skipping: [padawan-ccp-c1-m2-mgmt]
@@ -3146,6 +3148,7 @@ $$207522: ok: [padawan-ccp-c1-m1-mgmt]
 $$207609: ok: [padawan-ccp-c1-m3-mgmt]
 
 PLAY [localhost] ************************************************************** 
+$$EVENT: start ironic-deploy.yml
 
 TASK: [service-client | install | Client install details] ********************* 
 $$207638: ok: [localhost] => {
@@ -3166,6 +3169,11 @@ $$208423: ok: [localhost]
 
 PLAY [IRN-CLI] **************************************************************** 
 $$208436: skipping: no hosts matched
+
+$$EVENT: stop ironic-deploy.yml
+
+$$EVENT: start magnum-deploy.yml
+$$EVENT: stop magnum-deploy.yml
 
 PLAY [localhost] ************************************************************** 
 
@@ -6143,6 +6151,8 @@ $$413905: ok: [padawan-ccp-c1-m1-mgmt]
 
 PLAY [Configures Vertica on primary node] ************************************* 
 
+$$EVENT: start monasca-deploy.yml
+
 TASK: [vertica | Install Vertica dependencies] ******************************** 
 $$414137: ok: [padawan-ccp-c1-m1-mgmt] => (item=logrotate,pstack,rsync,openssh-client,openssh-server,sysstat,mcelog)
 
@@ -7496,6 +7506,7 @@ $$478533: ok: [padawan-ccp-c1-m1-mgmt]
 $$478688: ok: [padawan-ccp-c1-m3-mgmt]
 
 PLAY [Sets up Monasca Persister] ********************************************** 
+$$EVENT: start monasca-transform-deploy.yml
 
 TASK: [monasca-persister | Stop Monasca-Persister] **************************** 
 $$478752: skipping: [padawan-ccp-c1-m2-mgmt]
@@ -7774,6 +7785,9 @@ $$496521: ok: [padawan-ccp-c1-m1-mgmt] => (item={'expression': 'avg(mysql.perfor
 $$496925: ok: [padawan-ccp-c1-m1-mgmt] => (item={'severity': 'HIGH', 'expression': 'apache.status > 0', 'description': 'Alarms on failure to reach the Apache status endpoint', 'name': 'Apache Status'})
 $$497285: ok: [padawan-ccp-c1-m1-mgmt] => (item={'severity': 'MEDIUM', 'expression': 'avg(apache.performance.idle_worker_count) < 1 times 3', 'description': 'Alarms when there are no idle workers in the Apache server', 'name': 'Apache Idle Worker Count'})
 $$497636: ok: [padawan-ccp-c1-m1-mgmt] => (item={'expression': 'ntp.offset > 5 or ntp.offset < -5', 'name': 'NTP Time Sync', 'description': 'Alarms when the NTP time offset is high'})
+
+$$EVENT: stop monasca-deploy.yml
+$$EVENT: stop monasca-transform-deploy.yml
 
 PLAY [Sets up Storm] ********************************************************** 
 
@@ -8197,6 +8211,8 @@ $$515008: changed: [padawan-ccp-c1-m3-mgmt]
 $$515080: changed: [padawan-ccp-c1-m1-mgmt]
 
 PLAY [SWF-PRX] **************************************************************** 
+
+$$EVENT: start swift-deploy.yml
 
 TASK: [_SWF_CMN | install | Add group {{ swift_group }}] ********************** 
 $$515278: ok: [padawan-ccp-c1-m1-mgmt]
@@ -10274,6 +10290,8 @@ TASK: [swiftlm-uptime-monitor | start | Start the Swiftlm Uptime Monitor service
 $$625250: ok: [padawan-ccp-c1-m1-mgmt] => (item={'key': 'swiftlm-uptime-monitor', 'value': {'main': True, 'cmd': 'swiftlm-uptime-mon', 'conf_service': 'swiftlm-uptime-monitor', 'conf': 'swiftlm-uptime-monitor.conf'}})
 
 PLAY [SWF-*] ****************************************************************** 
+
+$$EVENT: stop swift-deploy.yml
 
 TASK: [monasca-agent | Stop Monasca-Agent] ************************************ 
 $$625300: skipping: [padawan-ccp-c1-m1-mgmt] => (item={'skipped': True, 'censored': 'results hidden due to no_log parameter', 'changed': False})
@@ -12554,6 +12572,8 @@ $$754117: ok: [padawan-ccp-comp0001-mgmt]
 $$754128: ok: [padawan-ccp-comp0002-mgmt]
 $$754139: ok: [padawan-ccp-comp0004-mgmt]
 $$754148: ok: [padawan-ccp-comp0003-mgmt]
+
+$$EVENT: stop nova-deploy.yml
 
 PLAY [MON-AGN:&NOV-*] ********************************************************* 
 
@@ -16193,6 +16213,8 @@ $$897548: ok: [padawan-ccp-c1-m2-mgmt]
 
 PLAY [CND-API] **************************************************************** 
 
+$$EVENT: start cinder-deploy.yml
+
 TASK: [Cinder Common | install | Check for presence of group '{{ cinder_group }}'] *** 
 $$897748: changed: [padawan-ccp-c1-m1-mgmt]
 $$897793: changed: [padawan-ccp-c1-m2-mgmt]
@@ -17310,6 +17332,8 @@ PLAY [CND-VOL] ****************************************************************
 PLAY [CND-BCK] **************************************************************** 
 
 PLAY [CND-*] ****************************************************************** 
+
+$$EVENT: stop cinder-deploy.yml
 
 TASK: [monasca-agent | Stop Monasca-Agent] ************************************ 
 $$1054365: skipping: [padawan-ccp-c1-m1-mgmt]
@@ -24413,6 +24437,8 @@ $$1451537: ok: [padawan-ccp-c1-m1-mgmt] => (item={'api_endpoint': 'admin', 'url'
 
 PLAY [localhost] ************************************************************** 
 
+$$EVENT: start ceph-deploy.yml
+
 TASK: [_CEP-CMN | install-client | Install ceph client] *********************** 
 $$1451618: skipping: [localhost]
 
@@ -24481,6 +24507,8 @@ $$1453101: skipping: no hosts matched
 
 PLAY [CMC-SVC[0]] ************************************************************* 
 $$1453104: skipping: no hosts matched
+
+$$EVENT: stop ceph-deploy.yml
 
 PLAY [FRE-API] **************************************************************** 
 
@@ -25429,6 +25457,8 @@ TASK: [monasca-agent | monasca-agent | start | start monasca-agent service] ***
 $$1517707: skipping: [padawan-ccp-comp0003-mgmt]
 $$1517712: skipping: [padawan-ccp-comp0004-mgmt]
 
+$$EVENT: stop monasca-agent-deploy.yml
+
 TASK: [freezer-agent | start | Activate the latest install] ******************* 
 $$1517967: ok: [padawan-ccp-comp0004-mgmt]
 $$1517967: ok: [padawan-ccp-comp0003-mgmt]
@@ -25990,6 +26020,8 @@ $$1534596: changed: [localhost] => (item={'section': 'telemetry', 'option': 'end
 $$1534669: changed: [localhost] => (item={'section': 'data_processing', 'option': 'endpoint_type', 'value': 'internalURL'})
 $$1534731: changed: [localhost] => (item={'section': 'baremetal', 'option': 'endpoint_type', 'value': 'internalURL'})
 
+$$EVENT: start hlm-status.yml
+
 PLAY [SHP-API] **************************************************************** 
 
 TASK: [sherpa | install | Install Sherpa virtual env] ************************* 
@@ -26243,6 +26275,8 @@ TASK: [KEY-API | status | Register keystone status] ***************************
 $$1570545: ok: [padawan-ccp-c1-m2-mgmt]
 $$1571023: ok: [padawan-ccp-c1-m1-mgmt]
 $$1573424: ok: [padawan-ccp-c1-m3-mgmt]
+
+$$EVENT: stop hlm-status.yml
 
 PLAY [localhost] ************************************************************** 
 
