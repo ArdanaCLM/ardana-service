@@ -18,15 +18,17 @@ bp = Blueprint('listener', __name__)
 LOGS_DIR = config.get_dir("log_dir")
 
 
-@bp.route("/api/v2/listener/playbook/<event>/<path:name>", methods=['POST'])
-def playbook_event(event, name):
+@bp.route("/api/v2/listener/playbook", methods=['POST'])
+def playbook_event():
     """Event listener for playbook events
 
     Propagate events to socketio listeners
     """
     opts = request.get_json() or {}
-    if 'id' in opts:
-        id = str(opts['id'])
+    if 'play_id' in opts:
+        id = str(opts['play_id'])
+        event = opts['event']
+        name = opts['playbook']
 
         playbook_event = "playbook-" + event
         socketio.emit(playbook_event, name, room=id)
