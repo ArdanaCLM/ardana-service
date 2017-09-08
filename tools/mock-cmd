@@ -8,6 +8,7 @@ import requests
 import sys
 import time
 
+# The following logic reads the same config files as the ardana service
 parser = SafeConfigParser()
 
 default_config = os.path.normpath(os.path.join(
@@ -29,6 +30,8 @@ def get(section, item, default=None):
     except (NoOptionError, NoSectionError):
         return default
 
+HOST=get("flask", "host", "127.0.0.1")
+PORT=str(get("flask", "port", "9085"))
 
 cmd_name = ''
 
@@ -102,9 +105,10 @@ elif cmd_name == 'ansible-playbook':
             if match:
                 if match.group(1) == "EVENT":
                     (event, name) = match.group(2).split(' ')
-                    url = 'http://localhost:9085/api/v2/listener/playbook' \
-                          '/%s/%s' % (event, name)
-                    payload = {'id': play_id}
+                    url = 'http://%s:%s/api/v2/listener/playbook' % (HOST, PORT)
+                    payload = {'play_id': play_id,
+                               'playbook': name,
+                               'event': event}
                     requests.post(url, json=payload)
                 else:
                     next_time = int(match.group(1))
