@@ -29,7 +29,7 @@ plays = {}
 
 @bp.route("/api/v2/plays/<id>/log")
 def get_log(id):
-    """Returns the log for the given ansible plays.
+    """Returns the log for the given ansible play.
 
     This works on both live and finished plays.
 
@@ -49,7 +49,7 @@ def get_log(id):
     """
     # For security, send_from_directory avoids sending any files
     # outside of the specified directory
-    return send_from_directory(LOGS_DIR, id + ".log")
+    return send_from_directory(LOGS_DIR, str(id) + ".log")
 
 
 @bp.route("/api/v2/plays")
@@ -222,6 +222,44 @@ def kill_play(id):
 
     except (IOError, OSError, filelock.Timeout):
         abort(404, "Unable to find process and metadata")
+
+
+@bp.route("/api/v2/plays/<id>/events")
+def get_events(id):
+    """Returns the events received for an ansible play.
+
+    This works on both live and finished plays.
+
+    **Example Request**:
+
+    .. sourcecode:: http
+
+       GET /api/v2/plays/345835/log HTTP/1.1
+
+    **Example Response**:
+
+    .. sourcecode:: http
+
+       HTTP/1.1 200 OK
+       Content-Type: application/json
+
+       [
+         {
+           "event": "playbook-start",
+           "playbook": "site.yml",
+           "timestamp": 1505151952
+         },
+         {
+           "event": "playbook-stop",
+           "playbook": "site.yml",
+           "timestamp": 1505151986
+         }
+       ]
+    """
+    # For security, send_from_directory avoids sending any files
+    # outside of the specified directory
+    return send_from_directory(LOGS_DIR, str(id) + ".events",
+                               mimetype="application/json")
 
 
 def get_metadata_lockfile(id):
