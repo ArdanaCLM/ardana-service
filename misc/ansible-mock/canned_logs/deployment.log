@@ -1,0 +1,93 @@
+$$487: 
+PLAY [localhost] ************************************************************** 
+$$493: 
+GATHERING FACTS *************************************************************** 
+$$765: [0;32mok: [localhost][0m
+$$765: 
+TASK: [guard-runtime-location | guard-runtime-location | main | Ensure we're running in an expected location.] *** $$765: 
+$$801: [0;36mskipping: [localhost][0m
+$$801: 
+TASK: [git-operations | _ready-deployment-tree | Compute previously deployed version] *** 
+$$923: [0;33mchanged: [localhost][0m
+$$924: 
+TASK: [git-operations | _promote-from-staging | Clear out working directory] *** 
+$$1005: [0;33mchanged: [localhost][0m
+$$1006: 
+TASK: [git-operations | _promote-from-staging | Clear out working directory] *** 
+$$1087: [0;33mchanged: [localhost][0m
+$$1087: 
+TASK: [git-operations | _promote-from-staging | Update branches] ************** 
+$$1362: [0;33mchanged: [localhost][0m
+$$1362: 
+TASK: [git-operations | _assemble-working-directory | Clear out target directory] *** 
+$$1596: [0;33mchanged: [localhost][0m
+$$1597: 
+TASK: [git-operations | _assemble-working-directory | Create target directory] *** 
+$$1662: [0;33mchanged: [localhost][0m
+$$1663: 
+TASK: [git-operations | _assemble-working-directory | Assemble scratch content] *** 
+$$2641: [0;33mchanged: [localhost][0m
+$$2642: 
+TASK: [git-operations | _tag-branches-for-deployment | Lay down timestamped tags] *** 
+$$2776: [0;33mchanged: [localhost][0m
+$$2776: 
+TASK: [config-processor | configure | Make directories required for osconfig network configuration] *** 
+$$2875: [0;33mchanged: [localhost] => (item=etc)[0m
+$$2965: [0;33mchanged: [localhost] => (item=etc/network)[0m
+$$2966: 
+TASK: [config-processor | configure | Copy hosts.hf for osconfig playbooks] *** 
+$$3094: [0;33mchanged: [localhost][0m
+$$3095: 
+TASK: [config-processor | configure | Sync ansible vars for cloud deployment] *** 
+$$3278: [0;33mchanged: [localhost -> 127.0.0.1] => (item=group_vars)[0m
+$$3471: [0;33mchanged: [localhost -> 127.0.0.1] => (item=host_vars)[0m
+$$3471: 
+TASK: [config-processor | configure | Copy ansible hosts file for cloud deployment (verb_hosts)] *** 
+$$3617: [0;33mchanged: [localhost][0m
+$$3618: 
+TASK: [config-processor | configure | Sync ansible top-level playbooks for cloud deployment/update] *** 
+$$3652: [0;36mskipping: [localhost][0m
+$$3653: 
+TASK: [config-processor | configure | Sync generated network artefacts for cloud deployment/update] *** 
+$$3818: [0;33mchanged: [localhost -> 127.0.0.1][0m
+$$3819: 
+TASK: [config-processor | configure | Make directories required for osconfig network configuration] *** 
+$$3895: [0;32mok: [localhost] => (item=etc)[0m
+$$3972: [0;32mok: [localhost] => (item=etc/network)[0m
+$$3973: 
+TASK: [config-processor | configure | Copy hosts.hf for osconfig playbooks] *** $$3973: 
+$$4095: [0;32mok: [localhost][0m
+$$4095: 
+TASK: [config-processor | configure | Sync ansible vars for cloud deployment] *** 
+$$4253: [0;32mok: [localhost -> 127.0.0.1] => (item=group_vars)[0m
+$$4461: [0;32mok: [localhost -> 127.0.0.1] => (item=host_vars)[0m
+$$4463: 
+TASK: [config-processor | configure | Copy ansible hosts file for cloud deployment (verb_hosts)] *** 
+$$4978: [0;32mok: [localhost][0m
+$$4978: 
+TASK: [config-processor | configure | Sync ansible top-level playbooks for cloud deployment/update] *** 
+$$5012: [0;36mskipping: [localhost][0m
+$$5012: 
+TASK: [config-processor | configure | Sync generated network artefacts for cloud deployment/update] *** 
+$$5189: [0;32mok: [localhost -> 127.0.0.1][0m
+$$5189: 
+TASK: [git-operations | ready-deployment-tree-help | Tell the user what to expect] *** 
+$$5218: [0;32mok: [localhost] => {
+    "msg": "The directory /home/stack/scratch/ansible/next/ardana/ansible contains a prepared ansible tree ready to run your deployment. You should cd into that directory and run: ansible-playbook -i hosts/verb_hosts site.yml"
+}[0m
+$$5218: 
+PLAY RECAP ******************************************************************** 
+$$5219: git-operations | _assemble-working-directory | Assemble scratch content --- 0.98s
+config-processor | configure | Copy ansible hosts file for cloud deployment (verb_hosts) --- 0.52s
+config-processor | configure | Sync ansible vars for cloud deployment --- 0.38s
+config-processor | configure | Sync ansible vars for cloud deployment --- 0.37s
+git-operations | _promote-from-staging | Update branches ---------------- 0.27s
+git-operations | _assemble-working-directory | Clear out target directory --- 0.23s
+config-processor | configure | Make directories required for osconfig network configuration --- 0.19s
+config-processor | configure | Sync generated network artefacts for cloud deployment/update --- 0.18s
+config-processor | configure | Sync generated network artefacts for cloud deployment/update --- 0.17s
+config-processor | configure | Make directories required for osconfig network configuration --- 0.15s
+-------------------------------------------------------------------------------
+Total: ------------------------------------------------------------------ 4.81s
+[0;33mlocalhost[0m                  : [0;32mok[0m[0;32m=[0m[0;32m20[0m   [0;33mchanged[0m[0;33m=[0m[0;33m13[0m   unreachable=0    failed=0   
+$$5219: 

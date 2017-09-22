@@ -1,0 +1,48 @@
+logsDir: logs
+archiveDir: archived
+archiveThresholdMb: 2048 # by default we keep up to 2GB worth of logs
+user_model: user_model
+testDir: test
+port: 3000
+bindAddress: 0.0.0.0
+homePath: /home/stack
+servicesPath: /opt/stack
+deployer: ~
+apiEndpoint: /api/v1
+notifyStateChanged: false
+
+paths:
+  # ardanaDir is also the git root in the Deployer
+  ardanaDir: ${homePath}/openstack
+  templatesDir: ${paths:ardanaDir}/examples
+  cloudModelPath: ${homePath}/scratch/ansible/next/my_cloud/stage/internal/
+  configDir: ${paths:ardanaDir}/my_cloud/config
+  cpOutputDir: ${homePath}/scratch/cp/my_cloud/stage/info
+  cloudDir: ${paths:ardanaDir}/my_cloud/definition
+  cloudDataDir: ${paths:cloudDir}/data
+  servicesPath: ${paths:ardanaDir}/ardana/services
+  playbookDir: ${paths:ardanaDir}/ardana/ansible
+  scratchDir: ${homePath}/scratch/ansible/next/ardana/ansible
+  readyCpOutputDir: ${homePath}/scratch/ansible/next/my_cloud/stage/info
+
+playbooks:
+  scanDirs:
+  - ${paths:scratchDir}
+
+configProcessor:
+  # These paths are relative to servicesPath
+  rootPath: ${servicesPath}/service/config-processor
+  schemaPath: ${servicesPath}/service/config-processor/venv/share/ardana-config-processor/Data/Site
+
+testing:
+  mock: false
+  mockModel: true
+  mockOSConfig: true
+  mockPlaybooks:
+      - 'ardana-status.yml'
+      - 'site.yml'
+  mockAnsibleScript: misc/ansible-mock/ansible.js
+
+logger:
+  console:
+    level: info

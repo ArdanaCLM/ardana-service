@@ -1,0 +1,12 @@
+{
+  "name": "ansible-mock",
+  "version": "1.0.0",
+  "description": "Mocks ansible output",
+  "dependencies": {
+    "lodash": "^3.10.1",
+    "q": "^1.4.1",
+    "sleep": "^3.0.0"
+  },
+  "devDependencies": {
+  }
+}

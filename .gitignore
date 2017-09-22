@@ -1,0 +1,11 @@
+/node_modules
+/npm-debug.log
+/config.yml
+/.idea
+*.iml
+*.swp
+/logs
+/test/.test-results
+/test/temp
+/misc/ansible-mock/node_modules
+/coverage-report
