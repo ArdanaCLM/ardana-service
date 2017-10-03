@@ -1,11 +1,9 @@
 import logging
 import random
 import requests
-from socketIO_client import BaseNamespace
 from socketIO_client import LoggingNamespace
 from socketIO_client import SocketIO
 import sys
-import time
 
 HOST = "localhost"
 PORT = 8081  # shim
@@ -53,7 +51,6 @@ socketIO = SocketIO(HOST, PORT, LoggingNamespace)
 socketIO.on('log', on_log)
 socketIO.on('end', on_end)
 socketIO.on('playbook-start', on_playbook_start)
-socketIO.on('playbook-stop', on_playbook_stop)
 socketIO.on('playbook-error', on_playbook_error)
 
 # Start some playbook in the list

@@ -1,5 +1,5 @@
-import filelock
 from collections import OrderedDict
+import filelock
 from flask import abort
 from flask import Blueprint
 from flask import jsonify
@@ -16,8 +16,8 @@ import tempfile
 import time
 
 from . import config
-from . import socketio
 from . import plays
+from . import socketio
 
 LOG = logging.getLogger(__name__)
 
@@ -37,7 +37,8 @@ logging.getLogger('filelock').setLevel(logging.WARNING)
 STATIC_PLAYBOOKS = {
     'config-processor-run',
     'config-processor-clean',
-    'ready-deployment'}
+    'ready-deployment',
+    'dayzero-os-provision'}
 
 # TODO(gary) Consider creating a function to archive old plays (create a tgz
 #    of log and metadata).  This feature is not mentioned anywhere, but the
@@ -179,16 +180,17 @@ def run_playbook(name):
       ``inventoryFile`` are deprecated and will be removed in a future version.
       Use ``extra-vars``, ``encryption-key`` and ``inventory`` instead.
     """
-    args = get_command_args()
 
     if name in STATIC_PLAYBOOKS:
         cwd = PRE_PLAYBOOKS_DIR
     else:
         cwd = PLAYBOOKS_DIR
 
+    args = get_command_args(cwd=cwd)
+
     # Prevent some special playbooks from multiple concurrent invocations
     if name in ("site", "config-processor-run", "config-processor-clean",
-                "ready-deployment"):
+                "ready-deployment", "dayzero-os-provision"):
         if get_running_playbook_id(name):
             abort(403, "Already running")
 
@@ -200,8 +202,6 @@ def run_playbook(name):
         else:
             abort(404, "Playbook not found")
 
-        playbook_name = os.path.join(PLAYBOOKS_DIR, name)
-
         # If we created a vault password file (in get_commands_args), then make
         # sure that it gets cleaned up after the playbook has run.
         # functools.partial is used to bind the vault_file to the function
@@ -212,7 +212,7 @@ def run_playbook(name):
         if vault_file:
             cleanup = functools.partial(remove_temp_vault_pwd_file, vault_file)
 
-        return start_playbook(playbook_name,
+        return start_playbook(name,
                               args=args,
                               cwd=cwd,
                               cleanup=cleanup)
@@ -222,7 +222,7 @@ def run_playbook(name):
         abort(404)
 
 
-def get_command_args(payload={}):
+def get_command_args(payload={}, cwd=None):
     # Process the body of the http request and extract and build the command
     # line arguments for the invocation of the ansible-playbook command.  For
     # testing, the payload can be given as an arg to this function
@@ -264,6 +264,8 @@ def get_command_args(payload={}):
     if 'inventory' in body:
         if body['inventory'] is None:
             body.pop('inventory')
+    elif cwd and cwd == PRE_PLAYBOOKS_DIR:
+        body['inventory'] = "hosts/localhost"
     else:
         body['inventory'] = "hosts/verb_hosts"
 

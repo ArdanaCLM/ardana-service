@@ -64,7 +64,7 @@ def get_dir(dir_name):
         return
 
     # Relative paths are resolved relative to the top-level directory
-    if not path.startswith('/'):
+    if path[0] not in ('/', '~'):
         top_dir = os.path.normpath(os.path.join(os.path.dirname(__file__),
                                                 ".."))
         path = os.path.abspath(os.path.join(top_dir, path))

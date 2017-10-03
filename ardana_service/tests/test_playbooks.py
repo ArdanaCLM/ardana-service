@@ -32,6 +32,11 @@ class TestArgProcessing(unittest.TestCase):
         args = playbooks.get_command_args({"foo": "bar"})
         self.assertEqual("hosts/verb_hosts", args['--inventory'])
 
+    def test_pre_inventory(self):
+        args = playbooks.get_command_args({"foo": "bar"},
+                                          playbooks.PRE_PLAYBOOKS_DIR)
+        self.assertEqual("hosts/localhost", args['--inventory'])
+
     def test_force_omit_inventory(self):
         args = playbooks.get_command_args({'inventory': None})
         self.assertNotIn('--inventory', args)
