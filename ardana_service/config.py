@@ -52,7 +52,7 @@ def get_flask_config():
 
 def get(section, item, default=None):
     try:
-        return parser.get(section, item)
+        return normalize(parser.get(section, item))
     except (NoOptionError, NoSectionError):
         return default
 
