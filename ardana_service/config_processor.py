@@ -78,13 +78,14 @@ def run_config_processor():
     tempdir = tempfile.mkdtemp()
 
     output_dir = os.path.join(tempdir, "clouds")
+    log_dir = os.path.join(tempdir, "log")
 
     cmd = playbooks.build_command_line(python, CP_SCRIPT_PATH, [
-        '-l', os.path.join(tempdir, "log"),
+        '-l', log_dir,
         '-c', os.path.join(MODEL_DIR, 'cloudConfig.yml'),
         '-s', CP_SERVICES_DIR,
         '-r', CP_SCHEMA_DIR,
-        '-o', os.path.join(tempdir, output_dir)])
+        '-o', output_dir])
 
     start_time = int(time.time())
 
@@ -110,11 +111,21 @@ def run_config_processor():
     generated = os.path.join(output_dir, cloud_name, '2.0', 'stage', 'info')
     if os.path.exists(generated):
         return '', 201
-    else:
-        error = {
-            'startTime': start_time,
-            'endTime': int(time.time()),
-            'log': 'Unable to locate config processor output',
-            'errorCode': 127
-        }
-        abort(make_response(jsonify(error), 400))
+
+    msg = 'Unable to locate config processor output'
+    error_file = os.path.join(log_dir, "errors.log")
+    if os.path.exists(error_file):
+        try:
+            with open(error_file) as f:
+                lines = f.readlines()
+            msg = ''.join(lines)
+        except IOError:
+            pass
+
+    error = {
+        'startTime': start_time,
+        'endTime': int(time.time()),
+        'log': msg,
+        'errorCode': 127
+    }
+    abort(make_response(jsonify(error), 400))
