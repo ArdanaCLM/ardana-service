@@ -25,8 +25,8 @@ if [ ! -d my_cloud/.git ] ; then
     cd -
 fi
 
-if [ ! -d hlm-ansible ] ; then
-    git clone https://git.suse.provo.cloud/hp/hlm-ansible -b hp/prerelease/ocata
+if [ ! -d ardana-ansible ] ; then
+    git clone https://git.suse.provo.cloud/ardana/ardana-ansible
 fi
 
 if [ ! -d ardana-input-model ] ; then
