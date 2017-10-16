@@ -1,0 +1,20 @@
+$$EVENT: start dayzero-os-provision.yml
+PLAY [localhost] ************************************************************** 
+
+GATHERING FACTS *************************************************************** 
+
+$$EVENT: start bm-power-status.yml
+$$EVENT: stop bm-power-status.yml
+$$783390: 
+$$EVENT: start cobbler-deploy.yml
+$$EVENT: stop cobbler-deploy.yml
+$$1573424: 
+$$EVENT: start bm-reimage.yml
+$$EVENT: stop bm-reimage.yml
+
+PLAY RECAP ******************************************************************** 
+This is just fake  ------------------------------------------------------ 0.41s
+Total: ------------------------------------------------------------------ 0.41s
+localhost                  : ok=128  changed=7    unreachable=0    failed=0   
+
+$$EVENT: stop dayzero-os-provision.yml

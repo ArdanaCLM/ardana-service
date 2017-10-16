@@ -93,7 +93,7 @@ elif cmd_name == 'ansible-playbook':
                 break
 
         log = os.path.normpath(os.path.join(os.path.dirname(__file__),
-                               "site.log"))
+                               playbook.replace('yml','log')))
 
         with open(log) as f:
             lines = f.readlines()
@@ -117,22 +117,15 @@ elif cmd_name == 'ansible-playbook':
                         time.sleep(naptime)
                     last_time = next_time
 
-                    # Prefix the log output with the playbook name, except
-                    # when running site.yml.  The playbook name is there only
-                    # so that we can run two different playbooks in parallel
-                    # and verify that there is no crosstalk in the events
-                    # being generated.  The ardana_service already prevents
-                    # concurrent runs of site.yml, and putting the playbook
-                    # name there makes the canned output appear odd in the UI
-                    if playbook == 'site.yml':
-                        print match.group(2)
-                    else:
-                        print playbook, match.group(2)
+                    print match.group(2)
+
+                    # For debugging crosstalk between events and logs, it
+                    # can be useful to prefix the log entry with the
+                    # playbook name
+                    # print playbook, match.group(2)
             else:
-                if playbook == 'site.yml':
-                    print line,
-                else:
-                    print playbook, line,
+                print line,
+                # print playbook, line, # (See above comment)
 
     else:
         real_cmd = ' '.join(sys.argv[1:])
