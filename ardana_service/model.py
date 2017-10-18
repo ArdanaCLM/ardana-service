@@ -35,10 +35,13 @@ PASS_THROUGH = 'pass-through'
 
 @bp.route("/api/v2/model", methods=['GET'])
 def get_model():
-    return jsonify(read_model())
+    try:
+        return jsonify(read_model())
+    except IOError:
+        abort(404)
 
 
-@bp.route("/api/v2/model", methods=['GET', 'POST'])
+@bp.route("/api/v2/model", methods=['POST'])
 def update_model():
     model = request.get_json() or {}
     try:
