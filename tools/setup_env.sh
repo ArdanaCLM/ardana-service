@@ -53,6 +53,9 @@ if [ ! -d config-processor ] ; then
     virtualenv -p /usr/bin/python2.7 $DEST
     VENV=$PWD/$DEST
 
+    # upgrade the local version of pip in case the venv installed an old one
+    $VENV/bin/pip install --upgrade pip
+
     # Install pre-reqs into the virtual environment
     $VENV/bin/pip install -r $DEST/kenobi-configuration-processor/ConfigurationProcessor/requirements.txt
 
