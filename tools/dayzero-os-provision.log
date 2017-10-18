@@ -1,20 +1,496 @@
+$$847880: /usr/bin/ansible-playbook -i hosts/localhost dayzero-os-provision.yml -e hlmuser_password=stack -e nodelist=compute1,compute2 -e failed_nodes=compute1,compute2
 $$EVENT: start dayzero-os-provision.yml
-PLAY [localhost] ************************************************************** 
-
-GATHERING FACTS *************************************************************** 
-
+$$847880:  
+$$848679: PLAY [localhost] ************************************************************** 
+$$848679: GATHERING FACTS *************************************************************** 
+$$849271: ok: [localhost]
+$$849272: TASK: [install-os | ready | Get failed node list] ***************************** 
+$$849286: ok: [localhost]
+$$849286: TASK: [install-os | ready | Remove failed nodes] ****************************** 
+$$849397: failed: [localhost] => (item=compute1) => {"cmd": "cobbler system remove --name=compute1", "failed": true, "item": "compute1", "rc": 2}
+$$849397: msg: [Errno 2] No such file or directory
+$$849398: ...ignoring
+$$849486: failed: [localhost] => (item=compute2) => {"cmd": "cobbler system remove --name=compute2", "failed": true, "item": "compute2", "rc": 2}
+$$849486: msg: [Errno 2] No such file or directory
+$$849486: ...ignoring
+$$849487: PLAY [localhost] ************************************************************** 
 $$EVENT: start bm-power-status.yml
+$$849487: TASK: [cobbler | get-baremetal-info | Get baremetal info] ********************* 
+$$849614: ok: [localhost -> 127.0.0.1]
+$$849615: TASK: [cobbler | target-all-nodes | Compute generic target list] ************** 
+$$849628: ok: [localhost]
+$$849628: TASK: [cobbler | get-baremetal-info | Get baremetal info] ********************* 
+$$849758: ok: [localhost -> 127.0.0.1]
+$$849758: TASK: [cobbler | get-nodelist | User-specified target list] ******************* 
+$$849773: ok: [localhost]
+$$849773: TASK: [cobbler | get-nodelist | Compute generic target list] ****************** 
+$$849784: skipping: [localhost]
+$$849785: TASK: [cobbler | get-nodelist | Check we have targets] ************************ 
+$$849797: skipping: [localhost]
+$$849797: TASK: [cobbler | get-nodelist | Create dynamic host group, minus myself] ****** 
+$$849814: ok: [localhost] => (item=compute1)
+$$849817: ok: [localhost] => (item=compute2)
+$$849817: TASK: [set_fact dynamic_targets_created=True] ********************************* 
+$$849826: ok: [localhost]
 $$EVENT: stop bm-power-status.yml
-$$783390: 
+$$849827: PLAY [dynamic_targets] ******************************************************** 
 $$EVENT: start cobbler-deploy.yml
+$$849828: GATHERING FACTS *************************************************************** 
+$$850419: ok: [compute1]
+$$850424: ok: [compute2]
+$$850439: TASK: [cobbler | get-power-status | Get power status] ************************* 
+$$850669: ok: [compute1]
+$$945813: ok: [compute2]
+$$945829: TASK: [debug msg="{{ ipmi_connectivity.power }}"] ***************************** 
+$$945878: ok: [compute2] => {
+    "msg": "on"
+}
+$$945879: ok: [compute1] => {
+    "msg": "on"
+}
+$$945893: PLAY [localhost] ************************************************************** 
+$$945896: TASK: [package-constants | include_vars /home/stack/helion/hos/ansible/hlm_version.yml] *** 
+$$945943: ok: [localhost]
+$$945945: TASK: [package-constants | include_vars {{ ansible_os_family | lower }}.yml] *** 
+$$945990: ok: [localhost]
+$$945990: TASK: [cobbler | get-baremetal-info | Get baremetal info] ********************* 
+$$946121: ok: [localhost -> 127.0.0.1]
+$$946122: TASK: [cobbler | set-vars | Set baremetal network subnet] ********************* 
+$$946137: ok: [localhost]
+$$946137: TASK: [cobbler | set-vars | Set baremetal network netmask] ******************** 
+$$946151: ok: [localhost]
+$$946152: TASK: [cobbler | set-vars | Set baremetal network cidr] *********************** 
+$$946165: ok: [localhost]
+$$946165: TASK: [cobbler | set-vars | List available nics] ****************************** 
+$$946259: ok: [localhost -> 127.0.0.1]
+$$946259: TASK: [cobbler | set-vars | Search for an interface on this cidr] ************* 
+$$946338: ok: [localhost]
+$$946339: TASK: [debug var=_selected] *************************************************** 
+$$946354: ok: [localhost] => {
+    "var": {
+        "_selected": {
+            "changed": false, 
+            "cidr": "192.168.7.0/28", 
+            "invocation": {
+                "module_args": "cidr=\"192.168.7.0/28\" ips=\"lo 127.0.0.1/8\neth0 192.168.7.1/28\"", 
+                "module_complex_args": {}, 
+                "module_name": "match-cidr"
+            }, 
+            "ip": "192.168.7.1", 
+            "mask": "0xfffffff0", 
+            "stdout": "eth0", 
+            "stdout_lines": [
+                "eth0"
+            ], 
+            "subnet": "0xc0a80700"
+        }
+    }
+}
+$$946354: TASK: [cobbler | set-vars | Select this interface] **************************** 
+$$946367: ok: [localhost]
+$$946368: TASK: [cobbler | set-vars | Select ip address] ******************************** 
+$$946381: ok: [localhost]
+$$946381: TASK: [cobbler | set-vars | Set baremetal network gateway] ******************** 
+$$946397: ok: [localhost]
+$$946397: TASK: [cobbler | set-vars | Set baremetal network name server] **************** 
+$$946412: ok: [localhost]
+$$946413: TASK: [cobbler | set-vars | Set local hlinux repo ip url] ********************* 
+$$946427: ok: [localhost]
+$$946427: TASK: [cobbler | install | Remove atftpd] ************************************* 
+$$946604: ok: [localhost]
+$$946605: TASK: [cobbler | install | Install cobbler dependencies] ********************** 
+$$969693: changed: [localhost] => (item=python-jsonschema,python-yaml,cobbler,syslinux-common,debian-installer-8-netboot-amd64,tftpd-hpa,xinetd,fence-agents,ipmitool,shim-signed,grub-efi-amd64-signed)
+$$969694: TASK: [cobbler | install | Create validate json script] *********************** 
+$$969802: changed: [localhost]
+$$969803: TASK: [cobbler | install | Validate json schema] ****************************** 
+$$970007: changed: [localhost]
+$$970008: TASK: [cobbler | install | stop tftpd-hpa] ************************************ 
+$$970174: changed: [localhost]
+$$970175: TASK: [cobbler | install | disable tftpd-hpa] ********************************* 
+$$970444: changed: [localhost]
+$$970445: TASK: [cobbler install | Get interface name] ********************************** 
+$$970562: ok: [localhost]
+$$970563: TASK: [check if interface matches baremetal file] ***************************** 
+$$970576: skipping: [localhost]
+$$970577: TASK: [cobbler | install | Create isc-dhcp-server conf file] ****************** 
+$$970699: changed: [localhost]
+$$970701: TASK: [cobbler | install | Install isc-dhcp-server] *************************** 
+$$974380: changed: [localhost]
+$$974381: TASK: [cobbler | install | Create dhcp conf file] ***************************** 
+$$974526: changed: [localhost]
+$$974527: TASK: [cobbler | install | Create ipmi lanplus power file] ******************** 
+$$974665: changed: [localhost]
+$$974666: TASK: [cobbler | install | Get deployer pub ssh key] ************************** 
+$$974767: changed: [localhost]
+$$974768: TASK: [cobbler | install | Save deployer ssh key] ***************************** 
+$$974779: ok: [localhost]
+$$974780: TASK: [cobbler | install | Install kickstarts] ******************************** 
+$$974948: changed: [localhost] => (item=[{'url_boot_path': 'main/installer-amd64/current/images/netboot/debian-installer/amd64', 'kickstart': 'hlinux-server-vm.preseed', 'name': 'hlinux', 'kernel': 'linux', 'url': u'http://192.168.7.1:79/hlm/hlinux', 'breed': 'debian', 'initrd': 'initrd.gz', 'file': u'/srv/www/cobbler/ks_mirror/hlinux-cattleprod', 'arch': 'x86_64', 'distro': 'cattleprod'}, {u'persistent_interfaces': [], u'ip_addr': u'192.168.7.2', u'nic_mapping': u'MY-DL160-PORTS', u'ilo_ip': u'192.168.9.30', u'boot_from_san': False, u'distro_id': u'hlinux-x86_64', u'role': u'COMPUTE-ROLE', u'mac_addr': u'8c:dc:d4:0f:1a:88', u'ilo_user': u'DAY0', u'server_group': u'RACK1', u'ilo_password': u'mnZcKPbC2qpJ', u'fcoe_interfaces': [], u'id': u'compute1'}])
+$$975091: changed: [localhost] => (item=[{'url_boot_path': 'main/installer-amd64/current/images/netboot/debian-installer/amd64', 'kickstart': 'hlinux-server-vm.preseed', 'name': 'hlinux', 'kernel': 'linux', 'url': u'http://192.168.7.1:79/hlm/hlinux', 'breed': 'debian', 'initrd': 'initrd.gz', 'file': u'/srv/www/cobbler/ks_mirror/hlinux-cattleprod', 'arch': 'x86_64', 'distro': 'cattleprod'}, {u'persistent_interfaces': [], u'ip_addr': u'192.168.7.3', u'nic_mapping': u'MY-DL160-PORTS', u'ilo_ip': u'192.168.9.31', u'boot_from_san': False, u'distro_id': u'hlinux-x86_64', u'role': u'COMPUTE-ROLE', u'mac_addr': u'8c:dc:d4:02:60:b8', u'ilo_user': u'DAY0', u'server_group': u'RACK1', u'ilo_password': u'mnZcKPbC2qpJ', u'fcoe_interfaces': [], u'id': u'compute2'}])
+$$975098: skipping: [localhost] => (item=[{'managed_by': 'sles', 'kickstart': 'sles12sp2-autoyast.xml', 'arch': 'x86_64', 'name': 'sles12sp2'}, {u'persistent_interfaces': [], u'ip_addr': u'192.168.7.2', u'nic_mapping': u'MY-DL160-PORTS', u'ilo_ip': u'192.168.9.30', u'boot_from_san': False, u'distro_id': u'hlinux-x86_64', u'role': u'COMPUTE-ROLE', u'mac_addr': u'8c:dc:d4:0f:1a:88', u'ilo_user': u'DAY0', u'server_group': u'RACK1', u'ilo_password': u'mnZcKPbC2qpJ', u'fcoe_interfaces': [], u'id': u'compute1'}])
+$$975104: skipping: [localhost] => (item=[{'managed_by': 'sles', 'kickstart': 'sles12sp2-autoyast.xml', 'arch': 'x86_64', 'name': 'sles12sp2'}, {u'persistent_interfaces': [], u'ip_addr': u'192.168.7.3', u'nic_mapping': u'MY-DL160-PORTS', u'ilo_ip': u'192.168.9.31', u'boot_from_san': False, u'distro_id': u'hlinux-x86_64', u'role': u'COMPUTE-ROLE', u'mac_addr': u'8c:dc:d4:02:60:b8', u'ilo_user': u'DAY0', u'server_group': u'RACK1', u'ilo_password': u'mnZcKPbC2qpJ', u'fcoe_interfaces': [], u'id': u'compute2'}])
+$$975109: skipping: [localhost] => (item=[{'managed_by': 'rhel', 'kickstart': 'rhel72-anaconda-ks.cfg', 'arch': 'x86_64', 'name': 'rhel72'}, {u'persistent_interfaces': [], u'ip_addr': u'192.168.7.2', u'nic_mapping': u'MY-DL160-PORTS', u'ilo_ip': u'192.168.9.30', u'boot_from_san': False, u'distro_id': u'hlinux-x86_64', u'role': u'COMPUTE-ROLE', u'mac_addr': u'8c:dc:d4:0f:1a:88', u'ilo_user': u'DAY0', u'server_group': u'RACK1', u'ilo_password': u'mnZcKPbC2qpJ', u'fcoe_interfaces': [], u'id': u'compute1'}])
+$$975113: skipping: [localhost] => (item=[{'managed_by': 'rhel', 'kickstart': 'rhel72-anaconda-ks.cfg', 'arch': 'x86_64', 'name': 'rhel72'}, {u'persistent_interfaces': [], u'ip_addr': u'192.168.7.3', u'nic_mapping': u'MY-DL160-PORTS', u'ilo_ip': u'192.168.9.31', u'boot_from_san': False, u'distro_id': u'hlinux-x86_64', u'role': u'COMPUTE-ROLE', u'mac_addr': u'8c:dc:d4:02:60:b8', u'ilo_user': u'DAY0', u'server_group': u'RACK1', u'ilo_password': u'mnZcKPbC2qpJ', u'fcoe_interfaces': [], u'id': u'compute2'}])
+$$975113: TASK: [cobbler | configure | Adding cobbler apache configuration] ************* 
+$$975221: changed: [localhost]
+$$975222: TASK: [cobbler | configure | Adding cobbler configuration] ******************** 
+$$975359: changed: [localhost]
+$$975359: TASK: [cobbler | configure | set default passwd] ****************************** 
+$$975395: passlib.registry registered 'sha512_crypt' handler: <class 'passlib.handlers.sha2_crypt.sha512_crypt'>
+$$976147: ok: [localhost] => (item=$6$rounds=656000$FP6n24E8$vJk8akdmPSkkkxMSoMzE0TJ58SL7sP6bcTSKvUd9LDru4dPPG2/WsD1x5ji.LjF9C3DnnoIZSZR8uIvDbi/W21)
+$$976148: TASK: [cobbler | configure | rm temp file] ************************************ 
+$$976227: changed: [localhost]
+$$976228: TASK: [cobbler | configure | Adding cobbler settings file] ******************** 
+$$976367: changed: [localhost]
+$$976368: TASK: [cobbler | configure | Add hlm cobbler directory] *********************** 
+$$976458: changed: [localhost]
+$$976459: TASK: [cobbler | configure | Add hlm cobbler content] ************************* 
+$$976592: changed: [localhost] => (item=partition-pxe)
+$$976713: changed: [localhost] => (item=partition-uefi)
+$$976841: changed: [localhost] => (item=configure_partitioning)
+$$976965: changed: [localhost] => (item=configure_kdump)
+$$977083: changed: [localhost] => (item=bnx2x.conf)
+$$977206: changed: [localhost] => (item=update_fcoe_udev.py)
+$$977207: TASK: [cobbler | configure | Add option to add gateway] *********************** 
+$$977325: changed: [localhost]
+$$977326: TASK: [cobbler | configure | set timestamp for installs] ********************** 
+$$977438: changed: [localhost]
+$$977438: TASK: [cobbler | configure | Set local stamp] ********************************* 
+$$977551: changed: [localhost]
+$$977552: TASK: [cobbler | configure | Create bootloader directory] ********************* 
+$$977647: ok: [localhost]
+$$977648: TASK: [cobbler | configure | Copy menu.c32 to cobbler loaders dir] ************ 
+$$977780: changed: [localhost]
+$$977781: TASK: [cobbler | configure | Copy pxelinux.0 to cobbler loaders dir] ********** 
+$$977925: changed: [localhost]
+$$977926: TASK: [cobbler | configure | Copy ldlinux.c32 to cobbler loaders dir] ********* 
+$$978066: changed: [localhost]
+$$978067: TASK: [cobbler | configure | Copy shim.efi.signed to cobbler loaders dir] ***** 
+$$978217: changed: [localhost]
+$$978218: TASK: [cobbler | configure | Copy grubnetx64.efi.signed to cobbler loaders dir] *** 
+$$978363: changed: [localhost]
+$$978364: TASK: [cobbler | configure | rename grubnetx64.efi.signed to grubx64.efi] ***** 
+$$978475: changed: [localhost]
+$$978476: TASK: [cobbler | configure | Adding cobbler dhcp template] ******************** 
+$$978619: changed: [localhost]
+$$978620: TASK: [cobbler | configure | Enable cobbler and and cobbler web in apache] **** 
+$$978767: changed: [localhost]
+$$978768: TASK: [cobbler | configure | Enable proxy in apache] ************************** 
+$$978917: changed: [localhost]
+$$978918: TASK: [cobbler | configure | Enable proxy_http in apache] ********************* 
+$$979068: changed: [localhost]
+$$979069: TASK: [cobbler | configure | Check SLES Profile] ****************************** 
+$$979414: ok: [localhost]
+$$979415: TASK: [cobbler | configure | distro_signature.json files] ********************* 
+$$979428: ok: [localhost]
+$$979429: TASK: [cobbler | configure | Adding sles12sp2 into distro_signatures.json] **** 
+$$979535: changed: [localhost] => (item=/etc/cobbler/distro_signatures.json)
+$$979622: changed: [localhost] => (item=/var/lib/cobbler/distro_signatures.json)
+$$979623: TASK: [cobbler | start | Enable and restart dhcp service] ********************* 
+$$982086: changed: [localhost]
+$$982087: TASK: [cobbler | start | Enable and restart apache2] ************************** 
+$$985639: changed: [localhost]
+$$985640: TASK: [cobbler | start | Enable and restart cobblerd] ************************* 
+$$986607: changed: [localhost]
+$$986608: TASK: [cobbler | start | Enable and restart xinetd] *************************** 
+$$987064: changed: [localhost]
+$$987065: TASK: [cobbler | get-baremetal-info | Get baremetal info] ********************* 
+$$987192: ok: [localhost -> 127.0.0.1]
+$$987193: TASK: [include_vars ../../deployer-setup/defaults/hlm_tar_locations.yml] ****** 
+$$987207: ok: [localhost]
+$$987208: TASK: [cobbler | populate-rhel | Check RHEL Profile] ************************** 
+$$987518: ok: [localhost]
+$$987519: TASK: [cobbler | populate-rhel | Install RHEL kickstarts] ********************* 
+$$987655: changed: [localhost] => (item=rhel72-anaconda-ks.cfg)
+$$987783: changed: [localhost] => (item=rhel72-anaconda-ks-multipath.cfg)
+$$987784: TASK: [cobbler | populate-rhel | Customize multipath kickstart] *************** 
+$$987885: changed: [localhost]
+$$987886: TASK: [cobbler | populate-rhel | Test for RHEL7 ISO] ************************** 
+$$987974: ok: [localhost]
+$$987974: TASK: [cobbler | populate-rhel | Create temporary mount directory] ************ 
+$$987987: skipping: [localhost]
+$$987988: TASK: [cobbler | populate-rhel | Mount RHEL ISO] ****************************** 
+$$987999: skipping: [localhost]
+$$987999: TASK: [cobbler | populate-rhel | Cobbler import] ****************************** 
+$$988011: skipping: [localhost]
+$$988012: TASK: [cobbler | populate-rhel | Create multipath profiles] ******************* 
+$$988030: skipping: [localhost] => (item={u'persistent_interfaces': [], u'ip_addr': u'192.168.7.2', u'nic_mapping': u'MY-DL160-PORTS', u'ilo_ip': u'192.168.9.30', u'boot_from_san': False, u'distro_id': u'hlinux-x86_64', u'role': u'COMPUTE-ROLE', u'mac_addr': u'8c:dc:d4:0f:1a:88', u'ilo_user': u'DAY0', u'server_group': u'RACK1', u'ilo_password': u'mnZcKPbC2qpJ', u'fcoe_interfaces': [], u'id': u'compute1'})
+$$988034: skipping: [localhost] => (item={u'persistent_interfaces': [], u'ip_addr': u'192.168.7.3', u'nic_mapping': u'MY-DL160-PORTS', u'ilo_ip': u'192.168.9.31', u'boot_from_san': False, u'distro_id': u'hlinux-x86_64', u'role': u'COMPUTE-ROLE', u'mac_addr': u'8c:dc:d4:02:60:b8', u'ilo_user': u'DAY0', u'server_group': u'RACK1', u'ilo_password': u'mnZcKPbC2qpJ', u'fcoe_interfaces': [], u'id': u'compute2'})
+$$988035: TASK: [cobbler | populate-rhel | Umount ISO] ********************************** 
+$$988048: skipping: [localhost]
+$$988049: TASK: [cobbler | populate-rhel | Remove temporary mount directory] ************ 
+$$988062: skipping: [localhost]
+$$988062: TASK: [include_vars ../../deployer-setup/defaults/hlm_tar_locations.yml] ****** 
+$$988077: ok: [localhost]
+$$988077: TASK: [cobbler | populate-sles | Check SLES Profile] ************************** 
+$$988388: ok: [localhost]
+$$988389: TASK: [cobbler | populate-sles | Install SLES kickstart] ********************** 
+$$988514: changed: [localhost]
+$$988515: TASK: [cobbler | populate-sles | Test for SLES ISO] *************************** 
+$$988593: ok: [localhost]
+$$988594: TASK: [cobbler | populate-sles | Create temporary mount directory] ************ 
+$$988606: skipping: [localhost]
+$$988606: TASK: [cobbler | populate-sles | Mount SLES ISO] ****************************** 
+$$988621: skipping: [localhost]
+$$988622: TASK: [cobbler | populate-sles | Cobbler import] ****************************** 
+$$988635: skipping: [localhost]
+$$988636: TASK: [cobbler | populate-sles | Umount ISO] ********************************** 
+$$988648: skipping: [localhost]
+$$988649: TASK: [cobbler | populate-sles | Remove temporary mount directory] ************ 
+$$988661: skipping: [localhost]
+$$988662: TASK: [cobbler | populate | Create directory for isos] ************************ 
+$$988757: changed: [localhost]
+$$988758: TASK: [Compile distro in-use list] ******************************************** 
+$$988782: ok: [localhost]
+$$988783: TASK: [cobbler | populate | Check distro exists in cobbler] ******************* 
+$$989097: ok: [localhost] => (item={'url_boot_path': 'main/installer-amd64/current/images/netboot/debian-installer/amd64', 'kickstart': 'hlinux-server-vm.preseed', 'name': 'hlinux', 'kernel': 'linux', 'url': u'http://192.168.7.1:79/hlm/hlinux', 'breed': 'debian', 'initrd': 'initrd.gz', 'file': u'/srv/www/cobbler/ks_mirror/hlinux-cattleprod', 'arch': 'x86_64', 'distro': 'cattleprod'})
+$$989097: TASK: [cobbler | populate | Fail if any managed distro(s) are missing] ******** 
+$$989119: skipping: [localhost] => (item={u'cmd': [u'cobbler', u'distro', u'report', u'--name=hlinux-x86_64'], u'end': u'2017-10-17 01:16:29.086792', u'stderr': u'', u'stdout': u'No distro found: hlinux-x86_64', 'item': {'url_boot_path': 'main/installer-amd64/current/images/netboot/debian-installer/amd64', 'kickstart': 'hlinux-server-vm.preseed', 'name': 'hlinux', 'kernel': 'linux', 'url': u'http://192.168.7.1:79/hlm/hlinux', 'breed': 'debian', 'initrd': 'initrd.gz', 'file': u'/srv/www/cobbler/ks_mirror/hlinux-cattleprod', 'arch': 'x86_64', 'distro': 'cattleprod'}, u'changed': False, u'rc': 1, 'failed': False, u'warnings': [], u'delta': u'0:00:00.212781', 'invocation': {'module_name': u'command', 'module_complex_args': {}, 'module_args': u'cobbler distro report --name=hlinux-x86_64'}, 'stdout_lines': [u'No distro found: hlinux-x86_64'], 'failed_when_result': False, u'start': u'2017-10-17 01:16:28.874011'})
+$$989120: TASK: [cobbler | populate | Create directory for net images] ****************** 
+$$989222: changed: [localhost] => (item={u'cmd': [u'cobbler', u'distro', u'report', u'--name=hlinux-x86_64'], u'end': u'2017-10-17 01:16:29.086792', u'stderr': u'', u'stdout': u'No distro found: hlinux-x86_64', 'item': {'url_boot_path': 'main/installer-amd64/current/images/netboot/debian-installer/amd64', 'kickstart': 'hlinux-server-vm.preseed', 'name': 'hlinux', 'kernel': 'linux', 'url': u'http://192.168.7.1:79/hlm/hlinux', 'breed': 'debian', 'initrd': 'initrd.gz', 'file': u'/srv/www/cobbler/ks_mirror/hlinux-cattleprod', 'arch': 'x86_64', 'distro': 'cattleprod'}, u'changed': False, u'rc': 1, 'failed': False, u'warnings': [], u'delta': u'0:00:00.212781', 'invocation': {'module_name': u'command', 'module_complex_args': {}, 'module_args': u'cobbler distro report --name=hlinux-x86_64'}, 'stdout_lines': [u'No distro found: hlinux-x86_64'], 'failed_when_result': False, u'start': u'2017-10-17 01:16:28.874011'})
+$$989222: TASK: [cobbler | populate | Get net kernel] *********************************** 
+$$989377: changed: [localhost] => (item={u'cmd': [u'cobbler', u'distro', u'report', u'--name=hlinux-x86_64'], u'end': u'2017-10-17 01:16:29.086792', u'stderr': u'', u'stdout': u'No distro found: hlinux-x86_64', 'item': {'url_boot_path': 'main/installer-amd64/current/images/netboot/debian-installer/amd64', 'kickstart': 'hlinux-server-vm.preseed', 'name': 'hlinux', 'kernel': 'linux', 'url': u'http://192.168.7.1:79/hlm/hlinux', 'breed': 'debian', 'initrd': 'initrd.gz', 'file': u'/srv/www/cobbler/ks_mirror/hlinux-cattleprod', 'arch': 'x86_64', 'distro': 'cattleprod'}, u'changed': False, u'rc': 1, 'failed': False, u'warnings': [], u'delta': u'0:00:00.212781', 'invocation': {'module_name': u'command', 'module_complex_args': {}, 'module_args': u'cobbler distro report --name=hlinux-x86_64'}, 'stdout_lines': [u'No distro found: hlinux-x86_64'], 'failed_when_result': False, u'start': u'2017-10-17 01:16:28.874011'})
+$$989377: TASK: [cobbler | populate | Get net initrd] *********************************** 
+$$989681: changed: [localhost] => (item={u'cmd': [u'cobbler', u'distro', u'report', u'--name=hlinux-x86_64'], u'end': u'2017-10-17 01:16:29.086792', u'stderr': u'', u'stdout': u'No distro found: hlinux-x86_64', 'item': {'url_boot_path': 'main/installer-amd64/current/images/netboot/debian-installer/amd64', 'kickstart': 'hlinux-server-vm.preseed', 'name': 'hlinux', 'kernel': 'linux', 'url': u'http://192.168.7.1:79/hlm/hlinux', 'breed': 'debian', 'initrd': 'initrd.gz', 'file': u'/srv/www/cobbler/ks_mirror/hlinux-cattleprod', 'arch': 'x86_64', 'distro': 'cattleprod'}, u'changed': False, u'rc': 1, 'failed': False, u'warnings': [], u'delta': u'0:00:00.212781', 'invocation': {'module_name': u'command', 'module_complex_args': {}, 'module_args': u'cobbler distro report --name=hlinux-x86_64'}, 'stdout_lines': [u'No distro found: hlinux-x86_64'], 'failed_when_result': False, u'start': u'2017-10-17 01:16:28.874011'})
+$$989682: TASK: [cobbler | populate | Add distro] *************************************** 
+$$990022: changed: [localhost] => (item={u'cmd': [u'cobbler', u'distro', u'report', u'--name=hlinux-x86_64'], u'end': u'2017-10-17 01:16:29.086792', u'stderr': u'', u'stdout': u'No distro found: hlinux-x86_64', 'item': {'url_boot_path': 'main/installer-amd64/current/images/netboot/debian-installer/amd64', 'kickstart': 'hlinux-server-vm.preseed', 'name': 'hlinux', 'kernel': 'linux', 'url': u'http://192.168.7.1:79/hlm/hlinux', 'breed': 'debian', 'initrd': 'initrd.gz', 'file': u'/srv/www/cobbler/ks_mirror/hlinux-cattleprod', 'arch': 'x86_64', 'distro': 'cattleprod'}, u'changed': False, u'rc': 1, 'failed': False, u'warnings': [], u'delta': u'0:00:00.212781', 'invocation': {'module_name': u'command', 'module_complex_args': {}, 'module_args': u'cobbler distro report --name=hlinux-x86_64'}, 'stdout_lines': [u'No distro found: hlinux-x86_64'], 'failed_when_result': False, u'start': u'2017-10-17 01:16:28.874011'})
+$$990022: TASK: [cobbler | populate | Add Profile] ************************************** 
+$$990595: changed: [localhost] => (item=[{u'cmd': [u'cobbler', u'distro', u'report', u'--name=hlinux-x86_64'], u'end': u'2017-10-17 01:16:29.086792', u'stderr': u'', u'stdout': u'No distro found: hlinux-x86_64', 'item': {'url_boot_path': 'main/installer-amd64/current/images/netboot/debian-installer/amd64', 'kickstart': 'hlinux-server-vm.preseed', 'name': 'hlinux', 'kernel': 'linux', 'url': u'http://192.168.7.1:79/hlm/hlinux', 'breed': 'debian', 'initrd': 'initrd.gz', 'file': u'/srv/www/cobbler/ks_mirror/hlinux-cattleprod', 'arch': 'x86_64', 'distro': 'cattleprod'}, u'changed': False, u'rc': 1, 'failed': False, u'warnings': [], u'delta': u'0:00:00.212781', 'invocation': {'module_name': u'command', 'module_complex_args': {}, 'module_args': u'cobbler distro report --name=hlinux-x86_64'}, 'stdout_lines': [u'No distro found: hlinux-x86_64'], 'failed_when_result': False, u'start': u'2017-10-17 01:16:28.874011'}, {u'persistent_interfaces': [], u'ip_addr': u'192.168.7.2', u'nic_mapping': u'MY-DL160-PORTS', u'ilo_ip': u'192.168.9.30', u'boot_from_san': False, u'distro_id': u'hlinux-x86_64', u'role': u'COMPUTE-ROLE', u'mac_addr': u'8c:dc:d4:0f:1a:88', u'ilo_user': u'DAY0', u'server_group': u'RACK1', u'ilo_password': u'mnZcKPbC2qpJ', u'fcoe_interfaces': [], u'id': u'compute1'}])
+$$991150: changed: [localhost] => (item=[{u'cmd': [u'cobbler', u'distro', u'report', u'--name=hlinux-x86_64'], u'end': u'2017-10-17 01:16:29.086792', u'stderr': u'', u'stdout': u'No distro found: hlinux-x86_64', 'item': {'url_boot_path': 'main/installer-amd64/current/images/netboot/debian-installer/amd64', 'kickstart': 'hlinux-server-vm.preseed', 'name': 'hlinux', 'kernel': 'linux', 'url': u'http://192.168.7.1:79/hlm/hlinux', 'breed': 'debian', 'initrd': 'initrd.gz', 'file': u'/srv/www/cobbler/ks_mirror/hlinux-cattleprod', 'arch': 'x86_64', 'distro': 'cattleprod'}, u'changed': False, u'rc': 1, 'failed': False, u'warnings': [], u'delta': u'0:00:00.212781', 'invocation': {'module_name': u'command', 'module_complex_args': {}, 'module_args': u'cobbler distro report --name=hlinux-x86_64'}, 'stdout_lines': [u'No distro found: hlinux-x86_64'], 'failed_when_result': False, u'start': u'2017-10-17 01:16:28.874011'}, {u'persistent_interfaces': [], u'ip_addr': u'192.168.7.3', u'nic_mapping': u'MY-DL160-PORTS', u'ilo_ip': u'192.168.9.31', u'boot_from_san': False, u'distro_id': u'hlinux-x86_64', u'role': u'COMPUTE-ROLE', u'mac_addr': u'8c:dc:d4:02:60:b8', u'ilo_user': u'DAY0', u'server_group': u'RACK1', u'ilo_password': u'mnZcKPbC2qpJ', u'fcoe_interfaces': [], u'id': u'compute2'}])
+$$991151: TASK: [cobbler | populate | Check system exists in cobbler] ******************* 
+$$991468: ok: [localhost] => (item={u'persistent_interfaces': [], u'ip_addr': u'192.168.7.2', u'nic_mapping': u'MY-DL160-PORTS', u'ilo_ip': u'192.168.9.30', u'boot_from_san': False, u'distro_id': u'hlinux-x86_64', u'role': u'COMPUTE-ROLE', u'mac_addr': u'8c:dc:d4:0f:1a:88', u'ilo_user': u'DAY0', u'server_group': u'RACK1', u'ilo_password': u'mnZcKPbC2qpJ', u'fcoe_interfaces': [], u'id': u'compute1'})
+$$991759: ok: [localhost] => (item={u'persistent_interfaces': [], u'ip_addr': u'192.168.7.3', u'nic_mapping': u'MY-DL160-PORTS', u'ilo_ip': u'192.168.9.31', u'boot_from_san': False, u'distro_id': u'hlinux-x86_64', u'role': u'COMPUTE-ROLE', u'mac_addr': u'8c:dc:d4:02:60:b8', u'ilo_user': u'DAY0', u'server_group': u'RACK1', u'ilo_password': u'mnZcKPbC2qpJ', u'fcoe_interfaces': [], u'id': u'compute2'})
+$$991760: TASK: [cobbler | populate | Load servers into cobbler] ************************ 
+$$992150: changed: [localhost] => (item={u'cmd': [u'cobbler', u'system', u'report', u'--name=compute1'], u'end': u'2017-10-17 01:16:31.459827', u'stderr': u'', u'stdout': u'No system found: compute1', 'item': {u'persistent_interfaces': [], u'ip_addr': u'192.168.7.2', u'nic_mapping': u'MY-DL160-PORTS', u'ilo_ip': u'192.168.9.30', u'boot_from_san': False, u'distro_id': u'hlinux-x86_64', u'role': u'COMPUTE-ROLE', u'mac_addr': u'8c:dc:d4:0f:1a:88', u'ilo_user': u'DAY0', u'server_group': u'RACK1', u'ilo_password': u'mnZcKPbC2qpJ', u'fcoe_interfaces': [], u'id': u'compute1'}, u'changed': False, u'rc': 1, 'failed': False, u'warnings': [], u'delta': u'0:00:00.208923', 'invocation': {'module_name': u'command', 'module_complex_args': {}, 'module_args': u'cobbler system report --name=compute1'}, 'stdout_lines': [u'No system found: compute1'], 'failed_when_result': False, u'start': u'2017-10-17 01:16:31.250904'})
+$$992512: changed: [localhost] => (item={u'cmd': [u'cobbler', u'system', u'report', u'--name=compute2'], u'end': u'2017-10-17 01:16:31.748431', u'stderr': u'', u'stdout': u'No system found: compute2', 'item': {u'persistent_interfaces': [], u'ip_addr': u'192.168.7.3', u'nic_mapping': u'MY-DL160-PORTS', u'ilo_ip': u'192.168.9.31', u'boot_from_san': False, u'distro_id': u'hlinux-x86_64', u'role': u'COMPUTE-ROLE', u'mac_addr': u'8c:dc:d4:02:60:b8', u'ilo_user': u'DAY0', u'server_group': u'RACK1', u'ilo_password': u'mnZcKPbC2qpJ', u'fcoe_interfaces': [], u'id': u'compute2'}, u'changed': False, u'rc': 1, 'failed': False, u'warnings': [], u'delta': u'0:00:00.197324', 'invocation': {'module_name': u'command', 'module_complex_args': {}, 'module_args': u'cobbler system report --name=compute2'}, 'stdout_lines': [u'No system found: compute2'], 'failed_when_result': False, u'start': u'2017-10-17 01:16:31.551107'})
+$$992513: TASK: [cobbler | populate | Cobbler sync] ************************************* 
+$$996843: changed: [localhost]
+$$996844: TASK: [cobbler | populate | Setup grub.cfg post sync] ************************* 
+$$996968: changed: [localhost]
+$$996968: TASK: [cobbler | populate | Setup grub.cfg post sync new location] ************ 
+$$997084: changed: [localhost]
+$$997085: TASK: [cobbler | populate | Remove ldlinux.c32 symlink] *********************** 
+$$997182: ok: [localhost]
+$$997183: TASK: [cobbler | populate | Insert real ldlinux.c32 file] ********************* 
+$$997285: changed: [localhost]
+$$997285: TASK: [cobbler | populate | Insert shim.efi.signed file] ********************** 
+$$997394: changed: [localhost]
+$$997395: TASK: [cobbler | populate | Enable and restart xinetd] ************************ 
+$$997834: changed: [localhost]
+$$997835: PLAY [localhost] ************************************************************** 
+$$997836: TASK: [cobbler | target-netboot-nodes | Compute the list of netboot nodes] **** 
+$$997851: skipping: [localhost]
+$$997852: TASK: [cobbler | target-netboot-nodes | Target the netboot nodes] ************* 
+$$997864: skipping: [localhost]
+$$997865: TASK: [cobbler | get-baremetal-info | Get baremetal info] ********************* 
+$$997991: ok: [localhost -> 127.0.0.1]
+$$997992: TASK: [cobbler | get-nodelist | User-specified target list] ******************* 
+$$998008: ok: [localhost]
+$$998008: TASK: [cobbler | get-nodelist | Compute generic target list] ****************** 
+$$998020: skipping: [localhost]
+$$998021: TASK: [cobbler | get-nodelist | Check we have targets] ************************ 
+$$998032: skipping: [localhost]
+$$998032: TASK: [cobbler | get-nodelist | Create dynamic host group, minus myself] ****** 
+$$998047: skipping: [localhost] => (item=compute1)
+$$998051: skipping: [localhost] => (item=compute2)
+$$998051: TASK: [set_fact dynamic_targets_created=True] ********************************* 
+$$998060: ok: [localhost]
 $$EVENT: stop cobbler-deploy.yml
-$$1573424: 
+$$998060: PLAY [localhost] ************************************************************** 
 $$EVENT: start bm-reimage.yml
+$$998061: TASK: [The nodes listed above will be reimaged] ******************************* 
+$$1058131: ok: [localhost]
+$$1058132: PLAY [localhost] ************************************************************** 
+$$1058132: TASK: [cobbler | get-baremetal-info | Get baremetal info] ********************* 
+$$1058285: ok: [localhost -> 127.0.0.1]
+$$1058286: TASK: [cobbler | get-nodelist | User-specified target list] ******************* 
+$$1058304: ok: [localhost]
+$$1058304: TASK: [cobbler | get-nodelist | Compute generic target list] ****************** 
+$$1058318: skipping: [localhost]
+$$1058318: TASK: [cobbler | get-nodelist | Check we have targets] ************************ 
+$$1058329: skipping: [localhost]
+$$1058330: TASK: [cobbler | get-nodelist | Create dynamic host group, minus myself] ****** 
+$$1058345: skipping: [localhost] => (item=compute1)
+$$1058349: skipping: [localhost] => (item=compute2)
+$$1058349: TASK: [set_fact dynamic_targets_created=True] ********************************* 
+$$1058358: ok: [localhost]
+$$1058358: PLAY [dynamic_targets] ******************************************************** 
+$$1058359: TASK: [cobbler | power-down | Power the node down] **************************** 
+$$1059720: changed: [compute1]
+$$1059738: changed: [compute2]
+$$1059752: PLAY [localhost] ************************************************************** 
+$$1059753: TASK: [Waiting for the nodes to power off] ************************************ 
+$$1299865: ok: [localhost]
+$$1299866: PLAY [localhost] ************************************************************** 
+$$1299866: TASK: [cobbler | get-baremetal-info | Get baremetal info] ********************* 
+$$1299994: ok: [localhost -> 127.0.0.1]
+$$1299995: TASK: [cobbler | target-all-nodes | Compute generic target list] ************** 
+$$1300008: skipping: [localhost]
+$$1300008: TASK: [cobbler | get-baremetal-info | Get baremetal info] ********************* 
+$$1300133: ok: [localhost -> 127.0.0.1]
+$$1300133: TASK: [cobbler | get-nodelist | User-specified target list] ******************* 
+$$1300148: ok: [localhost]
+$$1300148: TASK: [cobbler | get-nodelist | Compute generic target list] ****************** 
+$$1300159: skipping: [localhost]
+$$1300160: TASK: [cobbler | get-nodelist | Check we have targets] ************************ 
+$$1300171: skipping: [localhost]
+$$1300172: TASK: [cobbler | get-nodelist | Create dynamic host group, minus myself] ****** 
+$$1300187: skipping: [localhost] => (item=compute1)
+$$1300190: skipping: [localhost] => (item=compute2)
+$$1300191: TASK: [set_fact dynamic_targets_created=True] ********************************* 
+$$1300199: ok: [localhost]
+$$1300200: PLAY [dynamic_targets] ******************************************************** 
+$$1300200: TASK: [cobbler | assert-power-is-off | Check node power status] *************** 
+$$1300471: ok: [compute1]
+$$1300480: ok: [compute2]
+$$1300492: TASK: [cobbler | assert-nodes-are-not-pingable | Derive node ips] ************* 
+$$1300665: ok: [compute1 -> 127.0.0.1]
+$$1300669: ok: [compute2 -> 127.0.0.1]
+$$1300681: TASK: [cobbler | assert-nodes-are-not-pingable | ping IPs] ******************** 
+$$1303833: ok: [compute1]
+$$1303836: ok: [compute2]
+$$1303850: PLAY [localhost] ************************************************************** 
+$$1303851: TASK: [cobbler | target-netboot-nodes | Compute the list of netboot nodes] **** 
+$$1303865: skipping: [localhost]
+$$1303865: TASK: [cobbler | target-netboot-nodes | Target the netboot nodes] ************* 
+$$1303879: skipping: [localhost]
+$$1303880: TASK: [cobbler | get-baremetal-info | Get baremetal info] ********************* 
+$$1304015: ok: [localhost -> 127.0.0.1]
+$$1304016: TASK: [cobbler | get-nodelist | User-specified target list] ******************* 
+$$1304031: ok: [localhost]
+$$1304031: TASK: [cobbler | get-nodelist | Compute generic target list] ****************** 
+$$1304043: skipping: [localhost]
+$$1304044: TASK: [cobbler | get-nodelist | Check we have targets] ************************ 
+$$1304054: skipping: [localhost]
+$$1304055: TASK: [cobbler | get-nodelist | Create dynamic host group, minus myself] ****** 
+$$1304069: skipping: [localhost] => (item=compute1)
+$$1304073: skipping: [localhost] => (item=compute2)
+$$1304073: TASK: [set_fact dynamic_targets_created=True] ********************************* 
+$$1304082: ok: [localhost]
+$$1304083: PLAY [localhost] ************************************************************** 
+$$1304086: TASK: [shell date +%Y%m%d%H%M%S > {{ local_timestamp_file }}] ***************** 
+$$1304199: changed: [localhost]
+$$1304200: PLAY [dynamic_targets] ******************************************************** 
+$$1304201: TASK: [cobbler | netboot-on | Allow netboot in Cobbler] *********************** 
+$$1304545: changed: [compute1]
+$$1304545: TASK: [cobbler | netboot-on | Allow netboot in Cobbler] *********************** 
+$$1304875: changed: [compute2]
+$$1304876: PLAY [dynamic_targets] ******************************************************** 
+$$1304877: TASK: [Starting reimage batch] ************************************************ 
+$$1314899: ok: [compute1]
+$$1314900: TASK: [cobbler | set-pxeboot | Set boot order to PXE] ************************* 
+$$1315156: changed: [compute2]
+$$1315158: changed: [compute1]
+$$1315172: TASK: [cobbler | set-pxeboot | Make UEFI/Legacy mode sticky] ****************** 
+$$1315469: changed: [compute2]
+$$1315479: changed: [compute1]
+$$1315492: TASK: [cobbler | power-cycle | Check power status] **************************** 
+$$1315780: ok: [compute2]
+$$1315790: ok: [compute1]
+$$1315803: TASK: [cobbler | power-cycle | Power cycle node if on] ************************ 
+$$1315846: skipping: [compute1]
+$$1315849: skipping: [compute2]
+$$1315861: TASK: [cobbler | power-cycle | Power up node if off] ************************** 
+$$1317409: changed: [compute1]
+$$1317483: changed: [compute2]
+$$1317496: TASK: [These nodes have been instructed to install over PXE] ****************** 
+$$1317610: ok: [compute1]
+$$1317610: TASK: [cobbler | wait-for-shutdown | Wait for nodes to power down after network install] *** 
+$$1985171: ok: [compute2]
+$$1990035: ok: [compute1]
+$$1990049: TASK: [cobbler | wait-for-shutdown | Report any retries] ********************** 
+$$1990101: skipping: [compute1]
+$$1990101: skipping: [compute2]
+$$1990115: TASK: [cobbler | set-diskboot | Set boot order to local disk] ***************** 
+$$1990363: changed: [compute2]
+$$1990452: changed: [compute1]
+$$1990466: TASK: [cobbler | set-diskboot | Make UEFI/Legacy mode sticky] ***************** 
+$$1990728: changed: [compute2]
+$$1990764: changed: [compute1]
+$$1990776: PLAY [localhost] ************************************************************** 
+$$1990776: TASK: [Pausing to allow nodes to fully shut down] ***************************** 
+$$2050848: ok: [localhost]
+$$2050848: PLAY [localhost] ************************************************************** 
+$$2050849: TASK: [cobbler | get-baremetal-info | Get baremetal info] ********************* 
+$$2050977: ok: [localhost -> 127.0.0.1]
+$$2050978: TASK: [cobbler | get-nodelist | User-specified target list] ******************* 
+$$2050994: ok: [localhost]
+$$2050994: TASK: [cobbler | get-nodelist | Compute generic target list] ****************** 
+$$2051007: skipping: [localhost]
+$$2051007: TASK: [cobbler | get-nodelist | Check we have targets] ************************ 
+$$2051020: skipping: [localhost]
+$$2051020: TASK: [cobbler | get-nodelist | Create dynamic host group, minus myself] ****** 
+$$2051035: skipping: [localhost] => (item=compute1)
+$$2051039: skipping: [localhost] => (item=compute2)
+$$2051039: TASK: [set_fact dynamic_targets_created=True] ********************************* 
+$$2051048: ok: [localhost]
+$$2051048: PLAY [dynamic_targets] ******************************************************** 
+$$2051049: TASK: [cobbler | set-diskboot | Set boot order to local disk] ***************** 
+$$2051373: changed: [compute2]
+$$2051384: changed: [compute1]
+$$2051397: TASK: [cobbler | set-diskboot | Make UEFI/Legacy mode sticky] ***************** 
+$$2051790: changed: [compute2]
+$$2051797: changed: [compute1]
+$$2051809: PLAY [dynamic_targets] ******************************************************** 
+$$2051810: TASK: [cobbler | netboot-off | Disallow netboot in Cobbler] ******************* 
+$$2052158: changed: [compute1]
+$$2052159: TASK: [cobbler | netboot-off | Disallow netboot in Cobbler] ******************* 
+$$2052514: changed: [compute2]
+$$2052515: PLAY [localhost] ************************************************************** 
+$$2052515: TASK: [cobbler | get-baremetal-info | Get baremetal info] ********************* 
+$$2052644: ok: [localhost -> 127.0.0.1]
+$$2052644: TASK: [cobbler | get-nodelist | User-specified target list] ******************* 
+$$2052658: ok: [localhost]
+$$2052658: TASK: [cobbler | get-nodelist | Compute generic target list] ****************** 
+$$2052671: skipping: [localhost]
+$$2052672: TASK: [cobbler | get-nodelist | Check we have targets] ************************ 
+$$2052685: skipping: [localhost]
+$$2052685: TASK: [cobbler | get-nodelist | Create dynamic host group, minus myself] ****** 
+$$2052699: skipping: [localhost] => (item=compute1)
+$$2052703: skipping: [localhost] => (item=compute2)
+$$2052703: TASK: [set_fact dynamic_targets_created=True] ********************************* 
+$$2052712: ok: [localhost]
+$$2052713: PLAY [dynamic_targets] ******************************************************** 
+$$2052713: TASK: [cobbler | power-up | Power node up] ************************************ 
+$$2056305: changed: [compute1]
+$$2056337: changed: [compute2]
+$$2056351: PLAY [localhost] ************************************************************** 
+$$2056352: TASK: [The nodes have been instructed to boot from disk] ********************** 
+$$2116423: ok: [localhost]
+$$2116424: PLAY [localhost] ************************************************************** 
+$$2116425: TASK: [cobbler | get-baremetal-info | Get baremetal info] ********************* 
+$$2116558: ok: [localhost -> 127.0.0.1]
+$$2116558: TASK: [cobbler | target-all-nodes | Compute generic target list] ************** 
+$$2116571: skipping: [localhost]
+$$2116572: TASK: [cobbler | get-baremetal-info | Get baremetal info] ********************* 
+$$2116697: ok: [localhost -> 127.0.0.1]
+$$2116698: TASK: [cobbler | get-nodelist | User-specified target list] ******************* 
+$$2116713: ok: [localhost]
+$$2116714: TASK: [cobbler | get-nodelist | Compute generic target list] ****************** 
+$$2116727: skipping: [localhost]
+$$2116728: TASK: [cobbler | get-nodelist | Check we have targets] ************************ 
+$$2116740: skipping: [localhost]
+$$2116740: TASK: [cobbler | get-nodelist | Create dynamic host group, minus myself] ****** 
+$$2116755: skipping: [localhost] => (item=compute1)
+$$2116758: skipping: [localhost] => (item=compute2)
+$$2116759: TASK: [set_fact dynamic_targets_created=True] ********************************* 
+$$2116768: ok: [localhost]
+$$2116768: PLAY [dynamic_targets] ******************************************************** 
+$$2116769: TASK: [cobbler | wait-for-ssh | Derive node ip] ******************************* 
+$$2116939: ok: [compute1 -> 127.0.0.1]
+$$2116942: ok: [compute2 -> 127.0.0.1]
+$$2116957: TASK: [cobbler | wait-for-ssh | Wait for ssh to come online] ****************** 
+$$2211102: ok: [compute1 -> 127.0.0.1]
+$$2211104: ok: [compute2 -> 127.0.0.1]
+$$2211117: TASK: [cobbler | wait-for-ssh | Get md5sum] *********************************** 
+$$2211249: changed: [compute1 -> 127.0.0.1]
+$$2211260: changed: [compute2 -> 127.0.0.1]
+$$2211271: TASK: [cobbler | wait-for-ssh | check the timestamp on the dest with local] *** 
+$$2211584: changed: [compute1 -> 127.0.0.1]
+$$2211592: changed: [compute2 -> 127.0.0.1]
+$$2211606: PLAY RECAP ******************************************************************** 
+$$2211607: compute1                   : ok=25   changed=13   unreachable=0    failed=0   
+$$2211607: compute2                   : ok=25   changed=13   unreachable=0    failed=0   
+$$2211607: localhost                  : ok=129  changed=52   unreachable=0    failed=0   
 $$EVENT: stop bm-reimage.yml
-
-PLAY RECAP ******************************************************************** 
-This is just fake  ------------------------------------------------------ 0.41s
-Total: ------------------------------------------------------------------ 0.41s
-localhost                  : ok=128  changed=7    unreachable=0    failed=0   
-
 $$EVENT: stop dayzero-os-provision.yml
