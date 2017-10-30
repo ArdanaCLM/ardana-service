@@ -5,6 +5,9 @@ git rev-parse || exit
 
 cd $(git rev-parse --show-toplevel)
 
+GIT_BASE=${GIT_BASE:-https://git.suse.provo.cloud}
+SCRIPT=setup-ardana-cp.sh
+
 # Create dirs for customer data, scratch area
 mkdir -p \
    data/my_cloud/model \
@@ -26,28 +29,26 @@ if [ ! -d my_cloud/.git ] ; then
 fi
 
 if [ ! -d ardana-ansible ] ; then
-    git clone https://git.suse.provo.cloud/ardana/ardana-ansible
+    git clone ${GIT_BASE}/ardana/ardana-ansible
 fi
 
 if [ ! -d ardana-input-model ] ; then
-    git clone https://git.suse.provo.cloud/ardana/ardana-input-model -b hp/opensource
+    git clone ${GIT_BASE}/ardana/ardana-input-model
 fi
 
 # Setup config processor.  This process basically automates the steps needed to
 #    create a development environment for the config processor
 if [ ! -d config-processor ] ; then
-    if [ ! -f setup-hos-cp.sh ] ; then
-        git clone https://git.suse.provo.cloud/hp/kenobi-configuration-processor -b hp/prerelease/ocata cp_temp
-        sed -e 's/git.gozer.hpcloud.net/git.suse.provo.cloud/' -e 's#~/run_cp.sh#./run_cp.sh#' cp_temp/Scripts/setup-hos-cp.sh > setup-hos-cp.sh
-        chmod +x ./setup-hos-cp.sh
-        rm -rf cp_temp
+    if [ ! -f $SCRIPT ] ; then
+        curl -k ${GIT_BASE}/cgit/ardana/ardana-configuration-processor/plain/Scripts/$SCRIPT > $SCRIPT
+        chmod +x $SCRIPT
     fi
 
     # Specify a directory for the config processor and the repos it needs
     DEST=config-processor
 
     # Prepare the dir for development, including checking out needed repos
-    ./setup-hos-cp.sh -n $DEST
+    ./$SCRIPT -n $DEST
 
     # Prepare a virtual environment
     virtualenv -p /usr/bin/python2.7 $DEST
@@ -57,9 +58,9 @@ if [ ! -d config-processor ] ; then
     $VENV/bin/pip install --upgrade pip
 
     # Install pre-reqs into the virtual environment
-    $VENV/bin/pip install -r $DEST/kenobi-configuration-processor/ConfigurationProcessor/requirements.txt
+    $VENV/bin/pip install -r $DEST/ardana-configuration-processor/ConfigurationProcessor/requirements.txt
 
     # Install the config processor plugins into the python environment
-    cd $DEST/kenobi-configuration-processor/ConfigurationProcessor
+    cd $DEST/ardana-configuration-processor/ConfigurationProcessor
     $VENV/bin/python setup.py install
 fi

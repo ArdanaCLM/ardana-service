@@ -5,6 +5,7 @@ from ConfigParser import NoSectionError
 import os
 import re
 import requests
+import subprocess
 import sys
 import time
 
@@ -77,8 +78,11 @@ if len(sys.argv) > 2 and cmd_name.startswith('python') and \
         os.makedirs(outdir)
 
     else:
-        real_cmd = ' '.join(sys.argv[1:])
-        os.system(real_cmd)
+        try:
+            subprocess.check_output(sys.argv[1:], stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as e:
+            print e.output
+            sys.exit(e.returncode)
 
 elif cmd_name == 'ansible-playbook':
 
@@ -128,8 +132,11 @@ elif cmd_name == 'ansible-playbook':
                 # print playbook, line, # (See above comment)
 
     else:
-        real_cmd = ' '.join(sys.argv[1:])
-        os.system(real_cmd)
+        try:
+            subprocess.check_output(sys.argv[1:], stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as e:
+            print e.output
+            sys.exit(e.returncode)
 
 exit_code = int(get("testing", "mock_cmd_exit", 0))
 if exit_code != 0:
