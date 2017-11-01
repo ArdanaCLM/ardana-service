@@ -15,7 +15,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 #
-ARDANA_DEV_TOOLS_SCRATCH_PATH=${HOME}/workspace/ardana-dev-tools/scratch-hp_opensource
+ARDANA_DEV_TOOLS_SCRATCH_PATH=${HOME}/workspace/ardana-dev-tools/scratch-master
 PROJECT_NAME="ardana-service"
 TARBALL_GOZER="http://hos.suse.provo.cloud/ardana-installer-ui"
 PATCH_STANDARD=0
@@ -27,7 +27,7 @@ DEPLOYER_IP="192.168.10.254"
 while getopts "s:p:cd" OPTION; do
 	case "${OPTION:-}" in
 		s)
-			ARDANA_DEV_TOOLS_SCRATCH_PATH="${OPTARG:-}/ardana-dev-tools/scratch-hp_opensource"
+			ARDANA_DEV_TOOLS_SCRATCH_PATH="${OPTARG:-}/ardana-dev-tools/scratch-master"
 			;;
 		p)
 			PROJECT_NAME="${OPTARG:-}"
