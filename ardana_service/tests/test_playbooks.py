@@ -50,3 +50,18 @@ class TestArgProcessing(unittest.TestCase):
         args = playbooks.get_command_args({'encryption-key': key})
         self.assertNotIn('--encryption-key', args)
         self.assertIn('--vault-password-file', args)
+
+    def test_has_no_verbose(self):
+        args = playbooks.get_command_args({"verbose": "0"})
+        self.assertNotIn("--verbose", args)
+
+    def test_has_verbose(self):
+        args = playbooks.get_command_args({"verbose": "4"})
+        self.assertEqual("4", args['--verbose'])
+
+    def test_verbose_command(self):
+        args = playbooks.get_command_args({"verbose": "3"})
+        cmdline = playbooks.build_command_line('testcommand', 'testplaybook', args)
+
+        num = cmdline.count('--verbose')
+        self.assertTrue(num == 3)

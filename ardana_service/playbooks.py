@@ -269,6 +269,11 @@ def get_command_args(payload={}, cwd=None):
     else:
         body['inventory'] = "hosts/verb_hosts"
 
+    # Debug level
+    if 'verbose' in body:
+        if body['verbose'] == 0 or body['verbose'] == "0":
+            body.pop('verbose')
+
     # TODO(gary): Consider supporting force-color, which used to set the
     # env ANSIBLE_FORCE_COLOR=true and pop from args.  Since the installer
     # will now process the logs more intelligently, the need to supply
@@ -380,8 +385,12 @@ def build_command_line(command, playbook=None, args={}):
         cmdLine.extend(args)
     elif isinstance(args, dict):
         for k, v in args.iteritems():
-            cmdLine.append(k)
-            cmdLine.append(v)
+            if k == '--verbose':
+                for i in xrange(0, int(v)):
+                    cmdLine.append(k)
+            else:
+                cmdLine.append(k)
+                cmdLine.append(v)
     elif args:
         cmdLine.append(args)
 
