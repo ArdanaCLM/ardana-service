@@ -196,7 +196,7 @@ def run_playbook(name):
 
     try:
         name += ".yml"
-        for filename in os.listdir(PLAYBOOKS_DIR):
+        for filename in os.listdir(cwd):
             if filename == name:
                 break
         else:
