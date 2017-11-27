@@ -22,8 +22,7 @@ cd data
 if [ ! -d my_cloud/.git ] ; then
     cd my_cloud
     git init 
-    git add -A
-    git commit -m "Initial commit"
+    git commit --allow-empty -m "Initial commit"
     git checkout -b site
     cd -
 fi
