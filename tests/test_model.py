@@ -3,7 +3,7 @@ import os
 import unittest
 import yaml
 
-from .. import model
+from ardana_service import model
 
 TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), 'test_data')
 
