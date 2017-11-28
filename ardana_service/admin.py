@@ -2,6 +2,7 @@ from flask import Blueprint
 from flask import jsonify
 import pbr.version
 import time
+import os
 
 bp = Blueprint('admin', __name__)
 
@@ -42,7 +43,7 @@ def heartbeat():
 
     .. sourcecode:: http
 
-       GET /api/v2/heartbbeat HTTP/1.1
+       GET /api/v2/heartbeat HTTP/1.1
 
     **Example valid response**:
 
@@ -54,3 +55,28 @@ def heartbeat():
 
     """
     return jsonify(int(time.time()))
+
+
+@bp.route("/api/v2/user")
+def user():
+    """Returns the username the service is running under
+
+    Simple API to return the username the service is running under
+
+    **Example Request**:
+
+    .. sourcecode:: http
+
+       GET /api/v2/user HTTP/1.1
+
+    **Example valid response**:
+
+    .. sourcecode:: http
+
+       HTTP/1.1 200 OK
+
+       {"username": "myusername"}
+
+    """
+    user_dict = {'username': os.getlogin()}
+    return jsonify(user_dict)
