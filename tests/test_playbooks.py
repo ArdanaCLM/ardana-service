@@ -1,7 +1,7 @@
 import json
 import unittest
 
-from .. import playbooks
+from ardana_service import playbooks
 
 
 class TestArgProcessing(unittest.TestCase):
@@ -61,7 +61,8 @@ class TestArgProcessing(unittest.TestCase):
 
     def test_verbose_command(self):
         args = playbooks.get_command_args({"verbose": "3"})
-        cmdline = playbooks.build_command_line('testcommand', 'testplaybook', args)
+        cmdline = playbooks.build_command_line('testcommand', 'testplaybook',
+                                               args)
 
         num = cmdline.count('--verbose')
         self.assertTrue(num == 3)
