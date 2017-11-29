@@ -248,13 +248,15 @@ def model_file(name):
 
     if request.method == 'GET':
         filename = os.path.join(MODEL_DIR, name)
+        contents = ''
         try:
             with open(filename) as f:
                 lines = f.readlines()
-            contents = ''.join(lines)
+            contents = contents.join(lines)
 
-        except IOError:
-            pass
+        except IOError as e:
+            LOG.exception(e)
+            abort(400)
 
         return jsonify(contents)
     else:
@@ -273,7 +275,8 @@ def model_file(name):
             with open(filename, "w") as f:
                 f.write(data)
             return 'Success'
-        except Exception:
+        except Exception as e:
+            LOG.exception(e)
             abort(400)
 
 

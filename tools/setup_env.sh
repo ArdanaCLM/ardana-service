@@ -27,6 +27,15 @@ if [ ! -d my_cloud/.git ] ; then
     cd -
 fi
 
+config_repos="cinder heat keystone neutron nova"
+for repo in $config_repos ; do
+    git clone ${GIT_BASE}/ardana/${repo}-ansible
+    mkdir -p my_cloud/config/$repo
+    cd ${repo}-ansible
+    git ls-files | grep j2$ | xargs -I@ cp @ ../my_cloud/config/$repo
+    cd -
+done
+
 if [ ! -d ardana-ansible ] ; then
     git clone ${GIT_BASE}/ardana/ardana-ansible
 fi
@@ -63,3 +72,4 @@ if [ ! -d config-processor ] ; then
     cd $DEST/ardana-configuration-processor/ConfigurationProcessor
     $VENV/bin/python setup.py install
 fi
+

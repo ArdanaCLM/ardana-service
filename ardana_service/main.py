@@ -6,9 +6,11 @@ from ardana_service import model
 from ardana_service import osinstall
 from ardana_service import playbooks
 from ardana_service import plays
+from ardana_service import service
 from ardana_service import socketio
 from ardana_service import templates
 from ardana_service import versions
+
 import datetime
 from flask import Flask
 from flask import request
@@ -25,6 +27,7 @@ app.register_blueprint(plays.bp)
 app.register_blueprint(listener.bp)
 app.register_blueprint(model.bp)
 app.register_blueprint(osinstall.bp)
+app.register_blueprint(service.bp)
 app.register_blueprint(templates.bp)
 app.register_blueprint(versions.bp)
 CORS(app)
