@@ -65,8 +65,8 @@ if [ ! -d config-processor ] ; then
     # upgrade the local version of pip in case the venv installed an old one
     $VENV/bin/pip install --upgrade pip
 
-    # Install pre-reqs into the virtual environment
-    $VENV/bin/pip install -r $DEST/ardana-configuration-processor/ConfigurationProcessor/requirements.txt
+    # upgrade the local version of setuptools in case the venv installed an old one
+    $VENV/bin/pip install --upgrade setuptools
 
     # Install the config processor plugins into the python environment
     cd $DEST/ardana-configuration-processor/ConfigurationProcessor
