@@ -17,7 +17,7 @@ bp = Blueprint('service', __name__)
 def get_all_files():
 
     service_list = collections.defaultdict(list)
-    for root, dirs, files in os.walk(CONFIG_DIR):
+    for root, dirs, files in os.walk(CONFIG_DIR, followlinks=True):
         if root == CONFIG_DIR:
             continue
         for file in files:

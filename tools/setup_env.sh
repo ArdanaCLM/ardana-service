@@ -29,10 +29,12 @@ fi
 
 config_repos="cinder heat keystone neutron nova"
 for repo in $config_repos ; do
-    git clone ${GIT_BASE}/ardana/${repo}-ansible
+    if [ ! -d ${repo}-ansible ]; then
+        git clone ${GIT_BASE}/ardana/${repo}-ansible
+    fi
     mkdir -p my_cloud/config/$repo
     cd ${repo}-ansible
-    git ls-files | grep j2$ | xargs -I@ cp @ ../my_cloud/config/$repo
+    git ls-files | grep j2$ | xargs -I@ ln -fs ${PWD}/@ ../my_cloud/config/$repo
     cd -
 done
 
