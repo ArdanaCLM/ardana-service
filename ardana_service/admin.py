@@ -2,6 +2,7 @@ from flask import Blueprint
 from flask import jsonify
 import pbr.version
 import time
+import pwd
 import os
 
 bp = Blueprint('admin', __name__)
@@ -78,5 +79,5 @@ def user():
        {"username": "myusername"}
 
     """
-    user_dict = {'username': os.getlogin()}
+    user_dict = {'username': pwd.getpwuid(os.getuid()).pw_name}
     return jsonify(user_dict)
