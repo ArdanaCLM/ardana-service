@@ -1,0 +1,432 @@
+$$EVENT: start dayzero-pre-deployment.yml
+
+$$EVENT: start config-processor-run.yml
+
+$$47649:  /usr/bin/ansible-playbook -i hosts/localhost config-processor-run.yml -e encrypt= -e rekey=
+$$47650:
+$$47864:  PLAY [localhost] **************************************************************
+$$47865:  GATHERING FACTS ***************************************************************
+$$48490:  ok: [localhost]
+$$48491:  TASK: [guard-runtime-location | guard-runtime-location | main | Ensure we're running in an expected location.] ***
+$$48528:  skipping: [localhost]
+$$48528:  TASK: [git-operations | check-repo-status | Check for uncommitted changes] ****
+$$48663:  changed: [localhost]
+$$48664:  TASK: [git-operations | check-repo-status | Report uncommitted changes] *******
+$$48672:  skipping: [localhost]
+$$48672:  TASK: [git-operations | _assemble-working-directory | Clear out target directory] ***
+$$48779:  ok: [localhost]
+$$48779:  TASK: [git-operations | _assemble-working-directory | Create target directory] ***
+$$48886:  changed: [localhost]
+$$48887:  TASK: [git-operations | _assemble-working-directory | Assemble scratch content] ***
+$$49790:  changed: [localhost]
+$$49791:  PLAY [localhost] **************************************************************
+$$49792:  TASK: [config-processor | run-config-processor | Run Configuration Processor over the given cloud configuration] ***
+$$107579:  changed: [localhost]
+$$107580:  TASK: [debug var=config_processor_result.stdout_lines] ************************
+$$107589:  ok: [localhost] => {
+    "var": {
+        "config_processor_result.stdout_lines": [
+            "@@@ Processing cloud model version 2.0",
+            "",
+            "################################################## Input Processing Started ##################################################",
+            "",
+            "Input Processing Succeeded in 2.302s",
+            "",
+            "################################################## Validate Process Started ##################################################",
+            "Validator encryption-key Started",
+            "Validator encryption-key Completed in 0.000s",
+            "Validator cloudconfig-2.0 Started",
+            "Validator cloudconfig-2.0 Completed in 0.007s",
+            "Validator services-2.0 Started",
+            "Validator services-2.0 Completed in 0.032s",
+            "Validator service-components-2.0 Started",
+            "Validator service-components-2.0 Completed in 0.154s",
+            "Validator disk-model-2.0 Started",
+            "Validator disk-model-2.0 Completed in 0.074s",
+            "Validator memory-model-2.0 Started",
+            "Validator memory-model-2.0 Completed in 0.004s",
+            "Validator cpu-model-2.0 Started",
+            "Validator cpu-model-2.0 Completed in 0.004s",
+            "Validator network-groups-2.0 Started",
+            "Validator network-groups-2.0 Completed in 0.029s",
+            "Validator networks-2.0 Started",
+            "Validator networks-2.0 Completed in 0.044s",
+            "Validator interface-models-2.0 Started",
+            "Validator interface-models-2.0 Completed in 0.077s",
+            "Validator server-roles-2.0 Started",
+            "Validator server-roles-2.0 Completed in 0.016s",
+            "Validator server-groups-2.0 Started",
+            "Validator server-groups-2.0 Completed in 0.004s",
+            "Validator regions-2.0 Started",
+            "Validator regions-2.0 Completed in 0.004s",
+            "Validator nic-device-families-2.0 Started",
+            "Validator nic-device-families-2.0 Completed in 0.017s",
+            "Validator nic-device-types-2.0 Started",
+            "Validator nic-device-types-2.0 Completed in 0.019s",
+            "Validator nic-mappings-2.0 Started",
+            "Validator nic-mappings-2.0 Completed in 0.020s",
+            "Validator pass-through-2.0 Started",
+            "Validator pass-through-2.0 Completed in 0.004s",
+            "Validator firewall-rules-2.0 Started",
+            "Validator firewall-rules-2.0 Completed in 0.021s",
+            "Validator config-data-2.0 Started",
+            "Validator config-data-2.0 Completed in 0.020s",
+            "Validator control-planes-2.0 Started",
+            "Validator control-planes-2.0 Completed in 0.054s",
+            "Validator ring-specifications-2.0 Started",
+            "Validator ring-specifications-2.0 Completed in 0.078s",
+            "Validator load-balancer-2.0 Started",
+            "Validator load-balancer-2.0 Completed in 0.004s",
+            "Validator vm-factory-2.0 Started",
+            "Validator vm-factory-2.0 Completed in 0.004s",
+            "Validator servers-2.0 Started",
+            "Validator servers-2.0 Completed in 0.028s",
+            "Validator cross-reference-2.0 Started",
+            "Validator cross-reference-2.0 Completed in 0.004s",
+            "Validator deployer-network-lifecycle-mgr-2.0 Started",
+            "Validator deployer-network-lifecycle-mgr-2.0 Completed in 0.004s",
+            "",
+            "Validate Process Succeeded in 1.030s",
+            "",
+            "################################################## Model Creation Process Started ##################################################",
+            "about to load CloudDescription cloudConfig.yml",
+            "loading CloudDescription",
+            "",
+            "Model Creation Process Succeeded in 0.011s",
+            "",
+            "################################################## Controller Creation Process Started ##################################################",
+            "",
+            "Controller Creation Process Succeeded in 0.000s",
+            "",
+            "################################################## Reading Persistent State ##################################################",
+            "",
+            "Persistent State And Credential Change Reading Process Succeeded in 0.000s",
+            "",
+            "################################################## CleanUpStage Process Started ##################################################",
+            "",
+            "CleanUpStage Process Succeeded in 0.000s",
+            "",
+            "################################################## Migration Process Started ##################################################",
+            "Migrating the \"CloudModel\" model with the \"resource-nodes-to-resources-2.0\" migrator...",
+            "Migrating the \"CloudModel\" model with the \"component-list-expansion-2.0\" migrator...",
+            "Migrating the \"CloudModel\" model with the \"swift-rings-2.0\" migrator...",
+            "",
+            "Migration Process Succeeded in 0.012s",
+            "",
+            "################################################## Generate Process Started ##################################################",
+            "Generator encryption-key Started",
+            "Generator encryption-key Completed in 0.000s",
+            "Generator network-generator-2.0 Started",
+            "Generator network-generator-2.0 Completed in 0.000s",
+            "Generator internal-model-2.0 Started",
+            "Generator internal-model-2.0 Completed in 0.001s",
+            "Generator configuration-data-generator-2.0 Started",
+            "Generator configuration-data-generator-2.0 Completed in 0.000s",
+            "Generator network-tag-generator-2.0 Started",
+            "Generator network-tag-generator-2.0 Completed in 0.000s",
+            "Generator cloud-cplite-2.0 Started",
+            "Generator cloud-cplite-2.0 Completed in 0.009s",
+            "Generator ring-specifications-2.0 Started",
+            "Generator ring-specifications-2.0 Completed in 0.000s",
+            "Generator firewall-generator-2.0 Started",
+            "Generator firewall-generator-2.0 Completed in 0.000s",
+            "Generator audit-generator-2.0 Started",
+            "Generator audit-generator-2.0 Completed in 0.000s",
+            "Generator cert-generator-2.0 Started",
+            "Generator cert-generator-2.0 Completed in 0.000s",
+            "Generator consumes-generator-2.0 Started",
+            "Generator consumes-generator-2.0 Completed in 9.131s",
+            "Generator provides-data-generator-2.0 Started",
+            "Generator provides-data-generator-2.0 Completed in 0.000s",
+            "Generator advertises-generator-2.0 Started",
+            "Generator advertises-generator-2.0 Completed in 0.000s",
+            "Generator route-generator-2.0 Started",
+            "Generator route-generator-2.0 Completed in 0.002s",
+            "Generator dpdk-device-generator-2.0 Started",
+            "Generator dpdk-device-generator-2.0 Completed in 0.000s",
+            "Generator deleted-component-generator-2.0 Started",
+            "Generator deleted-component-generator-2.0 Completed in 0.000s",
+            "Generator memory-model-generator-2.0 Started",
+            "Generator memory-model-generator-2.0 Completed in 0.000s",
+            "Generator topology-generator-2.0 Started",
+            "Generator topology-generator-2.0 Completed in 0.001s",
+            "Generator cpu-assignment-generator-2.0 Started",
+            "Generator cpu-assignment-generator-2.0 Completed in 0.000s",
+            "Generator vm-factory-2.0 Started",
+            "Generator vm-factory-2.0 Completed in 0.000s",
+            "",
+            "Generate Process Succeeded in 9.315s",
+            "",
+            "################################################## Build Process Started ##################################################",
+            "Builder persistent-state-2.0 Started",
+            "Builder persistent-state-2.0 Generated the following artifacts:",
+            "\t(+) ./persistent_state/ip_addresses.yml",
+            "\t(+) ./persistent_state/server_allocations.yml",
+            "\t(+) ./persistent_state/private_data_ccp.yml",
+            "Builder persistent-state-2.0 Completed in 0.143s",
+            "Builder hosts-file-2.0 Started",
+            "Builder hosts-file-2.0 Generated the following artifacts:",
+            "\t(+) ./stage/net/hosts.hf",
+            "Builder hosts-file-2.0 Completed in 0.000s",
+            "Builder ansible-hosts-2.0 Started",
+            "Builder ansible-hosts-2.0 Generated the following artifacts:",
+            "\t(+) ./stage/ansible/hosts/localhost",
+            "\t(+) ./stage/ansible/hosts/verb_hosts",
+            "Builder ansible-hosts-2.0 Completed in 0.028s",
+            "Builder ansible-all-vars-2.0 Started",
+            "Builder ansible-all-vars-2.0 Generated the following artifacts:",
+            "\t(+) ./stage/ansible/group_vars/all",
+            "Builder ansible-all-vars-2.0 Completed in 0.143s",
+            "Builder ans-host-vars-2.0 Started",
+            "Builder ans-host-vars-2.0 Generated the following artifacts:",
+            "\t(+) ./stage/ansible/host_vars/deployerincloud-ccp-c0-m1",
+            "\t(+) ./stage/ansible/host_vars/deployerincloud-ccp-compute0001",
+            "\t(+) ./stage/ansible/host_vars/deployerincloud-ccp-compute0002",
+            "Builder ans-host-vars-2.0 Completed in 0.238s",
+            "Builder ans-group-vars-2.0 Started",
+            "Builder ans-group-vars-2.0 Generated the following artifacts:",
+            "\t(+) ./stage/ansible/group_vars/deployerincloud-ccp-cluster0",
+            "\t(+) ./stage/ansible/group_vars/deployerincloud-ccp-compute",
+            "\t(+) ./stage/ansible/group_vars/deployerincloud-ccp",
+            "Builder ans-group-vars-2.0 Completed in 0.972s",
+            "Builder ans-encr-artifacts Started",
+            "Builder ans-encr-artifacts Generated no artifacts",
+            "Builder ans-encr-artifacts Completed in 0.000s",
+            "Builder net-info-2.0 Started",
+            "Builder net-info-2.0 Generated the following artifacts:",
+            "\t(+) ./stage/info/net_info.yml",
+            "Builder net-info-2.0 Completed in 0.000s",
+            "Builder route-info-2.0 Started",
+            "Builder route-info-2.0 Generated the following artifacts:",
+            "\t(+) ./stage/info/route_info.yml",
+            "Builder route-info-2.0 Completed in 0.000s",
+            "Builder server-info-2.0 Started",
+            "Builder server-info-2.0 Generated the following artifacts:",
+            "\t(+) ./stage/info/server_info.yml",
+            "Builder server-info-2.0 Completed in 0.027s",
+            "Builder firewall-info-2.0 Started",
+            "Builder firewall-info-2.0 Generated the following artifacts:",
+            "\t(+) ./stage/info/firewall_info.yml",
+            "Builder firewall-info-2.0 Completed in 0.031s",
+            "Builder topology-info-2.0 Started",
+            "Builder topology-info-2.0 Generated the following artifacts:",
+            "\t(+) ./stage/info/control_plane_topology.yml",
+            "\t(+) ./stage/info/region_topology.yml",
+            "\t(+) ./stage/info/service_topology.yml",
+            "\t(+) ./stage/info/network_topology.yml",
+            "Builder topology-info-2.0 Completed in 0.087s",
+            "Builder cert-req-2.0 Started",
+            "Builder cert-req-2.0 Generated the following artifacts:",
+            "\t(+) ./stage/info/cert_reqs/my-public-deployerincloud-cert",
+            "\t(+) ./stage/info/cert_reqs/ardana-internal-cert",
+            "Builder cert-req-2.0 Completed in 0.000s",
+            "Builder diagram-2.0 Started",
+            "Builder diagram-2.0 Generated the following artifacts:",
+            "\t(+) ./stage/info/CloudDiagram.txt",
+            "Builder diagram-2.0 Completed in 0.016s",
+            "Builder html-diagram-2.0 Started",
+            "Builder html-diagram-2.0 Generated the following artifacts:",
+            "\t(+) ./stage/html/ardana.css",
+            "\t(+) ./stage/html/Control_Planes.html",
+            "\t(+) ./stage/html/Regions.html",
+            "\t(+) ./stage/html/Services.html",
+            "\t(+) ./stage/html/Networks.html",
+            "\t(+) ./stage/html/Server_Groups.html",
+            "\t(+) ./stage/html/Servers/ccn-0001.html",
+            "\t(+) ./stage/html/Servers/cpn-0001.html",
+            "\t(+) ./stage/html/Servers/cpn-0002.html",
+            "\t(+) ./stage/html/Server_View.html",
+            "\t(+) ./stage/html/Server_Roles.html",
+            "\t(+) ./stage/html/Interface_Models.html",
+            "\t(+) ./stage/html/Disk_Models.html",
+            "\t(+) ./stage/html/Memory_Models.html",
+            "\t(+) ./stage/html/CPU_Models.html",
+            "Builder html-diagram-2.0 Completed in 0.023s",
+            "Builder private-data-meta-data-2.0 Started",
+            "Builder private-data-meta-data-2.0 Generated the following artifacts:",
+            "\t(+) ./stage/info/private_data_metadata_ccp.yml",
+            "Builder private-data-meta-data-2.0 Completed in 0.042s",
+            "",
+            "Build Process Succeeded in 2.065s",
+            "",
+            "################################################## Explanation Process Started ##################################################",
+            "Explainer file ./stage/CloudExplanation.txt Created",
+            "Explainer servers-2.0 Started",
+            "Explainer servers-2.0 Completed in 0.000s",
+            "",
+            "Explanation Process Succeeded in 0.032s",
+            "",
+            "################################################## Finalize Process Started ##################################################",
+            "Finalizer cloud-model-2.0 Started",
+            "Finalizer cloud-model-2.0 Generated the following artifacts:",
+            "\t(+) ./stage/internal/CloudModel.yaml",
+            "\t(+) ./stage/internal/ConfigFiles.yaml",
+            "Finalizer cloud-model-2.0 Completed in 2.066s",
+            "Finalizer service-view-2.0 Started",
+            "Finalizer service-view-2.0 Generated the following artifacts:",
+            "\t(+) ./stage/info/service_info.yml",
+            "Finalizer service-view-2.0 Completed in 0.012s",
+            "Finalizer address-allocation-2.0 Started",
+            "Finalizer address-allocation-2.0 Generated the following artifacts:",
+            "\t(+) ./stage/info/address_info.yml",
+            "Finalizer address-allocation-2.0 Completed in 0.005s",
+            "",
+            "Finalize Process Succeeded in 2.095s",
+            "",
+            "################################################################################",
+            "# The configuration processor completed with warnings.",
+            "#   cross-reference-2.0       WRN: Server cpn-0001 with role COMPUTE-ROLE is not in scope for selection in any cluster or resource group",
+            "#   cross-reference-2.0       WRN: Server cpn-0002 with role COMPUTE-ROLE is not in scope for selection in any cluster or resource group",
+            "#   cross-reference-2.0       WRN: Server ccn-0001 with role CONTROLLER-ROLE is not in scope for selection in any cluster or resource group",
+            "################################################################################"
+        ]
+    }
+}
+$$107591:  TASK: [debug var=config_processor_result.stderr] ******************************
+$$107592:  skipping: [localhost]
+$$107593:  TASK: [fail msg="Configuration processor run failed, see log output above for details"] ***
+$$107596:  skipping: [localhost]
+$$107596:  TASK: [config-processor | add-localhost | Add localhost group] ****************
+$$107754:  ok: [localhost]
+$$107755:  TASK: [config-processor | add-localhost | Add localhost group entry] **********
+$$107973:  changed: [localhost]
+$$107974:  TASK: [config-processor | configure | Make directories required for osconfig network configuration] ***
+$$108175:  changed: [localhost] => (item=etc)
+$$108387:  changed: [localhost] => (item=etc/network)
+$$108387:  TASK: [config-processor | configure | Copy hosts.hf for osconfig playbooks] ***
+$$108697:  changed: [localhost]
+$$108697:  TASK: [config-processor | configure | Sync ansible vars for cloud deployment] ***
+$$109082:  changed: [localhost -> 127.0.0.1] => (item=group_vars)
+$$109461:  changed: [localhost -> 127.0.0.1] => (item=host_vars)
+$$109462:  TASK: [config-processor | configure | Copy ansible hosts file for cloud deployment (verb_hosts)] ***
+$$109803:  changed: [localhost]
+$$109803:  TASK: [config-processor | configure | Sync ansible top-level playbooks for cloud deployment/update] ***
+$$109951:  skipping: [localhost]
+$$109951:  TASK: [config-processor | configure | Sync generated network artefacts for cloud deployment/update] ***
+$$110267:  changed: [localhost -> 127.0.0.1]
+$$110268:  PLAY [localhost] **************************************************************
+$$110268:  TASK: [git-operations | save-cp-output | Empty transient branches] ************
+$$110435:  changed: [localhost]
+$$110439:  TASK: [git-operations | save-cp-output | Get {{ git_operations.site_branch }} reference] ***
+$$110601:  changed: [localhost]
+$$110601:  TASK: [git-operations | _persist-to-git | Clear scratch directory] ************
+$$110729:  ok: [localhost]
+$$110729:  TASK: [git-operations | _persist-to-git | Create scratch directory] ***********
+$$110864:  changed: [localhost]
+$$110865:  TASK: [git-operations | _persist-to-git | Prep new commit] ********************
+$$112429:  changed: [localhost]
+$$112429:  TASK: [git-operations | _persist-to-git | Clear target directory] *************
+$$112555:  ok: [localhost]
+$$112556:  TASK: [git-operations | _persist-to-git | Copy source] ************************
+$$112740:  changed: [localhost]
+$$112741:  TASK: [git-operations | _persist-to-git | Clear target directory] *************
+$$112865:  ok: [localhost]
+$$112866:  TASK: [git-operations | _persist-to-git | Copy source] ************************
+$$113070:  changed: [localhost]
+$$113071:  PLAY RECAP ********************************************************************
+$$113072:  localhost                  : ok=23   changed=16   unreachable=0    failed=0
+
+$$EVENT: stop config-processor-run.yml
+$$EVENT: start ready-deployment.yml
+
+$$113691:  /usr/bin/ansible-playbook -i hosts/localhost ready-deployment.yml
+$$113692:
+$$113926:  PLAY [localhost] **************************************************************
+$$113927:  GATHERING FACTS ***************************************************************
+$$114504:  ok: [localhost]
+$$114505:  TASK: [guard-runtime-location | guard-runtime-location | main | Ensure we're running in an expected location.] ***
+$$114546:  skipping: [localhost]
+$$114547:  TASK: [package-constants | include_vars /home/stack/openstack/ardana/ansible/ardana_version.yml] ***
+$$114575:  ok: [localhost]
+$$114576:  TASK: [package-constants | include_vars {{ ansible_os_family | lower }}.yml] ***
+$$114602:  ok: [localhost]
+$$114603:  TASK: [git-operations | _ready-deployment-tree | Compute previously deployed version] ***
+$$114711:  changed: [localhost]
+$$114712:  TASK: [git-operations | _promote-from-staging | Evaluate git version] *********
+$$114809:  changed: [localhost]
+$$114810:  TASK: [git-operations | _promote-from-staging | Prepare git-merge command line] ***
+$$114822:  ok: [localhost]
+$$114822:  TASK: [git-operations | _promote-from-staging | Clear out working directory] ***
+$$114925:  ok: [localhost]
+$$114926:  TASK: [git-operations | _promote-from-staging | Clear out working directory] ***
+$$115008:  changed: [localhost]
+$$115008:  TASK: [git-operations | _promote-from-staging | Update branches] **************
+$$115321:  changed: [localhost]
+$$115322:  TASK: [git-operations | _assemble-working-directory | Clear out target directory] ***
+$$115415:  ok: [localhost]
+$$115415:  TASK: [git-operations | _assemble-working-directory | Create target directory] ***
+$$115505:  changed: [localhost]
+$$115505:  TASK: [git-operations | _assemble-working-directory | Assemble scratch content] ***
+$$116484:  changed: [localhost]
+$$116485:  TASK: [git-operations | _tag-branches-for-deployment | Lay down timestamped tags] ***
+$$116704:  changed: [localhost]
+$$116705:  TASK: [config-processor | configure | Make directories required for osconfig network configuration] ***
+$$116874:  changed: [localhost] => (item=etc)
+$$117041:  changed: [localhost] => (item=etc/network)
+$$117042:  TASK: [config-processor | configure | Copy hosts.hf for osconfig playbooks] ***
+$$117259:  changed: [localhost]
+$$117259:  TASK: [config-processor | configure | Sync ansible vars for cloud deployment] ***
+$$117540:  changed: [localhost -> 127.0.0.1] => (item=group_vars)
+$$117791:  changed: [localhost -> 127.0.0.1] => (item=host_vars)
+$$117792:  TASK: [config-processor | configure | Copy ansible hosts file for cloud deployment (verb_hosts)] ***
+$$118006:  changed: [localhost]
+$$118007:  TASK: [config-processor | configure | Sync ansible top-level playbooks for cloud deployment/update] ***
+$$118058:  skipping: [localhost]
+$$118059:  TASK: [config-processor | configure | Sync generated network artefacts for cloud deployment/update] ***
+$$118293:  changed: [localhost -> 127.0.0.1]
+$$118294:  TASK: [config-processor | configure | Make directories required for osconfig network configuration] ***
+$$118449:  ok: [localhost] => (item=etc)
+$$118586:  ok: [localhost] => (item=etc/network)
+$$118587:  TASK: [config-processor | configure | Copy hosts.hf for osconfig playbooks] ***
+$$118777:  ok: [localhost]
+$$118778:  TASK: [config-processor | configure | Sync ansible vars for cloud deployment] ***
+$$119022:  ok: [localhost -> 127.0.0.1] => (item=group_vars)
+$$119284:  ok: [localhost -> 127.0.0.1] => (item=host_vars)
+$$119285:  TASK: [config-processor | configure | Copy ansible hosts file for cloud deployment (verb_hosts)] ***
+$$119519:  ok: [localhost]
+$$119520:  TASK: [config-processor | configure | Sync ansible top-level playbooks for cloud deployment/update] ***
+$$119594:  skipping: [localhost]
+$$119594:  TASK: [config-processor | configure | Sync generated network artefacts for cloud deployment/update] ***
+$$119825:  ok: [localhost -> 127.0.0.1]
+$$119825:  TASK: [deployer-setup | ardana-hooks-configure | Find all hooks] **************
+$$119965:  ok: [localhost]
+$$119965:  TASK: [deployer-setup | ardana-hooks-configure | Build list of hooks] *********
+$$119976:  ok: [localhost]
+$$119977:  TASK: [deployer-setup | ardana-hooks-configure | Display hooks found] *********
+$$119985:  ok: [localhost] => {
+    "var": {
+        "deployer_setup_hooks": [
+            ""
+        ]
+    }
+}
+$$119986:  TASK: [deployer-setup | ardana-hooks-configure | Build ardana entry point playbooks] ***
+$$120147:  changed: [localhost] => (item=cloud-configure)
+$$120296:  changed: [localhost] => (item=cluster-credentials-change)
+$$120423:  changed: [localhost] => (item=deploy)
+$$120538:  changed: [localhost] => (item=keystone-credentials-change)
+$$120639:  changed: [localhost] => (item=other-credentials-change)
+$$120770:  changed: [localhost] => (item=rabbitmq-credentials-change)
+$$120927:  changed: [localhost] => (item=reconfigure)
+$$121089:  changed: [localhost] => (item=start)
+$$121240:  changed: [localhost] => (item=status)
+$$121352:  changed: [localhost] => (item=stop)
+$$121480:  changed: [localhost] => (item=upgrade)
+$$121481:  TASK: [git-operations | ready-deployment-tree-help | Tell the user what to expect] ***
+$$121520:  ok: [localhost] => {
+    "msg": "The directory /home/stack/scratch/ansible/next/ardana/ansible contains a prepared ansible tree ready to run your deployment. You should cd into that directory and run: ansible-playbook -i hosts/verb_hosts site.yml"
+}
+$$121520:  PLAY [localhost] **************************************************************
+$$121521:  TASK: [deployer-setup | configure-ansible | Check if verb_hosts file exists] ***
+$$121699:  ok: [localhost]
+$$121700:  TASK: [deployer-setup | configure-ansible | Create ansible.cfg] ***************
+$$121979:  changed: [localhost]
+$$121979:  TASK: [deployer-setup | configure-ansible | Check if verb_hosts file exists] ***
+$$122071:  ok: [localhost]
+$$122072:  TASK: [deployer-setup | configure-ansible | Create ansible.cfg] ***************
+$$122316:  changed: [localhost]
+$$122317:  PLAY RECAP ********************************************************************
+$$122317:  localhost                  : ok=32   changed=15   unreachable=0    failed=0
+
+$$EVENT: stop ready-deployment.yml
+$$EVENT: stop dayzero-pre-deployment.yml
