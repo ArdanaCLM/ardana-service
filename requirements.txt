@@ -6,4 +6,5 @@ PyYAML>=3.10.0 # MIT
 gitpython>=2.0 # BSD-3
 filelock # Public Domain
 oslo.config>=5.1.0 # Apache-2.0
+oslo.log>=3.30.0 # Apache-2.0
 keystonemiddleware>=4.17.0 # Apache-2.0

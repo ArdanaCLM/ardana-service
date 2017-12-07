@@ -15,12 +15,20 @@ import datetime
 from flask import Flask
 from flask import request
 from flask_cors import CORS
+from keystonemiddleware import auth_token
+# Load keystone options into global config object
+from keystonemiddleware import opts  # noqa: F401
 from oslo_config import cfg
+from oslo_log import log as logging
 
-import logging
-logging.basicConfig(level=logging.DEBUG)
+PROGRAM = 'ardana_service'
+LOG = logging.getLogger(PROGRAM)
+CONF = cfg.CONF
+logging.register_options(CONF)
+# Load config options any config files specified on the command line
+CONF()
+logging.setup(CONF, PROGRAM)
 
-LOG = logging.getLogger('ardana_service')
 app = Flask('ardana_service')
 app.register_blueprint(admin.bp)
 app.register_blueprint(config_processor.bp)
@@ -32,12 +40,13 @@ app.register_blueprint(osinstall.bp)
 app.register_blueprint(service.bp)
 app.register_blueprint(templates.bp)
 app.register_blueprint(versions.bp)
+
 CORS(app)
 
-
-CONF = cfg.CONF
-# Load config options any config files specified on the command line
-CONF()
+if 'keystone_authtoken' in CONF.list_all_sections():
+    # Wrap with keystone middleware if configured to do so
+    app.wsgi_app = auth_token.AuthProtocol(app.wsgi_app,
+                                           {'oslo_config_config': CONF})
 
 
 @app.before_request
