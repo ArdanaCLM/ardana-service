@@ -1,72 +1,82 @@
-from ConfigParser import NoOptionError
-from ConfigParser import NoSectionError
-from ConfigParser import SafeConfigParser
-import logging
 import os
+from oslo_config import cfg
 
-LOG = logging.getLogger(__name__)
+flask_opts = [
+    cfg.IPOpt('host',
+              default='127.0.0.1',
+              help='IP address to listen on.'),
+    cfg.PortOpt('port',
+                default=9085,
+                help='Port number to listen on.'),
+    cfg.BoolOpt('pretty_json',
+                default=False,
+                help='Format json responses in a pretty way'),
+]
 
-parser = SafeConfigParser()
-
-default_config = os.path.normpath(os.path.join(os.path.dirname(__file__),
-                                               'defaults.cfg'))
-
-config_files = [default_config]
-local_config = os.path.normpath(os.path.join(os.path.dirname(__file__), '..',
-                                             'local.cfg'))
-if os.path.exists(local_config):
-    config_files.append(local_config)
-
-LOG.info("Loading config files %s", config_files)
-# This will fail with an exception if the config file cannot be loaded
-parser.read(config_files)
-
-
-def normalize(val):
-    # Coerce value to an appropriate python type
-    if val.lower() in ("yes", "true"):
-        return True
-
-    if val.lower() in ("no", "false"):
-        return False
-
-    try:
-        return int(val)
-    except ValueError:
-        try:
-            return float(val)
-        except ValueError:
-            pass
-
-    return val
+path_opts = [
+    cfg.StrOpt('config_dir',
+               default=os.path.expanduser('~/openstack/my_cloud/config'),
+               help='Location of openstack config files'),
 
 
-def get_flask_config():
-    """Return all items in the [flask] section.
-
-    The keys are converted to upercase as required by flask.  Since
-    SafeConfigParser returns all values as strings
-    """
-    return {k.upper(): normalize(v) for k, v in parser.items('flask')}
 
 
-def get(section, item, default=None):
-    try:
-        return normalize(parser.get(section, item))
-    except (NoOptionError, NoSectionError):
-        return default
+    cfg.StrOpt('cp_output_dir',
+               default='~/scratch/cp/my_cloud/stage/info)',
+               help='Config processor output dir'),
+    cfg.StrOpt('cp_python_path',
+               default='/opt/stack/service/config-processor/venv/bin/python',
+               help='Python path used for running the config processor '
+                    'directly, normally in the virtual environment '
+                    'that has all config processor classes installed in it.'),
+    cfg.StrOpt('cp_script_path',
+               default='/opt/stack/service/config-processor/venv/share/' +
+                       'ardana-config-processor/Driver/ardana-cp',
+               help='Path to python script used to invoke the config '
+                    'processor locally'),
+    cfg.StrOpt('cp_ready_output_dir',
+               default='~/scratch/ansible/next/my_cloud/stage/info',
+               help='Directory into which the local config processor writes '
+                    'its output'),
+    cfg.StrOpt('cp_schema_dir',
+               default='/opt/stack/service/config-processor/venv/share/' +
+                       'ardana-config-processor/Data/Site',
+               help='Config processor schema dir'),
+    cfg.StrOpt('cp_services_dir',
+               default='~/openstack/ardana/services',
+               help='Config processor services dir'),
 
 
-def get_dir(dir_name):
-    try:
-        path = parser.get('paths', dir_name)
-    except NoOptionError:
-        return
+    cfg.StrOpt('log_dir',
+               default=os.path.expanduser('/var/log/ardana-service'),
+               help='Location of playbook run logs'),
+    cfg.StrOpt('model_dir',
+               default=os.path.expanduser('~/openstack/my_cloud/definition'),
+               help='Location of customer''s data model'),
+    cfg.StrOpt('playbooks_dir',
+               default=os.path.expanduser(
+                   '~/scratch/ansible/next/ardana/ansible'),
+               help='Location where playbooks are, along with the group_vars '
+                    'and other things produced by the config processor'),
+    cfg.StrOpt('pre_playbooks_dir',
+               default=os.path.expanduser('~/openstack/ardana/ansible'),
+               help='Location of os install playbooks, which is where the '
+                    'un-processed playbooks reside'),
+    cfg.StrOpt('templates_dir',
+               default=os.path.expanduser('~/openstack/examples'),
+               help='Directory containing input model templates'),
+    cfg.StrOpt('top_dir',
+               default=os.path.expanduser('~/openstack/my_cloud'),
+               help='Top-level directory containing all of the customer''s '
+                    'files, which are managed by git operations'),
+]
 
-    # Relative paths are resolved relative to the top-level directory
-    if path[0] not in ('/', '~'):
-        top_dir = os.path.normpath(os.path.join(os.path.dirname(__file__),
-                                                ".."))
-        path = os.path.abspath(os.path.join(top_dir, path))
+CONF = cfg.CONF
+CONF.register_opts(flask_opts)
+CONF.register_opts(path_opts, 'paths')
 
-    return path
+
+# This function is used by "tox -e genopts" to generate a config file
+# containing for the ardana service
+def list_opts():
+    return [('DEFAULT', flask_opts), ('paths', path_opts)]

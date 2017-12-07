@@ -7,15 +7,12 @@ import logging
 import os
 import time
 
-from . import config
 from . import socketio
 from .playbooks import get_events_file
 
 LOG = logging.getLogger(__name__)
 
 bp = Blueprint('listener', __name__)
-
-LOGS_DIR = config.get_dir("log_dir")
 
 
 @bp.route("/api/v2/listener/playbook", methods=['POST'])

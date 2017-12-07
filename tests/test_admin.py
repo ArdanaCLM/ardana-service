@@ -1,5 +1,5 @@
-import unittest
 import json
+import testtools
 from flask import Flask
 from ardana_service.admin import bp
 
@@ -7,7 +7,7 @@ app = Flask(__name__)
 app.register_blueprint(bp)
 
 
-class TestAdmin(unittest.TestCase):
+class TestAdmin(testtools.TestCase):
 
     def test_get_user(self):
         # Execute without mocking to verify that the real operating system

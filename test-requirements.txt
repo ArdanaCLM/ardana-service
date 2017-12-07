@@ -8,7 +8,9 @@
 #
 # Hacking should appear first in case something else depends on pep8
 hacking!=0.13.0,<0.14,>=0.12.0 # Apache-2.0
-sphinx                       # 1.6.3 has a problem with sphinxcontrib-httpdomain with flask
-sphinxcontrib-httpdomain<1.5
-socketIO-client   # Just for testing
-mock
+sphinx # BSD , 1.6.3 has a problem with sphinxcontrib-httpdomain with flask
+sphinxcontrib-httpdomain<1.5 # BSD
+socketIO-client # MIT - Just for testing
+testtools>=2.2.0 # MIT
+mock>=2.0.0 # BSD
+fixtures>=3.0.0 # Apache-2.0/BSD

@@ -1,10 +1,20 @@
 import json
-import unittest
+from oslo_config import cfg
+from oslo_config import fixture as oslo_fixture
+import testtools
 
+from ardana_service import config  # noqa: F401
 from ardana_service import playbooks
 
+CONF = cfg.CONF
 
-class TestArgProcessing(unittest.TestCase):
+
+class TestArgProcessing(testtools.TestCase):
+
+    def setUp(self):
+        super(TestArgProcessing, self).setUp()
+        self.conf = self.useFixture(oslo_fixture.Config(cfg.CONF))
+        self.conf.config(group='paths', playbooks_dir='data/ardana-ansible')
 
     def test_dashes(self):
         args = playbooks.get_command_args({
@@ -34,7 +44,7 @@ class TestArgProcessing(unittest.TestCase):
 
     def test_pre_inventory(self):
         args = playbooks.get_command_args({"foo": "bar"},
-                                          playbooks.PRE_PLAYBOOKS_DIR)
+                                          CONF.paths.pre_playbooks_dir)
         self.assertEqual("hosts/localhost", args['--inventory'])
 
     def test_force_omit_inventory(self):

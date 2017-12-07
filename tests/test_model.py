@@ -1,6 +1,6 @@
 import copy
 import os
-import unittest
+import testtools
 import yaml
 
 from ardana_service import model
@@ -8,21 +8,18 @@ from ardana_service import model
 TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), 'test_data')
 
 
-class TestReadInvalidModels(unittest.TestCase):
+class TestReadInvalidModels(testtools.TestCase):
 
     def test_read_model_missing_config(self):
-        with self.assertRaises(IOError):
-            model.read_model(TEST_DATA_DIR)
+        self.assertRaises(IOError, model.read_model, TEST_DATA_DIR)
 
     def test_read_invalid_yml(self):
         model_dir = os.path.join(TEST_DATA_DIR, 'invalid_yml')
-        with self.assertRaises(yaml.YAMLError):
-            model.read_model(model_dir)
+        self.assertRaises(yaml.YAMLError, model.read_model, model_dir)
 
     def test_read_invalid_dir(self):
         model_dir = os.path.join(TEST_DATA_DIR, 'doesnotexist')
-        with self.assertRaises(IOError):
-            model.read_model(model_dir)
+        self.assertRaises(IOError, model.read_model, model_dir)
 
 
 # Note that this class does not inherit from TestCase, but its descendants do
@@ -182,7 +179,7 @@ class TestWriteModels(object):
 
 
 # Write tests with a model that originally contained two pass-through files
-class TestWriteTwoPassthroughs(unittest.TestCase, TestWriteModels):
+class TestWriteTwoPassthroughs(testtools.TestCase, TestWriteModels):
 
     @classmethod
     def setUpClass(cls):
@@ -191,6 +188,7 @@ class TestWriteTwoPassthroughs(unittest.TestCase, TestWriteModels):
 
     def setUp(self):
         # Start each test with a fresh copy of the test data
+        super(TestWriteTwoPassthroughs, self).setUp()
         self.data = copy.deepcopy(self.test_data)
 
     def test_update_pass_through(self):
@@ -255,7 +253,7 @@ class TestWriteTwoPassthroughs(unittest.TestCase, TestWriteModels):
 
 
 # Write tests with a model that originally contained one pass-through file
-class TestWriteOnePassthrough(unittest.TestCase, TestWriteModels):
+class TestWriteOnePassthrough(testtools.TestCase, TestWriteModels):
 
     @classmethod
     def setUpClass(cls):
@@ -263,6 +261,7 @@ class TestWriteOnePassthrough(unittest.TestCase, TestWriteModels):
         cls.test_data = model.read_model(cls.model_dir)
 
     def setUp(self):
+        super(TestWriteOnePassthrough, self).setUp()
         # Start each test with a fresh copy of the test data
         self.data = copy.deepcopy(self.test_data)
 
@@ -310,7 +309,7 @@ class TestWriteOnePassthrough(unittest.TestCase, TestWriteModels):
 
 
 # Write tests with a model that originally contained no pass-through file
-class TestWriteNoPassthrough(unittest.TestCase, TestWriteModels):
+class TestWriteNoPassthrough(testtools.TestCase, TestWriteModels):
 
     @classmethod
     def setUpClass(cls):
@@ -318,6 +317,7 @@ class TestWriteNoPassthrough(unittest.TestCase, TestWriteModels):
         cls.test_data = model.read_model(cls.model_dir)
 
     def setUp(self):
+        super(TestWriteNoPassthrough, self).setUp()
         # Start each test with a fresh copy of the test data
         self.data = copy.deepcopy(self.test_data)
 

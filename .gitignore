@@ -9,3 +9,4 @@ log
 local.cfg
 *.pyc
 .idea
+etc/ardana-service.conf.sample

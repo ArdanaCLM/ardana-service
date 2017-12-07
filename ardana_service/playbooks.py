@@ -8,24 +8,34 @@ from flask import url_for
 from flask_socketio import emit
 from flask_socketio import join_room
 import functools
+import getopt
 import json
 import logging
 import os
+from oslo_config import cfg
 import subprocess
+import sys
 import tempfile
 import time
 
-from . import config
 from . import plays
 from . import socketio
 
 LOG = logging.getLogger(__name__)
 
 bp = Blueprint('playbooks', __name__)
+CONF = cfg.CONF
+test_opts = [
+    cfg.BoolOpt('use_mock',
+                default=False,
+                help='Use a mocking tool to fake certain commands'),
+    cfg.StrOpt('mock_cmd',
+               default='tools/mock-cmd',
+               help='Mock executable to execute in place of real command, '
+                    'relative to the top-level directory'),
+]
+CONF.register_opts(test_opts, 'testing')
 
-PLAYBOOKS_DIR = config.get_dir("playbooks_dir")
-PRE_PLAYBOOKS_DIR = config.get_dir("pre_playbooks_dir")
-LOGS_DIR = config.get_dir("log_dir")
 
 # Quiet down the socketIO library, which is far too chatty
 logging.getLogger('socketio').setLevel(logging.WARNING)
@@ -33,7 +43,7 @@ logging.getLogger('engineio').setLevel(logging.WARNING)
 logging.getLogger('filelock').setLevel(logging.WARNING)
 
 # These playbooks are run from a directory that exists even before
-# the ready-deployment has been done (PRE_PLAYBOOKS_DIR)
+# the ready-deployment has been done (CONF.paths.pre_playbooks_dir)
 STATIC_PLAYBOOKS = {
     'config-processor-run',
     'config-processor-clean',
@@ -80,7 +90,7 @@ def playbooks():
 
     playbooks = set(STATIC_PLAYBOOKS)
     try:
-        for filename in os.listdir(PLAYBOOKS_DIR):
+        for filename in os.listdir(CONF.paths.playbooks_dir):
             if filename[0] != '_' and filename.endswith('.yml'):
                 # Strip off extension
                 playbooks.add(filename[:-4])
@@ -89,7 +99,7 @@ def playbooks():
         LOG.warning("Playbooks directory %s doesn't exist. This could indicate"
                     " that the ready_deployment playbook hasn't been run yet. "
                     "The list of playbooks available will be reduced",
-                    PLAYBOOKS_DIR)
+                    CONF.paths.playbooks_dir)
 
     return jsonify(sorted(playbooks))
 
@@ -182,9 +192,9 @@ def run_playbook(name):
     """
 
     if name in STATIC_PLAYBOOKS:
-        cwd = PRE_PLAYBOOKS_DIR
+        cwd = CONF.paths.pre_playbooks_dir
     else:
-        cwd = PLAYBOOKS_DIR
+        cwd = CONF.paths.playbooks_dir
 
     args = get_command_args(cwd=cwd)
 
@@ -264,7 +274,7 @@ def get_command_args(payload={}, cwd=None):
     if 'inventory' in body:
         if body['inventory'] is None:
             body.pop('inventory')
-    elif cwd and cwd == PRE_PLAYBOOKS_DIR:
+    elif cwd and cwd == CONF.paths.pre_playbooks_dir:
         body['inventory'] = "hosts/localhost"
     else:
         body['inventory'] = "hosts/verb_hosts"
@@ -284,7 +294,8 @@ def get_command_args(payload={}, cwd=None):
     if 'encryption-key' in body:
         encryption_key = body.pop('encryption-key')
         with tempfile.NamedTemporaryFile(suffix='', prefix='.vault-pwd',
-                                         dir=PLAYBOOKS_DIR, delete=False) as f:
+                                         dir=CONF.paths.playbooks_dir,
+                                         delete=False) as f:
             f.write(encryption_key)
         body['vault-password-file'] = f.name
 
@@ -367,14 +378,38 @@ def build_command_line(command, playbook=None, args={}):
     cmdLine = []
 
     # For dev/testing, support using a mock script
-    use_mock = config.get("testing", "use_mock")
-    alt_command = config.get("testing", "mock_cmd")
-    if use_mock and alt_command:
-        # Relative path should be resolve w.r.t. the top-level dir
+    if CONF.testing.use_mock:
+
+        alt_command = CONF.testing.mock_cmd
+        # Use the same python executable in order to be able to make
+        # use of share libs like oslo_config
+        cmdLine.append(sys.executable)
+
+        # Relative path should be resolved w.r.t. the top-level dir
         if not os.path.isabs(alt_command):
             alt_command = os.path.normpath(
                 os.path.join(os.path.dirname(__file__), "..", alt_command))
         cmdLine.append(alt_command)
+
+        # Append the --config-file and --config-dir args of the command line of
+        # the ardana_server to the one being created for the mock_cmd so that
+        # it can read and process the same config files. If any paths are
+        # relative paths, resolve them to absolute paths since the command may
+        # be launched with a different cwd than the parent.
+        try:
+            opts, others = getopt.getopt(sys.argv[1:], None,
+                                         ['config-file=', 'config-dir='])
+            for opt, path in opts:
+                cmdLine.append(opt)
+                if not os.path.isabs(path):
+                    path = os.path.normpath(
+                        os.path.join(
+                            os.path.dirname(os.path.dirname(__file__)), path))
+                cmdLine.append(path)
+
+        except getopt.GetoptError as e:
+            LOG.exception(e)
+            abort(500)
 
     cmdLine.append(command)
 
@@ -520,11 +555,11 @@ def on_join(id):
 
 
 def get_log_file(id):
-    return os.path.join(LOGS_DIR, str(id) + ".log")
+    return os.path.join(CONF.paths.log_dir, str(id) + ".log")
 
 
 def get_events_file(id):
-    return os.path.join(LOGS_DIR, str(id) + ".events")
+    return os.path.join(CONF.paths.log_dir, str(id) + ".events")
 
 
 def get_running_playbook_id(playbook):

@@ -4,12 +4,12 @@ from flask import jsonify
 import logging
 import model
 import os
+from oslo_config import cfg
 
-from . import config
 
 LOG = logging.getLogger(__name__)
 bp = Blueprint('templates', __name__)
-TEMPLATES_DIR = config.get_dir("templates_dir")
+CONF = cfg.CONF
 
 
 @bp.route("/api/v2/templates")
@@ -45,9 +45,9 @@ def get_all_templates():
     """
 
     templates = []
-    for name in os.listdir(TEMPLATES_DIR):
+    for name in os.listdir(CONF.paths.templates_dir):
 
-        readme = os.path.join(TEMPLATES_DIR, name, "README.html")
+        readme = os.path.join(CONF.paths.templates_dir, name, "README.html")
         try:
             with open(readme) as f:
                 lines = f.readlines()
@@ -119,7 +119,7 @@ def get_template(name):
        }
     """
 
-    model_dir = os.path.join(TEMPLATES_DIR, name)
+    model_dir = os.path.join(CONF.paths.templates_dir, name)
     try:
         return jsonify(model.read_model(model_dir))
     except Exception as e:

@@ -1,49 +1,63 @@
-#!/usr/bin/python -u
-from ConfigParser import SafeConfigParser
-from ConfigParser import NoOptionError
-from ConfigParser import NoSectionError
 import os
 import re
 import requests
 import subprocess
 import sys
 import time
+from oslo_config import cfg
 
-# The following logic reads the same config files as the ardana service
-parser = SafeConfigParser()
+main_opts = [
+    cfg.IPOpt('host',
+              default='127.0.0.1',
+              help='IP address to listen on.'),
+    cfg.PortOpt('port',
+                default=9085,
+                help='Port number to listen on.'),
+]
 
-default_config = os.path.normpath(os.path.join(
-    os.path.dirname(__file__), "..", "ardana_service", 'defaults.cfg'))
+test_opts = [
+    cfg.BoolOpt('mock_ansible',
+                default=True,
+                help='Use a fake ansible-playbook command that replays canned '
+                     'logs'),
+    cfg.IntOpt('mock_replay_speed',
+               default=10,
+               help='Factor to speed up the replay of logs 1 = normal speed, '
+                    '2 = double speed, etc.   0 = no pauses (max speed)'),
+    cfg.BoolOpt('mock_config_processor',
+                default=False,
+                help='Use a fake config processor that immediately returns '
+                     'true?'),
+    cfg.IntOpt('mock_cmd_exit',
+               default=0,
+               help='Return value of this program'),
+]
 
-config_files = [default_config]
-local_config = os.path.normpath(os.path.join(
-    os.path.dirname(__file__), '..', 'local.cfg'))
+CONF = cfg.CONF
+CONF.register_opts(main_opts)
+CONF.register_opts(test_opts, 'testing')
 
-if os.path.exists(local_config):
-    config_files.append(local_config)
+# strip off config file processing args from sys.argv sys.argv
+conf_args = []
 
-parser.read(config_files)
+while(len(sys.argv) > 1 and sys.argv[1] in ('--config-dir','--config-file')):
+    conf_args.extend(sys.argv[1:3])
+    del sys.argv[1:3]
 
 
-def get(section, item, default=None):
-    try:
-        return parser.get(section, item)
-    except (NoOptionError, NoSectionError):
-        return default
-
-HOST=get("flask", "host", "127.0.0.1")
-PORT=str(get("flask", "port", "9085"))
+# Load config files specified on the command line
+CONF(conf_args)
 
 cmd_name = ''
 
-if len(sys.argv) > 1:
+if len(sys.argv) > 0:
     cmd_name = os.path.basename(sys.argv[1])
 
 # Config processor invocation
 if len(sys.argv) > 2 and cmd_name.startswith('python') and \
    'config-processor' in sys.argv[2]:
 
-    if get("testing", "mock_config_processor") == "true":
+    if CONF.testing.mock_config_processor:
 
         for pos, arg in enumerate(sys.argv):
             if arg == '-c':
@@ -86,8 +100,8 @@ if len(sys.argv) > 2 and cmd_name.startswith('python') and \
 
 elif cmd_name == 'ansible-playbook':
 
-    if get("testing", "mock_ansible", None) == "true":
-        replay_speed = float(get("testing", "mock_replay_speed", 0))
+    if CONF.testing.mock_ansible:
+        replay_speed = float(CONF.testing.mock_replay_speed)
 
         play_id = os.environ.get('PLAY_ID', 0)
 
@@ -97,7 +111,7 @@ elif cmd_name == 'ansible-playbook':
                 break
 
         log = os.path.normpath(os.path.join(os.path.dirname(__file__),
-                               playbook.replace('yml','log')))
+                               playbook.replace('yml', 'log')))
 
         with open(log) as f:
             lines = f.readlines()
@@ -109,7 +123,12 @@ elif cmd_name == 'ansible-playbook':
             if match:
                 if match.group(1) == "EVENT":
                     (event, name) = match.group(2).split(' ')
-                    url = 'http://%s:%s/api/v2/listener/playbook' % (HOST, PORT)
+                    host = CONF.host
+                    if host == '0.0.0.0':
+                        host = '127.0.0.1'
+                    port = str(CONF.port)
+                    url = 'http://%s:%s/api/v2/listener/playbook' % \
+                        (host, port)
                     payload = {'play_id': play_id,
                                'playbook': name,
                                'event': event}
@@ -117,7 +136,8 @@ elif cmd_name == 'ansible-playbook':
                 else:
                     next_time = int(match.group(1))
                     if last_time > 0 and replay_speed > 0:
-                        naptime = (next_time - last_time) / (replay_speed * 1000.0)
+                        naptime = (next_time - last_time) / \
+                                  (replay_speed * 1000.0)
                         time.sleep(naptime)
                     last_time = next_time
 
@@ -138,6 +158,7 @@ elif cmd_name == 'ansible-playbook':
             print e.output
             sys.exit(e.returncode)
 
-exit_code = int(get("testing", "mock_cmd_exit", 0))
+exit_code = CONF.testing.mock_cmd_exit
+
 if exit_code != 0:
     sys.exit(exit_code)

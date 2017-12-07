@@ -1,7 +1,9 @@
 Flask>=0.11,<1.0  # BSD
-eventlet          # MIT
-flask-socketio    # MIT
-flask-cors        # MIT
-PyYAML>=3.10.0    # MIT
-gitpython>=2.0    # BSD-3
-filelock          # Public Domain
+eventlet # MIT
+flask-socketio # MIT
+flask-cors # MIT
+PyYAML>=3.10.0 # MIT
+gitpython>=2.0 # BSD-3
+filelock # Public Domain
+oslo.config>=5.1.0 # Apache-2.0
+keystonemiddleware>=4.17.0 # Apache-2.0

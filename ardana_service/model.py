@@ -7,22 +7,17 @@ from flask import request
 from flask import url_for
 import logging
 import os
+from oslo_config import cfg
 import random
 import yaml
-
-from . import config
 
 
 LOG = logging.getLogger(__name__)
 
-MODEL_DIR = config.get_dir("model_dir")
-PLAYBOOKS_DIR = config.get_dir("playbooks_dir")
-CP_OUTPUT_DIR = config.get_dir("cp_output_dir")
-CP_READY_DIR = config.get_dir("cp_ready_output_dir")
-
 CLOUD_CONFIG = "cloudConfig.yml"
 
 bp = Blueprint('model', __name__)
+CONF = cfg.CONF
 
 # Define some constants to avoid problems caused by typos
 CHANGED = 'changed'
@@ -221,9 +216,10 @@ def get_all_files():
     }
 
     # Now read and process all yml files in the dir tree below
-    for root, dirs, files in os.walk(MODEL_DIR):
+    for root, dirs, files in os.walk(CONF.paths.model_dir):
         for file in files:
-            relname = os.path.relpath(os.path.join(root, file), MODEL_DIR)
+            relname = os.path.relpath(os.path.join(root, file),
+                                      CONF.paths.model_dir)
             if file.endswith('.yml'):
 
                 basename = os.path.basename(relname).split('.')[0]
@@ -247,7 +243,7 @@ def get_all_files():
 def model_file(name):
 
     if request.method == 'GET':
-        filename = os.path.join(MODEL_DIR, name)
+        filename = os.path.join(CONF.paths.model_dir, name)
         contents = ''
         try:
             with open(filename) as f:
@@ -270,7 +266,7 @@ def model_file(name):
             abort(400)
 
         # It's valid, so write it out
-        filename = os.path.join(MODEL_DIR, name)
+        filename = os.path.join(CONF.paths.model_dir, name)
         try:
             with open(filename, "w") as f:
                 f.write(data)
@@ -300,7 +296,8 @@ def get_encrypted():
 
     VAULT_MARKER = '$ANSIBLE_VAULT'
     try:
-        vault_file = os.path.join(PLAYBOOKS_DIR, 'group_vars', 'all')
+        vault_file = os.path.join(CONF.paths.playbooks_dir, 'group_vars',
+                                  'all')
         with open(vault_file) as f:
             marker = f.read(len(VAULT_MARKER))
         encrypted = (marker == VAULT_MARKER)
@@ -346,9 +343,9 @@ def list_cp_output():
     """
 
     if request.args.get("ready") == "true":
-        output_dir = CP_READY_DIR
+        output_dir = CONF.paths.cp_ready_dir
     else:
-        output_dir = CP_OUTPUT_DIR
+        output_dir = CONF.paths.cp_output_dir
 
     try:
         results = [name for name in os.listdir(output_dir)
@@ -410,9 +407,9 @@ def get_cp_output_file(name):
     """
 
     if request.args.get("ready") == "true":
-        output_dir = CP_READY_DIR
+        output_dir = CONF.paths.cp_ready_dir
     else:
-        output_dir = CP_OUTPUT_DIR
+        output_dir = CONF.paths.cp_output_dir
 
     filename = os.path.join(output_dir, name)
     if not filename.endswith(".yml"):
@@ -455,7 +452,7 @@ def get_key_field(obj):
                 return key
 
 
-def read_model(model_dir=MODEL_DIR):
+def read_model(model_dir=None):
     """Reads the input model directory structure into a big dictionary
 
     Reads all of the yaml files from the given directory and loads them into a
@@ -463,6 +460,8 @@ def read_model(model_dir=MODEL_DIR):
     capture where each entry was loaded, so that the object can be written back
     out to the appropriate files
     """
+
+    model_dir = model_dir or CONF.paths.model_dir
 
     # First read and process the top-level cloud config file
     cloud_config_file = os.path.join(model_dir, CLOUD_CONFIG)
@@ -612,7 +611,9 @@ def update_pass_through(model):
 #
 
 # This function is long and should be modularized
-def write_model(in_model, model_dir=MODEL_DIR, dry_run=False):  # noqa: C901
+def write_model(in_model, model_dir=None, dry_run=False):  # noqa: C901
+
+    model_dir = model_dir or CONF.paths.model_dir
 
     # Create a deep copy of the model to avoid munging the model that was
     # passed in

@@ -7,17 +7,15 @@ from flask import send_from_directory
 import json
 import logging
 import os
+from oslo_config import cfg
 import signal
 import sys
 import time
 
-from . import config
-
 LOG = logging.getLogger(__name__)
-
 bp = Blueprint('plays', __name__)
+CONF = cfg.CONF
 
-LOGS_DIR = config.get_dir("log_dir")
 META_EXT = ".json"
 
 # Functions to deal with "plays".  Every time an ansible playbook is run,
@@ -49,7 +47,7 @@ def get_log(id):
     """
     # For security, send_from_directory avoids sending any files
     # outside of the specified directory
-    return send_from_directory(LOGS_DIR, str(id) + ".log")
+    return send_from_directory(CONF.paths.log_dir, str(id) + ".log")
 
 
 @bp.route("/api/v2/plays")
@@ -119,11 +117,11 @@ def get_plays():
                     meta_files.append(get_metadata_file(id))
 
         else:
-            for filename in os.listdir(LOGS_DIR):
+            for filename in os.listdir(CONF.paths.log_dir):
                 if not filename.endswith(META_EXT):
                     continue
 
-                path = os.path.join(LOGS_DIR, filename)
+                path = os.path.join(CONF.paths.log_dir, filename)
                 meta_files.append(path)
 
         for path in meta_files:
@@ -184,7 +182,7 @@ def get_play(id):
          "startTime": 1502161460385
        }
     """
-    return send_from_directory(LOGS_DIR, str(id) + META_EXT)
+    return send_from_directory(CONF.paths.log_dir, str(id) + META_EXT)
 
 
 @bp.route("/api/v2/plays/<id>", methods=['DELETE'])
@@ -258,16 +256,16 @@ def get_events(id):
     """
     # For security, send_from_directory avoids sending any files
     # outside of the specified directory
-    return send_from_directory(LOGS_DIR, str(id) + ".events",
+    return send_from_directory(CONF.paths.log_dir, str(id) + ".events",
                                mimetype="application/json")
 
 
 def get_metadata_lockfile(id):
-    return os.path.join(LOGS_DIR, str(id) + ".lock")
+    return os.path.join(CONF.paths.log_dir, str(id) + ".lock")
 
 
 def get_metadata_file(id):
-    return os.path.join(LOGS_DIR, str(id) + META_EXT)
+    return os.path.join(CONF.paths.log_dir, str(id) + META_EXT)
 
 
 def get_running_plays():

@@ -1,5 +1,5 @@
+from ardana_service import config  # noqa: F401
 from ardana_service import admin
-from ardana_service import config
 from ardana_service import config_processor
 from ardana_service import listener
 from ardana_service import model
@@ -15,6 +15,7 @@ import datetime
 from flask import Flask
 from flask import request
 from flask_cors import CORS
+from oslo_config import cfg
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
@@ -31,6 +32,11 @@ app.register_blueprint(service.bp)
 app.register_blueprint(templates.bp)
 app.register_blueprint(versions.bp)
 CORS(app)
+
+
+CONF = cfg.CONF
+# Load config options any config files specified on the command line
+CONF()
 
 
 @app.before_request
@@ -57,12 +63,13 @@ def log_response(response):
 
 
 if __name__ == "__main__":
-
-    flask_config = config.get_flask_config()
-    port = flask_config.pop('PORT', 9085)
-    host = flask_config.pop('HOST', '127.0.0.1')
-
-    app.config.from_mapping(config.get_flask_config())
+    # Note that any flask options that are to be exposed in our config file
+    # have to be explicitly configured (in flask_opts above) and explicitly
+    # placed into the following dict
+    flask_config = {
+        "JSONIFY_PRETTYPRINT_REGULAR": CONF.pretty_json
+    }
+    app.config.from_mapping(flask_config)
 
     socketio.init_app(app)
-    socketio.run(app, host=host, port=port, use_reloader=True)
+    socketio.run(app, host=CONF.host, port=CONF.port, use_reloader=True)

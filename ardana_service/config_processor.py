@@ -5,22 +5,18 @@ from flask import make_response
 from flask import request
 import logging
 import os
+from oslo_config import cfg
 import subprocess
 import sys
 import tempfile
 import time
 
-from . import config
 from . import model
 from . import playbooks
 
 LOG = logging.getLogger(__name__)
 bp = Blueprint('config_processor', __name__)
-
-MODEL_DIR = config.get_dir("model_dir")
-CP_SERVICES_DIR = config.get_dir("cp_services_dir")
-CP_SCHEMA_DIR = config.get_dir("cp_schema_dir")
-CP_SCRIPT_PATH = config.get_dir("cp_python_script_path")
+CONF = cfg.CONF
 
 
 @bp.route("/api/v2/config_processor", methods=['POST'])
@@ -73,18 +69,18 @@ def run_config_processor():
     elif req and "want_pass" in req:
         return '', 201
 
-    python = config.get_dir('cp_python_path') or sys.executable
+    python = CONF.paths.cp_python_path or sys.executable
 
     tempdir = tempfile.mkdtemp()
 
     output_dir = os.path.join(tempdir, "clouds")
     log_dir = os.path.join(tempdir, "log")
 
-    cmd = playbooks.build_command_line(python, CP_SCRIPT_PATH, [
+    cmd = playbooks.build_command_line(python, CONF.paths.cp_script_path, [
         '-l', log_dir,
-        '-c', os.path.join(MODEL_DIR, 'cloudConfig.yml'),
-        '-s', CP_SERVICES_DIR,
-        '-r', CP_SCHEMA_DIR,
+        '-c', os.path.join(CONF.paths.model_dir, 'cloudConfig.yml'),
+        '-s', CONF.paths.cp_services_dir,
+        '-r', CONF.paths.cp_schema_dir,
         '-o', output_dir])
 
     start_time = int(time.time())

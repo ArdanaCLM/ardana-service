@@ -4,18 +4,16 @@ from flask import request
 from git import Repo
 import logging
 import os
+from oslo_config import cfg
 
-from . import config
 
 LOG = logging.getLogger(__name__)
-
 bp = Blueprint('versions', __name__)
-
-GIT_DIR = config.get_dir("top_dir")
+CONF = cfg.CONF
 
 
 @bp.route("/api/v2/model/changes", methods=['DELETE'])
-def reset(dir=GIT_DIR):
+def reset(dir=None):
     """Resets the input model to the last committed version.
 
        This will reset any staged or un-staged changes, as
@@ -36,6 +34,7 @@ def reset(dir=GIT_DIR):
        Success
     """
 
+    dir = dir or CONF.paths.top_dir
     repo = Repo(dir)
     repo.head.reset(index=True, working_tree=True)
     for f in repo.untracked_files:
@@ -45,7 +44,7 @@ def reset(dir=GIT_DIR):
 
 
 @bp.route("/api/v2/model/commit", methods=['POST'])
-def commit(dir=GIT_DIR):
+def commit(dir=None):
     """Commits the current input model changes to the git repository.
 
        This will commit any staged or un-staged changes, and it will
@@ -75,6 +74,7 @@ def commit(dir=GIT_DIR):
     """
 
     message = request.get_json().get("message") or "Empty commit message"
+    dir = dir or CONF.paths.top_dir
     repo = Repo(dir)
 
     # Get commit at head of site branch
@@ -94,17 +94,15 @@ def commit(dir=GIT_DIR):
     # (which are differences between the index and the working tree)
     changes_exist = False
     for f in repo.index.diff(None):
-        path = os.path.join(dir, f.a_path)
         if f.change_type == 'D':
-            repo.index.remove([path])
+            repo.index.remove([f.a_path])
         else:
-            repo.index.add([path])
+            repo.index.add([f.a_path])
         changes_exist = True
 
     # Add all untracked files to the index
     for f in repo.untracked_files:
-        path = os.path.join(dir, f)
-        repo.index.add([path])
+        repo.index.add([f])
         changes_exist = True
 
     # Commit the changes in the index
