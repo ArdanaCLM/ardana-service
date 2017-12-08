@@ -33,16 +33,54 @@ def get_all_templates():
          {
            "name": "entry-scale-esx-kvm-vsa",
            "href": "/api/v2/templates/entry-scale-esx-kvm-vsa",
-           "overview": "..."
+           "overview": "...",
+           "metadata": {"nodeCount": 30, "hypervisor": ["esx", "kvm"], "storage": "vsa"}
          },
          {
            "name": "entry-scale-ironic-flat-network",
            "href": "/api/v2/templates/entry-scale-ironic-flat-network",
-           "overview": "..."
+           "overview": "...",
+           "metadata": {"nodeCount": 30, "hypervisor": ["ironic"], "network": "flat"}
+         },
+         {
+           "name": "mid-scale-kvm-vsa",
+           "href": "/api/v2/templates/mid-scale-kvm-vsa",
+           "overview": "...",
+           "metadata": {"nodeCount": 200, "hypervisor": ["kvm"], "storage": "vsa"}
          },
          "..."
        ]
     """
+
+    metadata_table = {
+        'entry-scale-esx-kvm-vsa': {
+            'nodeCount': 30, 'hypervisor': ['esx', 'kvm'], 'storage': 'vsa'
+        },
+        'entry-scale-ironic-flat-network': {
+            'nodeCount': 30, 'hypervisor': ['ironic'], 'network': 'flat'
+        },
+        'entry-scale-ironic-multi-tenancy': {
+            'nodeCount': 30, 'hypervisor': ['ironic'], 'network': 'multi-tenant'
+        },
+        'entry-scale-kvm-ceph': {
+            'nodeCount': 30, 'hypervisor': ['kvm'], 'storage': 'ceph'
+        },
+        'entry-scale-kvm-esx-vsa-mml': {
+            'nodeCount': 30, 'hypervisor': ['esx', 'kvm'], 'storage': 'vsa'
+        },
+        'entry-scale-kvm-vsa': {
+            'nodeCount': 30, 'hypervisor': ['kvm'], 'storage': 'vsa'
+        },
+        'entry-scale-kvm-vsa-mml': {
+            'nodeCount': 30, 'hypervisor': ['kvm'], 'storage': 'vsa'
+        },
+        'entry-scale-swift': {
+            'nodeCount': 30, 'hypervisor': [], 'storage': 'swift'
+        },
+        'mid-scale-kvm-vsa': {
+            'nodeCount': 200, 'hypervisor': ['kvm'], 'storage': 'vsa'
+        }
+    }
 
     templates = []
     for name in os.listdir(CONF.paths.templates_dir):
@@ -52,11 +90,13 @@ def get_all_templates():
             with open(readme) as f:
                 lines = f.readlines()
             overview = ''.join(lines)
+            metadata = metadata_table[name] if name in metadata_table else ''
 
             templates.append({
                 'name': name,
                 'href': '/'.join(('/api/v2/templates', name)),
-                'overview': overview
+                'overview': overview,
+                'metadata': metadata
             })
 
         except IOError:
