@@ -1,0 +1,7 @@
+---
+  product:
+    version: 2
+
+  pass-through:
+    global:
+       esx_cloud2: true
