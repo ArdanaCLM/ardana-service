@@ -47,7 +47,7 @@ def get_log(id):
     """
     # For security, send_from_directory avoids sending any files
     # outside of the specified directory
-    return send_from_directory(CONF.paths.log_dir, str(id) + ".log")
+    return send_from_directory(get_log_dir_abs(), str(id) + ".log")
 
 
 @bp.route("/api/v2/plays")
@@ -182,7 +182,7 @@ def get_play(id):
          "startTime": 1502161460385
        }
     """
-    return send_from_directory(CONF.paths.log_dir, str(id) + META_EXT)
+    return send_from_directory(get_log_dir_abs(), str(id) + META_EXT)
 
 
 @bp.route("/api/v2/plays/<id>", methods=['DELETE'])
@@ -256,7 +256,7 @@ def get_events(id):
     """
     # For security, send_from_directory avoids sending any files
     # outside of the specified directory
-    return send_from_directory(CONF.paths.log_dir, str(id) + ".events",
+    return send_from_directory(get_log_dir_abs(), str(id) + ".events",
                                mimetype="application/json")
 
 
@@ -278,3 +278,23 @@ def basename(playbook):
         return playbook
 
     return os.path.basename(playbook.rstrip(".yml"))
+
+
+def get_log_dir_abs():
+    """Get log_dir absolute path
+
+    When flask serves log files directly with send_from_directory(), it expects
+    relative pathnames to be relative to where the main.py resides, but
+    relative pathnames in the config files are considered to be relative
+    to the cwd of when flask was launched.  Return the absolute path of the
+    log directory.
+
+    Note that production config files specify absolute paths, so this
+    function only modifies paths in development environments (where relative
+    pathnames are used in config files)
+    """
+    log_dir = CONF.paths.log_dir
+    if os.path.isabs(log_dir):
+        return log_dir
+
+    return os.path.normpath(os.path.join(os.getcwd(), CONF.paths.log_dir))
