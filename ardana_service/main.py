@@ -1,5 +1,5 @@
-from ardana_service import config  # noqa: F401
 from ardana_service import admin
+from ardana_service import config  # noqa: F401
 from ardana_service import config_processor
 from ardana_service import listener
 from ardana_service import model
@@ -16,6 +16,7 @@ from flask import Flask
 from flask import request
 from flask_cors import CORS
 from oslo_config import cfg
+
 import logging
 logging.basicConfig(level=logging.DEBUG)
 

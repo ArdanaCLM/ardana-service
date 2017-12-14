@@ -1,9 +1,9 @@
 from flask import Blueprint
 from flask import jsonify
-import pbr.version
-import time
-import pwd
 import os
+import pbr.version
+import pwd
+import time
 
 bp = Blueprint('admin', __name__)
 

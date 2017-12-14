@@ -1,12 +1,12 @@
-import testtools
-import mock
 import json
+import mock
 import os
 from oslo_config import cfg
 from oslo_config import fixture as oslo_fixture
+import testtools
 
-from flask import Flask
 from ardana_service.service import bp
+from flask import Flask
 
 app = Flask(__name__)
 app.register_blueprint(bp)
@@ -29,8 +29,8 @@ class TestServiceFiles(testtools.TestCase):
         myapp = app.test_client()
         x = myapp.get('/api/v2/service/files')
         y = json.loads(x.data)
-        self.assertEquals(len(y), 1)
-        self.assertEquals(y[0]['files'][0], 'test.j2')
+        self.assertEqual(len(y), 1)
+        self.assertEqual(y[0]['files'][0], 'test.j2')
 
     @mock.patch('os.walk')
     def test_get_all_files_subdir(self, mock_os_walk):
@@ -42,8 +42,8 @@ class TestServiceFiles(testtools.TestCase):
         myapp = app.test_client()
         x = myapp.get('/api/v2/service/files')
         y = json.loads(x.data)
-        self.assertEquals(len(y), 1)
-        self.assertEquals(y[0]['files'][0], 'subdir/test.j2')
+        self.assertEqual(len(y), 1)
+        self.assertEqual(y[0]['files'][0], 'subdir/test.j2')
 
     @mock.patch('os.walk')
     def test_get_all_files_emptydir(self, mock_os_walk):
@@ -54,7 +54,7 @@ class TestServiceFiles(testtools.TestCase):
         myapp = app.test_client()
         x = myapp.get('/api/v2/service/files')
         y = json.loads(x.data)
-        self.assertEquals(len(y), 0)
+        self.assertEqual(len(y), 0)
 
     def test_get_a_file(self):
 

@@ -1,3 +1,4 @@
+import collections
 from flask import abort
 from flask import Blueprint
 from flask import jsonify
@@ -5,7 +6,6 @@ from flask import request
 import logging
 import os
 from oslo_config import cfg
-import collections
 
 LOG = logging.getLogger(__name__)
 bp = Blueprint('service', __name__)

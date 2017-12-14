@@ -34,19 +34,22 @@ def get_all_templates():
            "name": "entry-scale-esx-kvm-vsa",
            "href": "/api/v2/templates/entry-scale-esx-kvm-vsa",
            "overview": "...",
-           "metadata": {"nodeCount": 30, "hypervisor": ["esx", "kvm"], "storage": "vsa"}
+           "metadata": {"nodeCount": 30, "hypervisor": ["esx", "kvm"],
+               "storage": "vsa"}
          },
          {
            "name": "entry-scale-ironic-flat-network",
            "href": "/api/v2/templates/entry-scale-ironic-flat-network",
            "overview": "...",
-           "metadata": {"nodeCount": 30, "hypervisor": ["ironic"], "network": "flat"}
+           "metadata": {"nodeCount": 30, "hypervisor": ["ironic"],
+                "network": "flat"}
          },
          {
            "name": "mid-scale-kvm-vsa",
            "href": "/api/v2/templates/mid-scale-kvm-vsa",
            "overview": "...",
-           "metadata": {"nodeCount": 200, "hypervisor": ["kvm"], "storage": "vsa"}
+           "metadata": {"nodeCount": 200, "hypervisor": ["kvm"],
+                "storage": "vsa"}
          },
          "..."
        ]
@@ -60,7 +63,8 @@ def get_all_templates():
             'nodeCount': 30, 'hypervisor': ['ironic'], 'network': 'flat'
         },
         'entry-scale-ironic-multi-tenancy': {
-            'nodeCount': 30, 'hypervisor': ['ironic'], 'network': 'multi-tenant'
+            'nodeCount': 30, 'hypervisor': ['ironic'], 'network':
+                'multi-tenant'
         },
         'entry-scale-kvm-ceph': {
             'nodeCount': 30, 'hypervisor': ['kvm'], 'storage': 'ceph'
