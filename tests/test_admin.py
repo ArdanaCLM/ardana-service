@@ -1,6 +1,7 @@
+from flask import Flask
 import json
 import testtools
-from flask import Flask
+
 from ardana_service.admin import bp
 
 app = Flask(__name__)
