@@ -3,9 +3,9 @@ from flask import abort
 from flask import Blueprint
 from flask import jsonify
 from flask import request
-import logging
 import os
 from oslo_config import cfg
+from oslo_log import log as logging
 
 LOG = logging.getLogger(__name__)
 bp = Blueprint('service', __name__)

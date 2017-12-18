@@ -25,6 +25,18 @@ PROGRAM = 'ardana_service'
 LOG = logging.getLogger(PROGRAM)
 CONF = cfg.CONF
 logging.register_options(CONF)
+
+# The default level of INFO for engineio and socketio yields messages
+# for every line of every log that is transferred through the socket.
+# WARN avoids that.
+extra_log_level_defaults = [
+    'engineio=WARN',
+    'socketio=WARN',
+    'filelock=WARN',
+]
+logging.set_defaults(default_log_levels=logging.get_default_log_levels() +
+                     extra_log_level_defaults)
+
 # Load config options any config files specified on the command line
 CONF()
 logging.setup(CONF, PROGRAM)

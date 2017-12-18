@@ -5,9 +5,9 @@ from flask import jsonify
 from flask import request
 from flask import send_from_directory
 import json
-import logging
 import os
 from oslo_config import cfg
+from oslo_log import log as logging
 import signal
 import sys
 import time

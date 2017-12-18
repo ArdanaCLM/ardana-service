@@ -2,9 +2,9 @@ from flask import abort
 from flask import Blueprint
 from flask import request
 from git import Repo
-import logging
 import os
 from oslo_config import cfg
+from oslo_log import log as logging
 
 
 LOG = logging.getLogger(__name__)

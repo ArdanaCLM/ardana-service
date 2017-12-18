@@ -1,5 +1,5 @@
 from flask import Blueprint
-import logging
+from oslo_log import log as logging
 
 LOG = logging.getLogger(__name__)
 bp = Blueprint('osinstall', __name__)

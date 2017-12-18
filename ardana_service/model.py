@@ -5,9 +5,9 @@ from flask import Blueprint
 from flask import jsonify
 from flask import request
 from flask import url_for
-import logging
 import os
 from oslo_config import cfg
+from oslo_log import log as logging
 import random
 import yaml
 

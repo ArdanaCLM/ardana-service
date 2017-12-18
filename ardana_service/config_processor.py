@@ -3,9 +3,9 @@ from flask import Blueprint
 from flask import jsonify
 from flask import make_response
 from flask import request
-import logging
 import os
 from oslo_config import cfg
+from oslo_log import log as logging
 import subprocess
 import sys
 import tempfile

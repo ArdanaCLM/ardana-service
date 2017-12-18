@@ -10,9 +10,9 @@ from flask_socketio import join_room
 import functools
 import getopt
 import json
-import logging
 import os
 from oslo_config import cfg
+from oslo_log import log as logging
 import subprocess
 import sys
 import tempfile
@@ -35,12 +35,6 @@ test_opts = [
                     'relative to the top-level directory'),
 ]
 CONF.register_opts(test_opts, 'testing')
-
-
-# Quiet down the socketIO library, which is far too chatty
-logging.getLogger('socketio').setLevel(logging.WARNING)
-logging.getLogger('engineio').setLevel(logging.WARNING)
-logging.getLogger('filelock').setLevel(logging.WARNING)
 
 # These playbooks are run from a directory that exists even before
 # the ready-deployment has been done (CONF.paths.pre_playbooks_dir)

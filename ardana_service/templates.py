@@ -1,10 +1,10 @@
 from flask import abort
 from flask import Blueprint
 from flask import jsonify
-import logging
 import model
 import os
 from oslo_config import cfg
+from oslo_log import log as logging
 
 
 LOG = logging.getLogger(__name__)

@@ -3,8 +3,8 @@ from flask import Blueprint
 from flask import jsonify
 from flask import request
 import json
-import logging
 import os
+from oslo_log import log as logging
 import time
 
 from . import socketio
