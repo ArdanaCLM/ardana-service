@@ -48,6 +48,13 @@ while(len(sys.argv) > 1 and sys.argv[1] in ('--config-dir','--config-file')):
 # Load config files specified on the command line
 CONF(conf_args)
 
+exit_code = CONF.testing.mock_cmd_exit
+
+if exit_code != 0:
+    print "Fake error message to simluate an error\n"
+    print "Exiting with code %s" % exit_code
+    sys.exit(exit_code)
+
 cmd_name = ''
 
 if len(sys.argv) > 0:
@@ -158,7 +165,3 @@ elif cmd_name == 'ansible-playbook':
             print e.output
             sys.exit(e.returncode)
 
-exit_code = CONF.testing.mock_cmd_exit
-
-if exit_code != 0:
-    sys.exit(exit_code)
