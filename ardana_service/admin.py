@@ -1,11 +1,15 @@
 from flask import Blueprint
 from flask import jsonify
+from flask import request
 import os
+from oslo_config import cfg
 import pbr.version
 import pwd
+import threading
 import time
 
 bp = Blueprint('admin', __name__)
+CONF = cfg.CONF
 
 
 @bp.route("/api/v2/version")
@@ -81,3 +85,34 @@ def user():
     """
     user_dict = {'username': pwd.getpwuid(os.getuid()).pw_name}
     return jsonify(user_dict)
+
+
+def update_trigger_file():
+    trigger_file = os.path.join(CONF.paths.log_dir, 'trigger.txt')
+    with open(trigger_file, 'w') as f:
+        f.write("Triggered restart at %s\n" % time.asctime())
+
+
+@bp.route("/api/v2/restart", methods=['POST'])
+def restart():
+    """Requests the service to restart after a specified delay, in seconds
+
+    **Example Request**:
+
+    .. sourcecode:: http
+
+       POST /api/v2/user HTTP/1.1
+
+       Content-Type: application/json
+
+       {
+          "delay": 60
+       }
+    """
+    info = request.get_json() or {}
+    delay_secs = int(info.get('delay', 0))
+
+    t = threading.Timer(delay_secs, update_trigger_file)
+    t.start()
+
+    return 'Success'

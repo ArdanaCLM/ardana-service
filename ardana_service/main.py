@@ -18,8 +18,10 @@ from flask_cors import CORS
 from keystonemiddleware import auth_token
 # Load keystone options into global config object
 from keystonemiddleware import opts  # noqa: F401
+import os
 from oslo_config import cfg
 from oslo_log import log as logging
+import time
 
 PROGRAM = 'ardana_service'
 LOG = logging.getLogger(PROGRAM)
@@ -93,5 +95,10 @@ if __name__ == "__main__":
     }
     app.config.from_mapping(flask_config)
 
+    trigger_file = os.path.join(CONF.paths.log_dir, 'trigger.txt')
+    with open(trigger_file, 'w') as f:
+        f.write("Started at %s\n" % time.asctime())
+
     socketio.init_app(app)
-    socketio.run(app, host=CONF.host, port=CONF.port, use_reloader=True)
+    socketio.run(app, host=CONF.host, port=CONF.port, use_reloader=True,
+                 extra_files=[trigger_file])
