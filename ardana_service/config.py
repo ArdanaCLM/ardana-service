@@ -22,7 +22,7 @@ path_opts = [
 
 
     cfg.StrOpt('cp_output_dir',
-               default='~/scratch/cp/my_cloud/stage/info)',
+               default=os.path.expanduser('~/scratch/cp/my_cloud/stage/info'),
                help='Config processor output dir'),
     cfg.StrOpt('cp_python_path',
                default='/opt/stack/service/config-processor/venv/bin/python',
@@ -35,7 +35,8 @@ path_opts = [
                help='Path to python script used to invoke the config '
                     'processor locally'),
     cfg.StrOpt('cp_ready_output_dir',
-               default='~/scratch/ansible/next/my_cloud/stage/info',
+               default=os.path.expanduser(
+                   '~/scratch/ansible/next/my_cloud/stage/info'),
                help='Directory into which the local config processor writes '
                     'its output'),
     cfg.StrOpt('cp_schema_dir',
@@ -43,12 +44,12 @@ path_opts = [
                        'ardana-config-processor/Data/Site',
                help='Config processor schema dir'),
     cfg.StrOpt('cp_services_dir',
-               default='~/openstack/ardana/services',
+               default=os.path.expanduser('~/openstack/ardana/services'),
                help='Config processor services dir'),
 
 
     cfg.StrOpt('log_dir',
-               default=os.path.expanduser('/var/log/ardana-service'),
+               default='/var/log/ardana-service',
                help='Location of playbook run logs'),
     cfg.StrOpt('model_dir',
                default=os.path.expanduser('~/openstack/my_cloud/definition'),
