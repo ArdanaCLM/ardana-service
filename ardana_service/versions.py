@@ -34,7 +34,7 @@ def reset(dir=None):
        Success
     """
 
-    dir = dir or CONF.paths.top_dir
+    dir = dir or CONF.paths.git_dir
     repo = Repo(dir)
     repo.head.reset(index=True, working_tree=True)
     for f in repo.untracked_files:
@@ -74,7 +74,7 @@ def commit(dir=None):
     """
 
     message = request.get_json().get("message") or "Empty commit message"
-    dir = dir or CONF.paths.top_dir
+    dir = dir or CONF.paths.git_dir
     repo = Repo(dir)
 
     # Get commit at head of site branch

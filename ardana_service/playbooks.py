@@ -42,7 +42,10 @@ STATIC_PLAYBOOKS = {
     'config-processor-run',
     'config-processor-clean',
     'ready-deployment',
-    'dayzero-os-provision'}
+    'dayzero-os-provision',
+    'dayzero-pre-deployment'}
+
+# TODO(jack) SCRD-2228 Refactor/rename the dayzero-* playbooks as installui-*
 
 # TODO(gary) Consider creating a function to archive old plays (create a tgz
 #    of log and metadata).  This feature is not mentioned anywhere, but the

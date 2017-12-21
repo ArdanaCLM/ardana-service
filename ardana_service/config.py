@@ -66,8 +66,8 @@ path_opts = [
     cfg.StrOpt('templates_dir',
                default=os.path.expanduser('~/openstack/examples'),
                help='Directory containing input model templates'),
-    cfg.StrOpt('top_dir',
-               default=os.path.expanduser('~/openstack/my_cloud'),
+    cfg.StrOpt('git_dir',
+               default=os.path.expanduser('~/openstack'),
                help='Top-level directory containing all of the customer''s '
                     'files, which are managed by git operations'),
 ]
