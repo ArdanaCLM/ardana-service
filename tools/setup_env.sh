@@ -6,7 +6,6 @@ git rev-parse || exit
 cd $(git rev-parse --show-toplevel)
 
 GIT_BASE=${GIT_BASE:-https://git.suse.provo.cloud}
-SCRIPT=setup-ardana-cp.sh
 
 # Create dirs for customer data, scratch area
 mkdir -p \
@@ -46,19 +45,19 @@ if [ ! -d ardana-input-model ] ; then
     git clone ${GIT_BASE}/ardana/ardana-input-model
 fi
 
+# Specify a directory for the config processor and the repos it needs
+DEST=config-processor
+acp=ardana-configuration-processor
+
 # Setup config processor.  This process basically automates the steps needed to
 #    create a development environment for the config processor
-if [ ! -d config-processor ] ; then
-    if [ ! -f $SCRIPT ] ; then
-        curl -k ${GIT_BASE}/cgit/ardana/ardana-configuration-processor/plain/Scripts/$SCRIPT > $SCRIPT
-        chmod +x $SCRIPT
-    fi
+if [ ! -d $DEST ] ; then
+    mkdir $DEST
 
-    # Specify a directory for the config processor and the repos it needs
-    DEST=config-processor
+    git clone ${GIT_BASE}/ardana/$acp $DEST/$acp
 
     # Prepare the dir for development, including checking out needed repos
-    ./$SCRIPT -n $DEST
+    $DEST/$acp/Scripts/setup-ardana-cp.sh -n $DEST
 
     # Prepare a virtual environment
     virtualenv -p /usr/bin/python2.7 $DEST
@@ -71,7 +70,7 @@ if [ ! -d config-processor ] ; then
     $VENV/bin/pip install --upgrade setuptools
 
     # Install the config processor plugins into the python environment
-    cd $DEST/ardana-configuration-processor/ConfigurationProcessor
+    cd $DEST/$acp/ConfigurationProcessor
     $VENV/bin/python setup.py install
 fi
 
