@@ -20,7 +20,7 @@ def get_all_files():
         if root == CONF.paths.config_dir:
             continue
         for file in files:
-            if file.endswith('.j2'):
+            if file.endswith(('.j2', '.yml')):
                 relname = os.path.relpath(os.path.join(root, file),
                                           CONF.paths.config_dir)
                 (service, file_path) = relname.split('/', 1)
