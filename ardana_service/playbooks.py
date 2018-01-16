@@ -458,7 +458,7 @@ def monitor_output(ps, id, cleanup):
                 if isinstance(line, bytes):
                     line = line.decode("utf-8")
 
-                f.write(line)
+                f.write(line.encode("utf-8"))
                 f.flush()
                 socketio.emit("log", line, room=id)
 
