@@ -59,6 +59,8 @@ def playbooks():
     Lists the playbook names (without the trailing ``.yml`` extension) of the
     playbooks that are available to run.
 
+    .. :quickref: Playbook; List available playbooks
+
     **Example Request**:
 
     .. sourcecode:: http
@@ -113,6 +115,10 @@ def run_playbook(name):
        { 'limit' : 100 }
 
     will be converted to the command arguments ``--limit 100``
+
+    .. :quickref: Playbook; Run a playbook by name
+
+    :param name: playbook name, without the ``.yml`` suffix
 
     **Example Request**:
 

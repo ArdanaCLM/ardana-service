@@ -31,6 +31,10 @@ def get_log(id):
 
     This works on both live and finished plays.
 
+    .. :quickref: Play; Returns the log for the given ansible play
+
+    :param id: play id
+
     **Example Request**:
 
     .. sourcecode:: http
@@ -54,12 +58,14 @@ def get_log(id):
 def get_plays():
     """Returns the metadata about all ansible plays.
 
-       The list can optionally be limited by specifying the following query
-       parameters:
-       * maxNumber=<N>
-       * maxAge=<seconds>
-       * live=true
-       * playbook=<name>
+    The list can optionally be limited by specifying query parameters.
+
+    :query int maxNumber: Maximum number of plays to return
+    :query int maxAge: Maximum age in seconds
+    :query boolean live: Whether to restrict results to running plays
+    :query string playbook: Playbook name
+
+    .. :quickref: Play; Returns the metadata about all ansible plays
 
     **Example Request**:
 
@@ -159,6 +165,10 @@ def get_play(id):
     the process is still running, the output will not contain ``code``,
     ``logSize``, or ``endTime``.
 
+    .. :quickref: Play; Returns the metadata about the given play
+
+    :param id: play id
+
     **Example Request**:
 
     .. sourcecode:: http
@@ -187,7 +197,11 @@ def get_play(id):
 
 @bp.route("/api/v2/plays/<id>", methods=['DELETE'])
 def kill_play(id):
-    """Kills the playbook with the given id, if it is still running
+    """Kills the play with the given id if it is still running
+
+    .. :quickref: Play; Kills the given play
+
+    :param id: play id
 
     **Example Request**:
 
@@ -226,7 +240,12 @@ def kill_play(id):
 def get_events(id):
     """Returns the events received for an ansible play.
 
-    This works on both live and finished plays.
+    Returns all events that have been received for a play.  This works on both
+    live and finished plays.
+
+    .. :quickref: Play; Returns the events received for an ansible play
+
+    :param id: play id
 
     **Example Request**:
 

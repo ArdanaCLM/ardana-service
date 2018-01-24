@@ -16,11 +16,7 @@ CONF = cfg.CONF
 def get_all_templates():
     """Returns all available input model templates, aka examples
 
-    **Example Request**:
-
-    .. sourcecode:: http
-
-       GET /api/v2/templates HTTP/1.1
+    .. :quickref: Templates; Return list of available input model templates
 
     **Example Response**:
 
@@ -112,6 +108,13 @@ def get_all_templates():
 @bp.route("/api/v2/templates/<name>")
 def get_template(name):
     """Returns a particular template by name
+
+    Reads in YAML files from the selected example and returns them as a unified
+    JSON object.
+
+    .. :quickref: Templates; Return specified input model template
+
+    :param name: template name
 
     **Example Request**:
 

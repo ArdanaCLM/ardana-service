@@ -19,19 +19,7 @@ def reset(dir=None):
        This will reset any staged or un-staged changes, as
        well as removing any untracked files
 
-    **Example Request**:
-
-    .. sourcecode:: http
-
-       DELETE /api/v2/model/changes HTTP/1.1
-
-    **Example Response**:
-
-    .. sourcecode:: http
-
-       HTTP/1.1 200 OK
-
-       Success
+    .. :quickref: Model; Resets the input model to the last committed version
     """
 
     dir = dir or CONF.paths.git_dir
@@ -52,6 +40,8 @@ def commit(dir=None):
        changes to commit, this function will still succeed.
 
        If supplied, the body of the POST should contain the commit message.
+
+    .. :quickref: Model; Commits the current input model changes to the git repository
 
     **Example Request**:
 

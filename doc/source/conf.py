@@ -27,8 +27,8 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
     'sphinxcontrib.httpdomain',
-    # 'sphinxcontrib.autohttp.flask',     The current version is broken
-    # 'sphinxcontrib.autohttp.flaskqref',
+    'sphinxcontrib.autohttp.flask',
+    'sphinxcontrib.autohttp.flaskqref',
 ]
 
 # autodoc generation is a bit aggressive and a nuisance when doing heavy

@@ -14,6 +14,43 @@ CONF = cfg.CONF
 
 @bp.route("/api/v2/service/files", methods=['GET'])
 def get_all_files():
+    """List available service configuration files
+
+    .. :quickref: Service Config; List available service configuration files
+
+    **Example Response**:
+
+    .. sourcecode:: http
+
+       HTTP/1.1 200 OK
+
+       [
+            {
+                "files": [
+                    "cinder-monitor-cron.j2",
+                    "cinderlm.conf.j2",
+                    "api-paste.ini.j2",
+                    "cinder-logging.conf.j2",
+                    "block-monitor-periodic-cron.j2",
+                    "api_audit_map.conf.j2",
+                    "api.conf.j2",
+                    "scheduler-logging.conf.j2",
+                    "rootwrap.conf.j2",
+                    "volume-logging.conf.j2",
+                    "api-logging.conf.j2",
+                    "backup.conf.j2",
+                    "backup-logging.conf.j2",
+                    "api-cinder.conf.j2",
+                    "policy.json.j2",
+                    "scheduler.conf.j2",
+                    "volume.conf.j2",
+                    "cinder.conf.j2"
+                ],
+                "service": "cinder"
+            },
+       ]
+
+    """
 
     service_list = collections.defaultdict(list)
     for root, dirs, files in os.walk(CONF.paths.config_dir, followlinks=True):
@@ -30,30 +67,67 @@ def get_all_files():
     return jsonify(result)
 
 
-@bp.route("/api/v2/service/files/<path:name>", methods=['GET', 'POST'])
-def service_file(name):
+@bp.route("/api/v2/service/files/<path:name>", methods=['GET'])
+def get_service_file(name):
+    """Retrieve or update a service configuration file
 
-    if request.method == 'GET':
-        filename = os.path.join(CONF.paths.config_dir, name)
-        contents = ''
-        try:
-            with open(filename) as f:
-                lines = f.readlines()
-            contents = contents.join(lines)
+    .. :quickref: Service Config; Retrieve the contents of a service config file
 
-        except IOError as e:
-            LOG.exception(e)
-            abort(400)
+    :param path: service config file name
 
-        return jsonify(contents)
-    else:
-        data = request.get_json()
+    **Example Request**:
 
-        filename = os.path.join(CONF.paths.config_dir, name)
-        try:
-            with open(filename, "w") as f:
-                f.write(data)
-            return 'Success'
-        except Exception as e:
-            LOG.exception(e)
-            abort(400)
+    .. sourcecode:: http
+
+       GET /api/v2/service/files/neutron/dnsmasq-neutron.conf.j2 HTTP/1.1
+       Content-Type: application/json
+
+    **Example Response**:
+
+    .. sourcecode:: http
+
+       HTTP/1.1 200 OK
+
+       dhcp-option-force=26,1400
+
+       # Create the "ipxe" tag if request comes from iPXE user class
+       dhcp-userclass=set:ipxe,iPXE
+
+    """
+
+    filename = os.path.join(CONF.paths.config_dir, name)
+    contents = ''
+    try:
+        with open(filename) as f:
+            lines = f.readlines()
+        contents = contents.join(lines)
+
+    except IOError as e:
+        LOG.exception(e)
+        abort(400)
+
+    return jsonify(contents)
+
+
+@bp.route("/api/v2/service/files/<path:name>", methods=['POST'])
+def update_service_file(name):
+    """Update a service configuration file
+
+    Replace the contents of the given service configuration file with the
+    request body
+
+    .. :quickref: Service Config; Update the contents of a service config file
+
+    :param path: service config file name
+    """
+
+    data = request.get_json()
+
+    filename = os.path.join(CONF.paths.config_dir, name)
+    try:
+        with open(filename, "w") as f:
+            f.write(data)
+        return 'Success'
+    except Exception as e:
+        LOG.exception(e)
+        abort(400)

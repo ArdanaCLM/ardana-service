@@ -14,15 +14,9 @@ CONF = cfg.CONF
 
 @bp.route("/api/v2/version")
 def version():
-    """Returns the epoch time
+    """Returns the version of the service
 
-    Simple API to return the version of the service.
-
-    **Example Request**:
-
-    .. sourcecode:: http
-
-       GET /api/v2/version HTTP/1.1
+    .. :quickref: Admin; Returns the version of the service
 
     **Example valid response**:
 
@@ -42,13 +36,9 @@ def heartbeat():
     """Returns the epoch time
 
     Simple API to verify that the service is up and responding.  Returns
-    the number of seconds since 1970-01-01 00:00:00 GMT
+    the number of seconds since 1970-01-01 00:00:00 GMT.
 
-    **Example Request**:
-
-    .. sourcecode:: http
-
-       GET /api/v2/heartbeat HTTP/1.1
+    .. :quickref: Admin; Returns the epoch time
 
     **Example valid response**:
 
@@ -66,13 +56,7 @@ def heartbeat():
 def user():
     """Returns the username the service is running under
 
-    Simple API to return the username the service is running under
-
-    **Example Request**:
-
-    .. sourcecode:: http
-
-       GET /api/v2/user HTTP/1.1
+    .. :quickref: Admin; Returns the username the service is running under
 
     **Example valid response**:
 
@@ -96,6 +80,8 @@ def update_trigger_file():
 @bp.route("/api/v2/restart", methods=['POST'])
 def restart():
     """Requests the service to restart after a specified delay, in seconds
+
+    .. :quickref: Admin; Requests a service restart after a delay
 
     **Example Request**:
 

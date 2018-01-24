@@ -21,161 +21,40 @@ The REST API:
 
 **Available Endpoints**
 
-=================================== ======== ======================================================================================
- Endpoint                            METHOD   Description
-=================================== ======== ======================================================================================
- ``/version``                        GET      Returns version and git commit information about the currently deployed HLM API,
-                                              for example: "0.1.6"
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/heartbeat``                      GET      Returns the current epoch time (seconds since 1970-01-01 00:00:00 GMT)
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/templates``                      GET      Return list of the available examples (cloud types) from the examples folder.
-                                              e.g. entry-scale-kvm-vsa, entry-scale-swift...
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/templates/{id}``                 GET      Returns the Input Model for the specified example.
-                                              Reads in YAML files from the selected example and returns them as a unified JSON
-                                              object.
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/config_processor``               POST     Runs the config processor synchronously (directly runs the python script, not the
-                                              playbook). This is useful for validating the current input model.
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/playbooks``                      GET      List Ansible playbooks we can run. In addition    to site ready_deployment and
-                                              config_processor_run, all playbooks that don't start with '_' are available.
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/playbooks/{playbook}``           POST     Launch an ansible-playbook process for the playbook specified.  Supported playbooks
-                                              are listed and described in a ``GET`` to ``/playbooks``
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/plays``                          GET      List metadata about all ansible plays (live and finished). Limit number of returned
-                                              results with query parameters: ``maxNumber=<N>``, ``maxAge=<seconds>``, and/or
-                                              ``playbook=<name>``. If only live plays are desired use the parameter ``live=true``
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/plays/{id}``                     GET      Get metadata about the specified ansible play
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/plays/{id}/log``                 GET      Gets the log for the specified ansible play
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/plays/{id}``                     DELETE   Kills the ansible play process identified by the specified id if it is active.
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/model``                          GET      Returns the current Input Model. The returned JSON include metadata about the model
-                                              as well as the Input Model data.
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/model/is_encrypted``             GET      Indicates whether the readied config processor output was encrypted.
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/model``                          POST     Replaces the input model on disk with the supplied JSON. The provided JSON is
-                                              analyzed and written back to disk using the same file YAML structure as when
-                                              reading (as far as this is possible).  Note that the entire model is re-written
-                                              by this operation. The payload required for this POST to work should match what
-                                              was returned by a GET to ``/model``
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/model/commit``                   POST     Commits the current input model changes to the git repository.  The request body is
-                                              used as the commit message.
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/model/changes``                  DELETE   Resets (cleans) the input model. This performs a git reset, which resets the input
-                                              model to the last git commit.
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/model/entities``                 GET      List top-level configuration entities currently in the input model e.g. servers,
-                                              disk-models, networks, server-roles etc. and associated valid sub-routes
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/model/entities/{entity}``        GET      Get a whole entity
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/model/entities/{entity}``        PUT      Replace a whole entity
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/model/entities/{entity}``        POST     Add an entry to an array-type entity
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/model/entities/{entity}/{id}``   GET      Get an individual entry by ID (name or index) from an array-type entity
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/model/entities/{entity}/{id}``   PUT      Update an individual entry by ID (name or index) from an array-type entity
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/model/entities/{entity}/{id}``   DELETE   Delete an individual entry by ID (name or index) from an array-type entity
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/model/files``                    GET      List yaml files in the model
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/model/files/{path}``             GET      Get the contents of the given model file
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/model/files/{path}``             POST     Replace the contents of the given model file with the request body
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/model/cp_output``                GET      Returns a list of the files in the config processor output. If the ready query
-                                              parameter is specified (e.g. ``?ready=true``) it returns the listing from the "ready"
-                                              directory instead.
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/model/cp_output/{path}``         GET      Returns the file contents of the indicated file in the config processor output as
-                                              JSON.  If the ready query parameter is specified (e.g. ``?ready=true``) we look in
-                                              the "ready" directory instead.
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/osinstall``                      POST     Start installation of OS on specified nodes. Details provided in request body.
-                                              **Not yet implemented**
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/osinstall``                      GET      Get status of OS installation for all servers having the OS installed.
-                                              **Not yet implemented**
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/servers``                        GET      Get the portions of the inputModel that contain servers, including baremetal servers
-                                              **Not yet implemented**
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/servers``                        POST     Add a new server to the model after validating that it has the necessary attributes
-                                              (id, ip address, role) and that it does not already exist.
-                                              **Not yet implemented**
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/servers{id}``                    DELETE   Delete the server from the input model
-                                              **Not yet implemented**
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/servers{id}``                    PUT      Update a server in the inputModel.  This effectively deletes and re-adds the server
-                                              **Not yet implemented**
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/servers/process``                POST     Add a new server, commit the model, run the config process, ready deployment, and
-                                              deploy the server.
-                                              **Not yet implemented**
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/servers/{id}/process``           DELETE   Delete the server and deactivate it using the appropriate playbook(s)
-                                              **Not yet implemented**
------------------------------------ -------- --------------------------------------------------------------------------------------
- ``/restart``                        POST     Restart the service
-=================================== ======== ======================================================================================
+.. qrefflask:: ardana_service.main:app
+    :order: path
+
+**Changed for v2**
+
+The following endpoints were changed:
+
+* ``/model/config/{path}`` was changed to ``/service/files/{path}`` to more accurately reflect that fact that the
+  endpoint manages service config files rather than model files.
+
+The following endpoints were removed:
+
+* ``/servers`` for updating the input model. This functionality can be performed by using the ``/model`` endpoints
+
+* ``/servers/process``, which combined several REST calls into a single endpoint.  The
+  individual REST calls (to commit the model, run the config processor, and launch playbooks) must be called individually.
+
+* ``/osinstall`` , which called several ansible playbooks.  Callers instead should use the
+  ``/playbooks`` endpoint to run a single ansible playbook that in turn executes all of these same tasks, such as
+  ``dayzero-os-provision.yml``.
+
+* ``/model/expanded``. The ``/model/cp_output`` can be used instead to obtain the same information
+
+* ``/model/history``. This was not being used by any client.
+
+Other changes to existing endpoints are documented in the details of each endpoint.
 
 
 REST Details
 ^^^^^^^^^^^^
 
-Administrative Info
-"""""""""""""""""""
-
-.. automodule:: ardana_service.admin
-    :members:
-
-Model Operations
-""""""""""""""""
-
-.. automodule:: ardana_service.model
-    :members:
-
-.. automodule:: ardana_service.versions
-    :members:
-
-
-Playbook Operations
-"""""""""""""""""""
-
-.. automodule:: ardana_service.playbooks
-    :members:
-
-
-Play Operations
-"""""""""""""""
-
-.. automodule:: ardana_service.plays
-    :members:
-
-
-Input Model Templates
-"""""""""""""""""""""
-
-.. automodule:: ardana_service.templates
-    :members:
-
-
-Validating the input model
-""""""""""""""""""""""""""
-
-.. automodule:: ardana_service.config_processor
-    :members:
+.. autoflask:: ardana_service.main:app
+    :endpoints:
+    :order: path
 
 
 SocketIO API

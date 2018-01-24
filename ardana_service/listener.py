@@ -20,6 +20,8 @@ def playbook_event():
     """Event listener for playbook events
 
     Propagate events to socketio listeners
+
+    .. :quickref: Playbook; Send event to playbook listener
     """
     opts = request.get_json() or {}
     if 'play_id' in opts:

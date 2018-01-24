@@ -34,11 +34,7 @@ def run_config_processor():
     will be 400 and the body of the response will be contain the log of the
     Config Processor explaining why things failed.
 
-    **Example Request**:
-
-    .. sourcecode:: http
-
-       POST /api/v2/config_processor HTTP/1.1
+    .. :quickref: Config Processor; Validate the current input model
 
     **Example valid response**:
 

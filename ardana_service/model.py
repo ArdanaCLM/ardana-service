@@ -30,6 +30,16 @@ PASS_THROUGH = 'pass-through'
 
 @bp.route("/api/v2/model", methods=['GET'])
 def get_model():
+    """Returns the current input model.
+
+    .. :quickref: Model; Returns the current input model
+
+    The returned JSON include metadata about the model as well as the Input
+    Model data.
+
+    :status 200: when model is succesfully read, parsed, and returned
+    :status 404: failure to find or read model
+    """
     try:
         return jsonify(read_model())
     except IOError:
@@ -38,6 +48,18 @@ def get_model():
 
 @bp.route("/api/v2/model", methods=['POST'])
 def update_model():
+    """Replace the input model with the supplied JSON.
+
+    The provided JSON is analyzed and written back to disk using the same file
+    YAML structure as when reading (as far as this is possible). Note that the
+    entire model is re-written by this operation. The payload required for this
+    POST to work should match what was returned by :http:get:`/api/v2/model`
+
+    .. :quickref: Model; Update the current input model
+
+    :status 200: when model is succesfully written
+    :status 400: failure to find or read model
+    """
     model = request.get_json() or {}
     try:
         write_model(model)
@@ -48,6 +70,15 @@ def update_model():
 
 @bp.route("/api/v2/model/entities", methods=['GET'])
 def get_entity_operations():
+    """List top-level entities in the input model
+
+    List top-level configuration entities currently in the input model e.g.
+    servers, disk-models, networks, server-roles etc. and associated valid
+    sub-routes.
+
+    .. :quickref: Model; List top-level entities in the input model
+
+    """
 
     model = read_model()
     entity_operations = {}
@@ -75,6 +106,14 @@ def get_entity_operations():
 
 @bp.route("/api/v2/model/entities/<entity_name>", methods=['GET'])
 def get_entities(entity_name):
+    """Get a whole entity
+
+    .. :quickref: Model; Get a whole entity
+
+    :param entity_name: name of the entity
+    :status 200: success
+    :status 404: failure to read model or find the given entity
+    """
 
     model = read_model()
     try:
@@ -85,6 +124,12 @@ def get_entities(entity_name):
 
 @bp.route("/api/v2/model/entities/<entity_name>", methods=['PUT'])
 def update_entities(entity_name):
+    """Replace a whole entity by name.
+
+    .. :quickref: Model; Replace a whole entity in the input model
+
+    :param entity_name: Name of the entity
+    """
 
     model = read_model()
     if entity_name not in model['inputModel']:
@@ -112,6 +157,15 @@ def get_entity_index(entities, id):
 
 @bp.route("/api/v2/model/entities/<entity_name>/<id>", methods=['GET'])
 def get_entity_by_id(entity_name, id):
+    """Get an individual entry by id (name or index) from an array-type entity
+
+    .. :quickref: Model; Get an individual entity from the input model
+
+    :param entity_name: name of the entity
+    :param id: id of the individual entity
+    :status 200: success
+    :status 404: failure to read model or find the given entity
+    """
 
     model = read_model()
     try:
@@ -125,6 +179,15 @@ def get_entity_by_id(entity_name, id):
 
 @bp.route("/api/v2/model/entities/<entity_name>/<id>", methods=['PUT'])
 def update_entity_by_id(entity_name, id):
+    """Update an individual entry by id
+
+    Update an individual entry by id (name or index) from an array-type entity.
+
+    .. :quickref: Model; Update an individual entity in the input model
+
+    :param entity_name: Name of the entity
+    :param id: id of the individual entity
+    """
 
     model = read_model()
     new_entity = request.get_json()
@@ -141,7 +204,15 @@ def update_entity_by_id(entity_name, id):
 
 @bp.route("/api/v2/model/entities/<entity_name>/<id>", methods=['DELETE'])
 def delete_entity_by_id(entity_name, id):
+    """Delete an individual entry by id
 
+    Delete an individual entry by ID (name or index) from an array-type entity
+
+    .. :quickref: Model; Delete an individual entry by id
+
+    :param entity_name: Name of the entity
+    :param id: id of the individual entity
+    """
     model = read_model()
     try:
         entities = model['inputModel'][entity_name]
@@ -156,7 +227,12 @@ def delete_entity_by_id(entity_name, id):
 
 @bp.route("/api/v2/model/entities/<entity_name>", methods=['POST'])
 def create_entity(entity_name):
+    """Add an entry to an array-type entity
 
+    .. :quickref: Model; Add an entry to an array-type entity
+
+    :param entity_name: Name of the entity
+    """
     model = read_model()
     new_entity = request.get_json()
 
@@ -177,6 +253,10 @@ def create_entity(entity_name):
 
 @bp.route("/api/v2/model/files", methods=['GET'])
 def get_all_files():
+    """List yaml files in the model
+
+    .. :quickref: Model; List yaml files in the model
+    """
 
     file_list = []
 
@@ -239,48 +319,61 @@ def get_all_files():
     return jsonify(file_list)
 
 
-@bp.route("/api/v2/model/files/<path:name>", methods=['GET', 'POST'])
-def model_file(name):
+@bp.route("/api/v2/model/files/<path:name>", methods=['GET'])
+def get_model_file(name):
+    """Get the contents of the given model file
 
-    if request.method == 'GET':
-        filename = os.path.join(CONF.paths.model_dir, name)
-        contents = ''
-        try:
-            with open(filename) as f:
-                lines = f.readlines()
-            contents = contents.join(lines)
+    .. :quickref: Model; Get the contents of the given model file
 
-        except IOError as e:
-            LOG.exception(e)
-            abort(400)
+    :param path: name of the file
+    """
+    filename = os.path.join(CONF.paths.model_dir, name)
+    contents = ''
+    try:
+        with open(filename) as f:
+            lines = f.readlines()
+        contents = contents.join(lines)
 
-        return jsonify(contents)
-    else:
-        data = request.get_json()
+    except IOError as e:
+        LOG.exception(e)
+        abort(400)
 
-        # Verify that it is valid yaml before accepting it
-        try:
-            yaml.safe_load(data)
-        except yaml.YAMLError:
-            LOG.exception("Invalid yaml data")
-            abort(400)
+    return jsonify(contents)
 
-        # It's valid, so write it out
-        filename = os.path.join(CONF.paths.model_dir, name)
-        try:
-            with open(filename, "w") as f:
-                f.write(data)
-            return 'Success'
-        except Exception as e:
-            LOG.exception(e)
-            abort(400)
+
+@bp.route("/api/v2/model/files/<path:name>", methods=['POST'])
+def update_model_file(name):
+    """Update the contents of the given model file
+
+    .. :quickref: Model; Update the contents of the given model file
+
+    :param path: name of the file
+    """
+    data = request.get_json()
+
+    # Verify that it is valid yaml before accepting it
+    try:
+        yaml.safe_load(data)
+    except yaml.YAMLError:
+        LOG.exception("Invalid yaml data")
+        abort(400)
+
+    # It's valid, so write it out
+    filename = os.path.join(CONF.paths.model_dir, name)
+    try:
+        with open(filename, "w") as f:
+            f.write(data)
+        return 'Success'
+    except Exception as e:
+        LOG.exception(e)
+        abort(400)
 
 
 @bp.route("/api/v2/model/is_encrypted")
 def get_encrypted():
-    """Returns whether the readied config processor output was encrypted.
+    """Returns whether the readied config processor output is encrypted.
 
-    If the config processor has not been run, it will return a 404 http error
+    .. :quickref: Model; Returns whether the config processor output is encrypted
 
     **Example Response**:
 
@@ -292,6 +385,9 @@ def get_encrypted():
        {
            "isEncrypted": false
        }
+
+    :status 200: success
+    :status 404: if the config processor has not been run
     """
 
     VAULT_MARKER = '$ANSIBLE_VAULT'
@@ -312,9 +408,7 @@ def get_encrypted():
 def list_cp_output():
     """Lists the config processor output files
 
-    Returns a list of the config processor output filenames, stripped of the
-    .yml extension. If the ready query parameter is specified (e.g.
-    ``?ready=true``) it returns the listing from the "ready" directory instead.
+    :query ready: ``true`` to return the file from the "ready" directory.
 
     **Changed for v2**:
 
@@ -340,6 +434,8 @@ def list_cp_output():
            "service_info.yml",
            "service_topology.yml"
        ]
+
+    .. :quickref: Model; Lists the config processor output files
     """
 
     if request.args.get("ready") == "true":
@@ -358,13 +454,15 @@ def list_cp_output():
 
 @bp.route("/api/v2/model/cp_output/<path:name>")
 def get_cp_output_file(name):
-    """Returns the contents of the given path from the config
+    """Returns the contents of a file from the config processor output directory
 
-    processor output directory.
+    Returns the content as JSON.
 
-    Returns the content as JSON. If the ready query parameter is
-    specified (e.g. ``?ready=true``) it returns the file from the "ready"
-    directory instead.
+    .. :quickref: Model; Returns the contents of a file from the config processor output directory
+
+    :query ready: ``true`` to return the file from the "ready" directory.
+
+    :param path: name of the file
 
     **Changed for v2**:
 

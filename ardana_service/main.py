@@ -3,7 +3,6 @@ from ardana_service import config  # noqa: F401
 from ardana_service import config_processor
 from ardana_service import listener
 from ardana_service import model
-from ardana_service import osinstall
 from ardana_service import playbooks
 from ardana_service import plays
 from ardana_service import service
@@ -39,10 +38,6 @@ extra_log_level_defaults = [
 logging.set_defaults(default_log_levels=logging.get_default_log_levels() +
                      extra_log_level_defaults)
 
-# Load config options any config files specified on the command line
-CONF()
-logging.setup(CONF, PROGRAM)
-
 app = Flask('ardana_service')
 app.register_blueprint(admin.bp)
 app.register_blueprint(config_processor.bp)
@@ -50,17 +45,9 @@ app.register_blueprint(playbooks.bp)
 app.register_blueprint(plays.bp)
 app.register_blueprint(listener.bp)
 app.register_blueprint(model.bp)
-app.register_blueprint(osinstall.bp)
 app.register_blueprint(service.bp)
 app.register_blueprint(templates.bp)
 app.register_blueprint(versions.bp)
-
-CORS(app)
-
-if 'keystone_authtoken' in CONF.list_all_sections():
-    # Wrap with keystone middleware if configured to do so
-    app.wsgi_app = auth_token.AuthProtocol(app.wsgi_app,
-                                           {'oslo_config_config': CONF})
 
 
 @app.before_request
@@ -87,6 +74,17 @@ def log_response(response):
 
 
 if __name__ == "__main__":
+
+    # Load config options any config files specified on the command line
+    CONF()
+    logging.setup(CONF, PROGRAM)
+    CORS(app)
+
+    if 'keystone_authtoken' in CONF.list_all_sections():
+        # Wrap with keystone middleware if configured to do so
+        app.wsgi_app = auth_token.AuthProtocol(app.wsgi_app,
+                                               {'oslo_config_config': CONF})
+
     # Note that any flask options that are to be exposed in our config file
     # have to be explicitly configured (in flask_opts above) and explicitly
     # placed into the following dict
