@@ -1,4 +1,3 @@
-$$EVENT: start dayzero-site.yml
 $$EVENT: start site.yml
 
 PLAY [localhost] ************************************************************** 
@@ -26021,7 +26020,7 @@ $$1534596: changed: [localhost] => (item={'section': 'telemetry', 'option': 'end
 $$1534669: changed: [localhost] => (item={'section': 'data_processing', 'option': 'endpoint_type', 'value': 'internalURL'})
 $$1534731: changed: [localhost] => (item={'section': 'baremetal', 'option': 'endpoint_type', 'value': 'internalURL'})
 
-$$EVENT: start hlm-status.yml
+$$EVENT: start ardana-status.yml
 
 PLAY [SHP-API] **************************************************************** 
 
@@ -26277,7 +26276,7 @@ $$1570545: ok: [padawan-ccp-c1-m2-mgmt]
 $$1571023: ok: [padawan-ccp-c1-m1-mgmt]
 $$1573424: ok: [padawan-ccp-c1-m3-mgmt]
 
-$$EVENT: stop hlm-status.yml
+$$EVENT: stop ardana-status.yml
 
 PLAY [localhost] ************************************************************** 
 
@@ -26311,4 +26310,4 @@ padawan-ccp-comp0003-mgmt  : ok=518  changed=133  unreachable=0    failed=0
 padawan-ccp-comp0004-mgmt  : ok=520  changed=271  unreachable=0    failed=0   
 
 $$EVENT: stop site.yml
-$$EVENT: stop dayzero-site.yml
+
