@@ -1,4 +1,3 @@
-import filelock
 from flask import abort
 from flask import Blueprint
 from flask import jsonify
@@ -217,22 +216,19 @@ def kill_play(id):
        Content-Type: application/json
     """
     meta_file = get_metadata_file(id)
-    lock = filelock.SoftFileLock(get_metadata_lockfile(id))
 
     try:
-        # Writes should be very fast
-        with lock.acquire(timeout=3):
-            with open(meta_file) as f:
-                play = json.load(f)
+        with open(meta_file) as f:
+            play = json.load(f)
 
-            os.kill(int(id), signal.SIGINT)
-            play['killed'] = True
-            with open(meta_file, "w") as f:
-                json.dump(play, f)
+        os.kill(int(id), signal.SIGINT)
+        play['killed'] = True
+        with open(meta_file, "w") as f:
+            json.dump(play, f)
 
-            return "Success"
+        return "Success"
 
-    except (IOError, OSError, filelock.Timeout):
+    except (IOError, OSError):
         abort(404, "Unable to find process and metadata")
 
 
@@ -277,10 +273,6 @@ def get_events(id):
     # outside of the specified directory
     return send_from_directory(get_log_dir_abs(), str(id) + ".events",
                                mimetype="application/json")
-
-
-def get_metadata_lockfile(id):
-    return os.path.join(CONF.paths.log_dir, str(id) + ".lock")
 
 
 def get_metadata_file(id):
