@@ -33,7 +33,6 @@ logging.register_options(CONF)
 extra_log_level_defaults = [
     'engineio=WARN',
     'socketio=WARN',
-    'filelock=WARN',
 ]
 logging.set_defaults(default_log_levels=logging.get_default_log_levels() +
                      extra_log_level_defaults)

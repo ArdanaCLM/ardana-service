@@ -1,5 +1,4 @@
 from collections import OrderedDict
-import filelock
 from flask import abort
 from flask import Blueprint
 from flask import jsonify
@@ -475,27 +474,24 @@ def monitor_output(ps, id, cleanup):
 
     # Update the metadata now that the process has finished.
     meta_file = plays.get_metadata_file(id)
-    lock = filelock.SoftFileLock(plays.get_metadata_lockfile(id))
     running = plays.get_running_plays()
     running.pop(id, None)
 
     try:
-        # Writes should be very fast
-        with lock.acquire(timeout=3):
-            with open(meta_file) as f:
-                play = json.load(f)
+        with open(meta_file) as f:
+            play = json.load(f)
 
-            play['endTime'] = int(1000 * time.time())
-            play['code'] = ps.returncode
-            play['logSize'] = os.stat(log_file).st_size
-            with open(meta_file, "w") as f:
-                json.dump(play, f)
+        play['endTime'] = int(1000 * time.time())
+        play['code'] = ps.returncode
+        play['logSize'] = os.stat(log_file).st_size
+        with open(meta_file, "w") as f:
+            json.dump(play, f)
 
         # Call the cleanup function passed in, if any
         if cleanup:
             cleanup()
 
-    except (IOError, OSError, filelock.Timeout):
+    except (IOError, OSError):
         pass
 
 
