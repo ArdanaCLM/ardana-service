@@ -1,3 +1,6 @@
+..
+ (c) Copyright 2017-2018 SUSE LLC
+
 Input Model
 ===========
 This describes the structure of the input model, which has two related
