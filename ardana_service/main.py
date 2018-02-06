@@ -12,6 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# When running the main program, reference to the ardana_service package
+# will throw errors unless the current directory is added to the python path
+if __name__ == "__main__":
+    import sys
+    sys.path.append('.')
+
 from ardana_service import admin
 from ardana_service import config  # noqa: F401
 from ardana_service import config_processor
@@ -86,8 +92,7 @@ def log_response(response):
     return response
 
 
-if __name__ == "__main__":
-
+def main():
     # Load config options any config files specified on the command line
     CONF()
     logging.setup(CONF, PROGRAM)
@@ -113,3 +118,7 @@ if __name__ == "__main__":
     socketio.init_app(app)
     socketio.run(app, host=CONF.host, port=CONF.port, use_reloader=True,
                  extra_files=[trigger_file])
+
+
+if __name__ == "__main__":
+    main()

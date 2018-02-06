@@ -11,18 +11,32 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
+from setuptools import find_packages
+from setuptools import setup
 
-# THIS FILE IS MANAGED BY THE GLOBAL REQUIREMENTS REPO - DO NOT EDIT
-import setuptools
-
-# In python < 2.7.4, a lazy loading of package `pbr` will break
-# setuptools if some other modules registered functions in `atexit`.
-# solution from: http://bugs.python.org/issue15881#msg170215
-try:
-    import multiprocessing  # noqa
-except ImportError:
-    pass
-
-setuptools.setup(
-    setup_requires=['pbr>=2.0.0'],
-    pbr=True)
+setup(
+    name='ardana-service',
+    version='1.0.0',
+    author='SUSE LLC',
+    author_email='ardana@googlegroups.com',
+    packages=find_packages(exclude=['tests']),
+    include_package_data=True,
+    scripts=[],
+    url='https://github.com/ArdanaCLM',
+    license='Apache-2.0',
+    description='OpenStack Ardana Lifecycle Management Server',
+    long_description=open('README.rst').read(),
+    install_requires=['Flask', 'eventlet', 'flask-socketio', 'flask-cors',
+                      'gitpython', 'oslo.config', 'oslo.log',
+                      'keystonemiddleware'],
+    zip_safe=False,
+    entry_points={
+        'console_scripts': [
+            'ardana-service = ardana_service.main:main',
+        ],
+        'oslo.config.opts': [
+            'ardana_service = ardana_service.config:list_opts',
+        ],
+    }
+)
