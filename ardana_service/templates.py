@@ -41,11 +41,11 @@ def get_all_templates():
 
        [
          {
-           "name": "entry-scale-esx-kvm-vsa",
-           "href": "/api/v2/templates/entry-scale-esx-kvm-vsa",
+           "name": "entry-scale-kvm-esx-ses",
+           "href": "/api/v2/templates/entry-scale-kvm-esx-ses",
            "overview": "...",
            "metadata": {"nodeCount": 30, "hypervisor": ["esx", "kvm"],
-               "storage": "vsa"}
+               "storage": "ses"}
          },
          {
            "name": "entry-scale-ironic-flat-network",
@@ -55,19 +55,28 @@ def get_all_templates():
                 "network": "flat"}
          },
          {
-           "name": "mid-scale-kvm-vsa",
-           "href": "/api/v2/templates/mid-scale-kvm-vsa",
+           "name": "mid-scale-kvm-ses",
+           "href": "/api/v2/templates/mid-scale-kvm-ses",
            "overview": "...",
            "metadata": {"nodeCount": 200, "hypervisor": ["kvm"],
-                "storage": "vsa"}
+                "storage": "ses"}
          },
          "..."
        ]
     """
 
     metadata_table = {
-        'entry-scale-esx-kvm-vsa': {
-            'nodeCount': 30, 'hypervisor': ['esx', 'kvm'], 'storage': 'vsa'
+        'entry-scale-kvm-ses': {
+            'nodeCount': 30, 'hypervisor': ['kvm'], 'storage': 'ses'
+        },
+        'entry-scale-kvm-esx-ses': {
+            'nodeCount': 30, 'hypervisor': ['esx', 'kvm'], 'storage': 'ses'
+        },
+        'entry-scale-kvm-esx-ses-mml': {
+            'nodeCount': 30, 'hypervisor': ['esx', 'kvm'], 'storage': 'ses'
+        },
+        'entry-scale-kvm-ses-mml': {
+            'nodeCount': 30, 'hypervisor': ['kvm'], 'storage': 'ses'
         },
         'entry-scale-ironic-flat-network': {
             'nodeCount': 30, 'hypervisor': ['ironic'], 'network': 'flat'
@@ -76,30 +85,18 @@ def get_all_templates():
             'nodeCount': 30, 'hypervisor': ['ironic'], 'network':
                 'multi-tenant'
         },
-        'entry-scale-kvm-ceph': {
-            'nodeCount': 30, 'hypervisor': ['kvm'], 'storage': 'ceph'
-        },
-        'entry-scale-kvm-esx-vsa-mml': {
-            'nodeCount': 30, 'hypervisor': ['esx', 'kvm'], 'storage': 'vsa'
-        },
-        'entry-scale-kvm-vsa': {
-            'nodeCount': 30, 'hypervisor': ['kvm'], 'storage': 'vsa'
-        },
-        'entry-scale-kvm-vsa-mml': {
-            'nodeCount': 30, 'hypervisor': ['kvm'], 'storage': 'vsa'
-        },
         'entry-scale-swift': {
             'nodeCount': 30, 'hypervisor': [], 'storage': 'swift'
         },
-        'mid-scale-kvm-vsa': {
-            'nodeCount': 200, 'hypervisor': ['kvm'], 'storage': 'vsa'
+        'mid-scale-kvm-ses': {
+            'nodeCount': 200, 'hypervisor': ['kvm'], 'storage': 'ses'
         }
     }
 
     templates = []
     for name in os.listdir(CONF.paths.templates_dir):
 
-        readme = os.path.join(CONF.paths.templates_dir, name, "README.html")
+        readme = os.path.join(CONF.paths.templates_dir, name, "README.md")
         try:
             with open(readme) as f:
                 lines = f.readlines()
@@ -134,7 +131,7 @@ def get_template(name):
 
     .. sourcecode:: http
 
-       GET /api/v2/entry-scale-kvm-vsa HTTP/1.1
+       GET /api/v2/entry-scale-kvm-ses HTTP/1.1
 
     **Example Response**:
 
@@ -143,7 +140,7 @@ def get_template(name):
        HTTP/1.1 200 OK
 
        {
-         "name": "entry-scale-kvm-vsa",
+         "name": "entry-scale-kvm-ses",
          "version": 2,
          "readme": {
            "html": "..."
@@ -151,7 +148,7 @@ def get_template(name):
          "fileInfo": {"..."},
          "inputModel": {
            "cloud": {
-             "name": "entry-scale-kvm-vsa",
+             "name": "entry-scale-kvm-ses",
              "hostname-data": {
                "host-prefix": "helion",
                "member-prefix": "-m"
