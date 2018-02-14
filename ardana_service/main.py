@@ -25,6 +25,7 @@ from ardana_service import listener
 from ardana_service import model
 from ardana_service import playbooks
 from ardana_service import plays
+from ardana_service import servers
 from ardana_service import service
 from ardana_service import socketio
 from ardana_service import templates
@@ -64,6 +65,7 @@ app.register_blueprint(playbooks.bp)
 app.register_blueprint(plays.bp)
 app.register_blueprint(listener.bp)
 app.register_blueprint(model.bp)
+app.register_blueprint(servers.bp)
 app.register_blueprint(service.bp)
 app.register_blueprint(templates.bp)
 app.register_blueprint(versions.bp)

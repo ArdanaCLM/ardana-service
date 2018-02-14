@@ -453,7 +453,7 @@ def list_cp_output():
     """
 
     if request.args.get("ready") == "true":
-        output_dir = CONF.paths.cp_ready_dir
+        output_dir = CONF.paths.cp_ready_output_dir
     else:
         output_dir = CONF.paths.cp_output_dir
 
@@ -519,7 +519,7 @@ def get_cp_output_file(name):
     """
 
     if request.args.get("ready") == "true":
-        output_dir = CONF.paths.cp_ready_dir
+        output_dir = CONF.paths.cp_ready_output_dir
     else:
         output_dir = CONF.paths.cp_output_dir
 

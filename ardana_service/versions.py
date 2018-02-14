@@ -78,6 +78,11 @@ def commit(dir=None):
     """
 
     message = request.get_json().get("message") or "Empty commit message"
+    return commit_model(dir, message)
+
+
+def commit_model(dir=None, message=None):
+
     dir = dir or CONF.paths.git_dir
     repo = Repo(dir)
 

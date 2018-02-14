@@ -26,6 +26,7 @@ import json
 import os
 from oslo_config import cfg
 from oslo_log import log as logging
+from promise import Promise
 import subprocess
 import sys
 import tempfile
@@ -117,7 +118,7 @@ def playbooks():
 
 
 @bp.route("/api/v2/playbooks/<name>", methods=['POST'])
-def run_playbook(name):
+def run_playbook_rest(name):
     """Run an ansible playbook
 
     JSON payload is an object that may contain key/value pairs that will be
@@ -206,13 +207,21 @@ def run_playbook(name):
       ``inventoryFile`` are deprecated and will be removed in a future version.
       Use ``extra-vars``, ``encryption-key`` and ``inventory`` instead.
     """
+    result = run_playbook(name, request.get_json())
+    return jsonify({"id": result['id']}), 202, {'Location': result['url']}
+
+
+def run_playbook(name, payload=None, play_id=None):
+    # Run a playbook with the given payload  This function is separate from
+    # the run_playbook_rest function in order to permit it to be called outside
+    # of the context of a single REST call that returns immediately
 
     if name in STATIC_PLAYBOOKS:
         cwd = CONF.paths.pre_playbooks_dir
     else:
         cwd = CONF.paths.playbooks_dir
 
-    args = get_command_args(cwd=cwd)
+    args = get_command_args(payload, cwd)
 
     # Prevent some special playbooks from multiple concurrent invocations
     if name in ("site", "config-processor-run", "config-processor-clean",
@@ -241,18 +250,18 @@ def run_playbook(name):
         return start_playbook(name,
                               args=args,
                               cwd=cwd,
-                              cleanup=cleanup)
+                              cleanup=cleanup,
+                              play_id=play_id)
 
     except OSError as e:
         LOG.exception(e)
         abort(404)
 
 
-def get_command_args(payload={}, cwd=None):
+def get_command_args(payload=None, cwd=None):
     # Process the body of the http request and extract and build the command
-    # line arguments for the invocation of the ansible-playbook command.  For
-    # testing, the payload can be given as an arg to this function
-    body = payload or request.get_json() or {}
+    # line arguments for the invocation of the ansible-playbook command.
+    body = payload or {}
 
     # Normalize the keys by removing all of the leading dashes from the keys,
     # since they are optional
@@ -329,7 +338,7 @@ def remove_temp_vault_pwd_file(filename):
         pass
 
 
-def start_playbook(playbook, args={}, cwd=None, cleanup=None):
+def start_playbook(playbook, args={}, cwd=None, cleanup=None, play_id=None):
 
     # Create processes with the subprocess module rather
     # than using a more advanced mechanism like Celery
@@ -341,7 +350,7 @@ def start_playbook(playbook, args={}, cwd=None, cleanup=None):
     cmd = build_command_line('ansible-playbook', playbook, args)
 
     start_time = int(1000 * time.time())
-    id = str(start_time)
+    id = play_id if play_id is not None else str(start_time)
 
     # Prevent python programs from buffering their output.  Buffering causes
     # the output to be delayed, making it more difficult to determine the
@@ -373,18 +382,23 @@ def start_playbook(playbook, args={}, cwd=None, cleanup=None):
         LOG.exception(e)
         abort(500, "Unable to write metadata")
 
+    # Create a promise to be returned for clients interested in the promise
+    promise = Promise()
+
     # Use a thread to read the pipe to avoid blocking this process.  Since
     # the thread will interact with socketio, we have to use that library's
     # function for creating threads
     running = plays.get_running_plays()
     running[id] = {'task': socketio.start_background_task(monitor_output,
-                                                          ps, id, cleanup),
+                                                          ps, id, cleanup,
+                                                          promise),
                    'playbook': playbook}
 
     LOG.debug("Spawned thread with play %s", id)
 
-    return jsonify({"id": id}), 202, {'Location': url_for('plays.get_play',
-                                                          id=id)}
+    return {"id": id,
+            "url": url_for('plays.get_play', id=id),
+            "promise": promise}
 
 
 def build_command_line(command, playbook=None, args={}):
@@ -462,13 +476,13 @@ def scrub_passwords(args):
     return scrubbed
 
 
-def monitor_output(ps, id, cleanup):
+def monitor_output(ps, id, cleanup, promise):
     # Monitor the piped output of the running process, forwarding each message
     # received to listening socketIO clients
 
     log_file = get_log_file(id)
 
-    with open(log_file, 'w') as f:
+    with open(log_file, 'a') as f:
         with ps.stdout:
             # Can use this in python3: for line in ps.stdout:
             # Using iter() per https://stackoverflow.com/a/17698359/190597
@@ -507,6 +521,11 @@ def monitor_output(ps, id, cleanup):
 
     except (IOError, OSError):
         pass
+
+    if ps.returncode == 0:
+        promise.do_resolve('Success')
+    else:
+        promise.do_reject(Exception("Play %s failed" % id))
 
 
 @socketio.on('connect')

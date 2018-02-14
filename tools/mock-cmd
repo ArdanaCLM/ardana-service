@@ -131,11 +131,18 @@ elif cmd_name == 'ansible-playbook':
                 playbook = os.path.basename(arg)
                 break
 
-        log = os.path.normpath(os.path.join(os.path.dirname(__file__),
-                               playbook.replace('yml', 'log')))
+        # avoid a full replay when we are doing just limited playbooks
+        if '--limit' in sys.argv or '--tags' in sys.argv:
+            lines = ["Playbook %s completed. (No limited replay log exists)" % playbook]
+        else:
+            log = os.path.normpath(os.path.join(os.path.dirname(__file__),
+                                playbook.replace('yml', 'log')))
 
-        with open(log) as f:
-            lines = f.readlines()
+            try:
+                with open(log) as f:
+                    lines = f.readlines()
+            except:
+                lines = ["Playbook %s completed. (No replay log exists)" % playbook]
 
         last_time = 0
         pattern = re.compile(r'^\$\$(\w+): (.*)')
