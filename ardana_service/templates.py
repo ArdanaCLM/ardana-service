@@ -41,11 +41,10 @@ def get_all_templates():
 
        [
          {
-           "name": "entry-scale-kvm-esx-ses",
-           "href": "/api/v2/templates/entry-scale-kvm-esx-ses",
+           "name": "entry-scale-kvm-esx",
+           "href": "/api/v2/templates/entry-scale-kvm-esx",
            "overview": "...",
-           "metadata": {"nodeCount": 30, "hypervisor": ["esx", "kvm"],
-               "storage": "ses"}
+           "metadata": {"nodeCount": 30, "hypervisor": ["esx", "kvm"]}
          },
          {
            "name": "entry-scale-ironic-flat-network",
@@ -55,28 +54,27 @@ def get_all_templates():
                 "network": "flat"}
          },
          {
-           "name": "mid-scale-kvm-ses",
-           "href": "/api/v2/templates/mid-scale-kvm-ses",
+           "name": "mid-scale-kvm",
+           "href": "/api/v2/templates/mid-scale-kvm",
            "overview": "...",
-           "metadata": {"nodeCount": 200, "hypervisor": ["kvm"],
-                "storage": "ses"}
+           "metadata": {"nodeCount": 200, "hypervisor": ["kvm"]}
          },
          "..."
        ]
     """
 
     metadata_table = {
-        'entry-scale-kvm-ses': {
-            'nodeCount': 30, 'hypervisor': ['kvm'], 'storage': 'ses'
+        'entry-scale-kvm': {
+            'nodeCount': 30, 'hypervisor': ['kvm']
         },
-        'entry-scale-kvm-esx-ses': {
-            'nodeCount': 30, 'hypervisor': ['esx', 'kvm'], 'storage': 'ses'
+        'entry-scale-kvm-esx': {
+            'nodeCount': 30, 'hypervisor': ['esx', 'kvm']
         },
-        'entry-scale-kvm-esx-ses-mml': {
-            'nodeCount': 30, 'hypervisor': ['esx', 'kvm'], 'storage': 'ses'
+        'entry-scale-kvm-esx-mml': {
+            'nodeCount': 30, 'hypervisor': ['esx', 'kvm']
         },
-        'entry-scale-kvm-ses-mml': {
-            'nodeCount': 30, 'hypervisor': ['kvm'], 'storage': 'ses'
+        'entry-scale-kvm-mml': {
+            'nodeCount': 30, 'hypervisor': ['kvm']
         },
         'entry-scale-ironic-flat-network': {
             'nodeCount': 30, 'hypervisor': ['ironic'], 'network': 'flat'
@@ -86,10 +84,10 @@ def get_all_templates():
                 'multi-tenant'
         },
         'entry-scale-swift': {
-            'nodeCount': 30, 'hypervisor': [], 'storage': 'swift'
+            'nodeCount': 30, 'hypervisor': []
         },
-        'mid-scale-kvm-ses': {
-            'nodeCount': 200, 'hypervisor': ['kvm'], 'storage': 'ses'
+        'mid-scale-kvm': {
+            'nodeCount': 200, 'hypervisor': ['kvm']
         }
     }
 
@@ -131,7 +129,7 @@ def get_template(name):
 
     .. sourcecode:: http
 
-       GET /api/v2/entry-scale-kvm-ses HTTP/1.1
+       GET /api/v2/entry-scale-kvm HTTP/1.1
 
     **Example Response**:
 
@@ -140,7 +138,7 @@ def get_template(name):
        HTTP/1.1 200 OK
 
        {
-         "name": "entry-scale-kvm-ses",
+         "name": "entry-scale-kvm",
          "version": 2,
          "readme": {
            "html": "..."
@@ -148,7 +146,7 @@ def get_template(name):
          "fileInfo": {"..."},
          "inputModel": {
            "cloud": {
-             "name": "entry-scale-kvm-ses",
+             "name": "entry-scale-kvm",
              "hostname-data": {
                "host-prefix": "helion",
                "member-prefix": "-m"
