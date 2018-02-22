@@ -94,6 +94,28 @@ def log_response(response):
     return response
 
 
+# Middleware function to permit unsecured functions to be called even
+# when keystone authentication is being enforced
+def enable_unsecured(handler):
+    def _inner(environ, start_fn):
+        unsecured = ['/api/v2/heartbeat',
+                     '/api/v2/version']
+        path = environ.get('PATH_INFO')
+
+        if environ.get('HTTP_X_IDENTITY_STATUS') != 'Confirmed' and \
+                path not in unsecured:
+
+            LOG.info("Rejecting unauthorized call to %s", path)
+
+            # Set response headers to signal to the keystone middleware that
+            # this REST api must be authorized.  See
+            # https://wiki.openstack.org/wiki/Openstack-authn
+            start_fn('401 Unauthorized', [('WWW-Authenticate', 'Delegated')])
+        else:
+            return handler(environ, start_fn)
+    return _inner
+
+
 def main():
     # Load config options any config files specified on the command line
     CONF()
@@ -102,6 +124,17 @@ def main():
 
     if 'keystone_authtoken' in CONF.list_all_sections():
         # Wrap with keystone middleware if configured to do so
+        if not CONF.keystone_authtoken.delay_auth_decision:
+            msg = "The [keystone_authtoken] section in the config file " \
+                "must have delay_auth_decision explicitly set to true. " \
+                "The default value, false, will cause calls to " \
+                "/api/v2/heartbeat to be rejected "
+            LOG.error(msg)
+            print msg   # print on the console for good measure
+            sys.exit(1)
+
+        # Use our our middleware function to permit unsecured apis to be called
+        app.wsgi_app = enable_unsecured(app.wsgi_app)
         app.wsgi_app = auth_token.AuthProtocol(app.wsgi_app,
                                                {'oslo_config_config': CONF})
 
