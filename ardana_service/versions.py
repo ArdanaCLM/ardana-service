@@ -55,7 +55,7 @@ def commit(dir=None):
 
        If supplied, the body of the POST should contain the commit message.
 
-    .. :quickref: Model; Commits the current input model changes to the git repository
+    .. :quickref: Model; Commits current input model changes to the git repo
 
     **Example Request**:
 
@@ -87,35 +87,57 @@ def commit_model(dir=None, message=None):
     repo = Repo(dir)
 
     # Get commit at head of site branch
-    site = [head.commit.hexsha for head in repo.heads if head.name == 'site']
-    if not site:
-        LOG.error("The repo %s has no 'site' branch", dir)
-        abort(404)
+    try:
+        site = repo.heads['site']
+    except IndexError:
+        msg = "repo %s has no 'site' branch" % dir
+        LOG.error(msg)
+        abort(404, msg)
 
     # Verify that HEAD is the same commit as the site branch head
-    if repo.head.commit.hexsha != site[0]:
-        LOG.error(
-            "The repo %s does not have the 'site' branch checked out",
-            dir)
-        abort(404)
+    if repo.head.reference != site:
+        msg = "The repo %s does not have the 'site' branch checked out" % dir
+        LOG.error(msg)
+        abort(404, msg)
 
     # Process all modifications and deletes that have not been staged
     # (which are differences between the index and the working tree)
     changes_exist = False
     for f in repo.index.diff(None):
         if f.change_type == 'D':
-            repo.index.remove([f.a_path])
+            # a Delete
+            repo.index.remove([f.a_path], write=True)
         else:
-            repo.index.add([f.a_path])
+            # a Modification or Rename
+            repo.index.add([f.a_path], write=True)
         changes_exist = True
 
     # Add all untracked files to the index
     for f in repo.untracked_files:
-        repo.index.add([f])
+        # Update the index with the new file.  Note that the entry in the
+        # index has metadata to remember that this file was formerly untracked
+        repo.index.add([f], write=True)
         changes_exist = True
 
     # Commit the changes in the index
     if changes_exist:
+        # "commit" the index by writing it into the git repository.
         repo.index.commit(message)
+
+        # During a normal git commit, the index metatdata is refreshed to
+        # reflect the fact that the previously-untracked files are now tracked.
+        # (Note that the "BACKGROUND REFRESH" section of the man page for `git
+        # status` command discusses this at a high level).  For some reason
+        # the GitPython commit does not perform this important step.  Since
+        # the native `git diff` command does update this metadata, we can
+        # force the update by triggering that command to execute.
+        #
+        # Normally we would probably not care about updating this metadata
+        # since many operations that normally use it, such as `git status`,
+        # `git commit`, `git diff`, etc. automatically update it.  But the
+        # command `git diff-index` does not automatically update the metadata
+        # and will report uncommitted differences if it were used without first
+        # refreshing the metadata.
+        repo.index.diff(None)
 
     return repo.head.commit.hexsha
