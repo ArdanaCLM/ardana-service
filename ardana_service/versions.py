@@ -106,17 +106,17 @@ def commit_model(dir=None, message=None):
     for f in repo.index.diff(None):
         if f.change_type == 'D':
             # a Delete
-            repo.index.remove([f.a_path], write=True)
+            repo.index.remove([f.a_path])
         else:
             # a Modification or Rename
-            repo.index.add([f.a_path], write=True)
+            repo.index.add([f.a_path])
         changes_exist = True
 
     # Add all untracked files to the index
     for f in repo.untracked_files:
         # Update the index with the new file.  Note that the entry in the
         # index has metadata to remember that this file was formerly untracked
-        repo.index.add([f], write=True)
+        repo.index.add([f])
         changes_exist = True
 
     # Commit the changes in the index
