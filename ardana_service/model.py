@@ -516,6 +516,11 @@ def get_cp_output_file(name):
                }
            }
        }
+
+    **Changes for v2**:
+
+    When requesting a filename, it is deprecated to specify a suffix of
+    ``_yml`` and expect it to match a real filename ending with ``.yml``.
     """
 
     if request.args.get("ready") == "true":
@@ -523,7 +528,7 @@ def get_cp_output_file(name):
     else:
         output_dir = CONF.paths.cp_output_dir
 
-    filename = os.path.join(output_dir, name)
+    filename = os.path.join(output_dir, name).replace("_yml", ".yml")
     if not filename.endswith(".yml"):
         filename += ".yml"
 
