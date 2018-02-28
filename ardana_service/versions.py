@@ -95,10 +95,17 @@ def commit_model(dir=None, message=None):
         abort(404, msg)
 
     # Verify that HEAD is the same commit as the site branch head
-    if repo.head.reference != site:
-        msg = "The repo %s does not have the 'site' branch checked out" % dir
+    try:
+        if repo.head.reference != site:
+            msg = "The repo %s does not have the 'site' branch checked out" \
+                % dir
+            LOG.error(msg)
+            abort(403, msg)
+
+    except TypeError:
+        msg = "The repo %s is in a detached HEAD state" % dir
         LOG.error(msg)
-        abort(404, msg)
+        abort(403, msg)
 
     # Process all modifications and deletes that have not been staged
     # (which are differences between the index and the working tree)
