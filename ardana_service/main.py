@@ -41,6 +41,7 @@ from keystonemiddleware import opts  # noqa: F401
 import os
 from oslo_config import cfg
 from oslo_log import log as logging
+from oslo_middleware import healthcheck
 import time
 
 PROGRAM = 'ardana_service'
@@ -137,6 +138,9 @@ def main():
         app.wsgi_app = enable_unsecured(app.wsgi_app)
         app.wsgi_app = auth_token.AuthProtocol(app.wsgi_app,
                                                {'oslo_config_config': CONF})
+
+    # Use oslo healthcheck, which does not log its requests
+    app.wsgi_app = healthcheck.Healthcheck(app.wsgi_app)
 
     # Note that any flask options that are to be exposed in our config file
     # have to be explicitly configured (in flask_opts above) and explicitly

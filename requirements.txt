@@ -20,5 +20,6 @@ PyYAML>=3.10.0 # MIT
 GitPython>=2.0 # BSD-3
 oslo.config>=4.11.0 # Apache-2.0
 oslo.log>=3.30.0 # Apache-2.0
+oslo.middleware>=3.31.0 # Apache-2.0
 keystonemiddleware>=4.17.0 # Apache-2.0
 promise>=2.1 # MIT
