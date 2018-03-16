@@ -31,7 +31,6 @@ from ardana_service import socketio
 from ardana_service import templates
 from ardana_service import versions
 
-import datetime
 from flask import Flask
 from flask import request
 from flask_cors import CORS
@@ -59,7 +58,8 @@ extra_log_level_defaults = [
 logging.set_defaults(default_log_levels=logging.get_default_log_levels() +
                      extra_log_level_defaults)
 
-app = Flask('ardana_service')
+
+app = Flask(PROGRAM)
 app.register_blueprint(admin.bp)
 app.register_blueprint(config_processor.bp)
 app.register_blueprint(playbooks.bp)
@@ -70,12 +70,22 @@ app.register_blueprint(servers.bp)
 app.register_blueprint(service.bp)
 app.register_blueprint(templates.bp)
 app.register_blueprint(versions.bp)
+# Flask logging is broken, and it is a time bomb: by default it does nothing,
+# but the first time an exception happens, it creates a new logger that
+# interferes with normal python logging, which messes up all subsequent log
+# messages.  This bug was reported in
+# https://github.com/pallets/flask/issues/641 and is expected to be fixed in
+# the future when Flask 1.0 ships.  Referring to app.logger forces this
+# creation via Flask's logger property handler.  We then clean up the mess it
+# makes
+app.logger                   # initialize flask logging (screwing up logging)
+app.logger.handlers = []     # clear out the newly creating logger
+app.logger.propagate = True  # let messages be handled by normal logging
 
 
 @app.before_request
 def log_request():
     LOG.info(' '.join([
-        datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S.%f'),
         request.remote_addr,
         '   ',
         request.method,
@@ -86,7 +96,6 @@ def log_request():
 @app.after_request
 def log_response(response):
     LOG.info(' '.join([
-        datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S.%f'),
         request.remote_addr,
         str(response.status_code),
         request.method,
@@ -118,6 +127,7 @@ def enable_unsecured(handler):
 
 
 def main():
+
     # Load config options any config files specified on the command line
     CONF()
     logging.setup(CONF, PROGRAM)
@@ -155,7 +165,11 @@ def main():
         f.write("Started at %s\n" % time.asctime())
 
     socketio.init_app(app)
+
+    # The 'log' parameter avoids running in debug mode, which suppresses the
+    # debug message that is emitted on *every* incoming request.
     socketio.run(app, host=CONF.host, port=CONF.port, use_reloader=True,
+                 log=LOG,
                  extra_files=[trigger_file])
 
 
