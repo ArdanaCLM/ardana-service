@@ -12,10 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from . import model
 from flask import abort
 from flask import Blueprint
 from flask import jsonify
-import model
+from operator import itemgetter
 import os
 from oslo_config import cfg
 from oslo_log import log as logging
@@ -113,7 +114,7 @@ def get_all_templates():
         except IOError:
             pass
 
-    return jsonify(sorted(templates))
+    return jsonify(sorted(templates, key=itemgetter('name')))
 
 
 @bp.route("/api/v2/templates/<name>")

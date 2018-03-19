@@ -144,7 +144,7 @@ def main():
                 "The default value, false, will cause calls to " \
                 "/api/v2/heartbeat to be rejected "
             LOG.error(msg)
-            print msg   # print on the console for good measure
+            print(msg)  # print on the console for good measure
             sys.exit(1)
 
         # Use our our middleware function to permit unsecured apis to be called
@@ -164,8 +164,9 @@ def main():
     app.config.from_mapping(flask_config)
 
     trigger_file = os.path.join(CONF.paths.log_dir, 'trigger.txt')
-    with open(trigger_file, 'w') as f:
-        f.write("Started at %s\n" % time.asctime())
+    if not os.path.exists(trigger_file):
+        with open(trigger_file, 'w') as f:
+            f.write("Started at %s\n" % time.asctime())
 
     socketio.init_app(app)
 

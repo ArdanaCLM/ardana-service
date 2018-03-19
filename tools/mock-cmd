@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import print_function
 import os
 import re
 import requests
@@ -65,8 +66,8 @@ CONF(conf_args)
 exit_code = CONF.testing.mock_cmd_exit
 
 if exit_code != 0:
-    print "Fake error message to simluate an error\n"
-    print "Exiting with code %s" % exit_code
+    print("Fake error message to simluate an error\n")
+    print("Exiting with code %s" % exit_code)
     sys.exit(exit_code)
 
 cmd_name = ''
@@ -116,7 +117,7 @@ if len(sys.argv) > 2 and cmd_name.startswith('python') and \
         try:
             subprocess.check_output(sys.argv[1:], stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
-            print e.output
+            print(e.output)
             sys.exit(e.returncode)
 
 elif cmd_name == 'ansible-playbook':
@@ -169,20 +170,20 @@ elif cmd_name == 'ansible-playbook':
                         time.sleep(naptime)
                     last_time = next_time
 
-                    print match.group(2)
+                    print(match.group(2))
 
                     # For debugging crosstalk between events and logs, it
                     # can be useful to prefix the log entry with the
                     # playbook name
                     # print playbook, match.group(2)
             else:
-                print line,
+                print(line, end="")
                 # print playbook, line, # (See above comment)
 
     else:
         try:
             subprocess.check_output(sys.argv[1:], stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
-            print e.output
+            print(e.output)
             sys.exit(e.returncode)
 

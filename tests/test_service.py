@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import mock
 import os
 from oslo_config import cfg
 from oslo_config import fixture as oslo_fixture
+from oslo_serialization import jsonutils
 import testtools
 
 from ardana_service.service import bp
@@ -42,7 +42,7 @@ class TestServiceFiles(testtools.TestCase):
             [('/root', ['dir1'], []), ('/root/dir1', [], ['test.j2'])]
         myapp = app.test_client()
         x = myapp.get('/api/v2/service/files')
-        y = json.loads(x.data)
+        y = jsonutils.loads(x.data)
         self.assertEqual(len(y), 1)
         self.assertEqual(y[0]['files'][0], 'test.j2')
 
@@ -55,7 +55,7 @@ class TestServiceFiles(testtools.TestCase):
                 ('/root/dir1/subdir', [], ['test.j2'])]
         myapp = app.test_client()
         x = myapp.get('/api/v2/service/files')
-        y = json.loads(x.data)
+        y = jsonutils.loads(x.data)
         self.assertEqual(len(y), 1)
         self.assertEqual(y[0]['files'][0], 'subdir/test.j2')
 
@@ -67,7 +67,7 @@ class TestServiceFiles(testtools.TestCase):
             [('/root', ['dir1'], []), ('/root/dir1', [], [])]
         myapp = app.test_client()
         x = myapp.get('/api/v2/service/files')
-        y = json.loads(x.data)
+        y = jsonutils.loads(x.data)
         self.assertEqual(len(y), 0)
 
     def test_get_a_file(self):
@@ -76,7 +76,7 @@ class TestServiceFiles(testtools.TestCase):
                          config_dir=self.TEST_DATA_DIR + '/service_files/')
         myapp = app.test_client()
         x = myapp.get('/api/v2/service/files/testservice/test.j2')
-        y = json.loads(x.data)
+        y = jsonutils.loads(x.data)
         content = 'log_config_append={{ cinder_api_conf_dir }}' + \
                   '/api-logging.conf'
         self.assertTrue(y.find(content))
@@ -87,9 +87,9 @@ class TestServiceFiles(testtools.TestCase):
                          config_dir=self.TEST_DATA_DIR + '/service_files/')
         myapp = app.test_client()
         x = myapp.get('/api/v2/service/files/testservice/test.j2')
-        y = json.loads(x.data)
+        y = jsonutils.loads(x.data)
         result = myapp.post(
             '/api/v2/service/files/testservice/test.j2',
-            data=json.dumps(y),
+            data=jsonutils.dumps(y),
             content_type='application/json')
         self.assertTrue(str(result).find('200'))

@@ -89,7 +89,8 @@ def get_all_files():
 def get_service_file(name):
     """Retrieve a service configuration file
 
-    .. :quickref: Service Config; Retrieve the contents of a service config file
+    .. :quickref: Service Config; Retrieve the contents of a service config \
+        file
 
     :param path: service config file name
 

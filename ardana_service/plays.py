@@ -134,7 +134,7 @@ def get_plays():
     meta_files = []
     try:
         if live_only:
-            for id, play in get_running_plays().iteritems():
+            for id, play in get_running_plays().items():
                 if not want_playbook or \
                         basename(play['playbook']) == want_playbook:
                     meta_files.append(get_metadata_file(id))

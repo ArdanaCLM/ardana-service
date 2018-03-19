@@ -268,7 +268,7 @@ def get_command_args(payload=None, cwd=None):
 
     # Normalize the keys by removing all of the leading dashes from the keys,
     # since they are optional
-    body = {k.lstrip('-'): v for k, v in body.iteritems()}
+    body = {k.lstrip('-'): v for k, v in body.items()}
 
     # Handle a couple of old key formats for backward compatibility
     if 'extraVars' in body:
@@ -324,11 +324,11 @@ def get_command_args(payload=None, cwd=None):
         with tempfile.NamedTemporaryFile(suffix='', prefix='.vault-pwd',
                                          dir=CONF.paths.playbooks_dir,
                                          delete=False) as f:
-            f.write(encryption_key)
+            f.write(encryption_key.encode('utf-8'))
         body['vault-password-file'] = f.name
 
     # Finally normalize all keys to have the leading --
-    args = {'--' + k: v for k, v in body.iteritems()}
+    args = {'--' + k: v for k, v in body.items()}
 
     return args
 
@@ -362,8 +362,13 @@ def start_playbook(playbook, args={}, cwd=None, cleanup=None, play_id=None):
     env['PYTHONUNBUFFERED'] = '1'
     env['PLAY_ID'] = str(id)
 
-    ps = subprocess.Popen(cmd, cwd=cwd, env=env,
-                          stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    if sys.version_info.major < 3:
+        ps = subprocess.Popen(cmd, cwd=cwd, env=env,
+                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    else:
+        ps = subprocess.Popen(cmd, cwd=cwd, env=env,
+                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                              universal_newlines=True)
 
     meta_file = plays.get_metadata_file(id)
 
@@ -452,9 +457,9 @@ def build_command_line(command, playbook=None, args={}):
     if isinstance(args, list):
         cmdLine.extend(args)
     elif isinstance(args, dict):
-        for k, v in args.iteritems():
+        for k, v in args.items():
             if k == '--verbose':
-                for i in xrange(0, int(v)):
+                for i in range(0, int(v)):
                     cmdLine.append(k)
             else:
                 cmdLine.append(k)
@@ -471,7 +476,7 @@ def scrub_passwords(args):
     # readable
 
     scrubbed = {}
-    for k, v in args.iteritems():
+    for k, v in args.items():
         if k in ('--encrypt', '--rekey'):
             scrubbed[k] = "****"
         else:
@@ -486,15 +491,22 @@ def monitor_output(ps, id, cleanup, promise):
     log_file = get_log_file(id)
 
     with open(log_file, 'a') as f:
-        with ps.stdout:
-            # Can use this in python3: for line in ps.stdout:
-            # Using iter() per https://stackoverflow.com/a/17698359/190597
-            for line in iter(ps.stdout.readline, b''):
-                # python 2 returns bytes that must be converted to a string
-                if isinstance(line, bytes):
-                    line = line.decode("utf-8")
-
-                f.write(line.encode("utf-8"))
+        # Reading subprocess line by line varies in python2 vs python3.  See
+        # https://stackoverflow.com/a/17698359/190597
+        #
+        # Can use this in python3: for line in ps.stdout:
+        if sys.version_info.major < 3:
+            with ps.stdout:
+                for line in iter(ps.stdout.readline, b''):
+                    if isinstance(line, bytes):
+                        f.write(line)
+                    else:
+                        f.write(line.encode("utf-8"))
+                    f.flush()
+                    socketio.emit("log", line, room=id)
+        else:
+            for line in ps.stdout:
+                f.write(line)
                 f.flush()
                 socketio.emit("log", line, room=id)
 
@@ -568,7 +580,7 @@ def on_join(id):
             for e in events:
                 last_events[e['playbook']] = e['event']
 
-            for playbook, event in last_events.iteritems():
+            for playbook, event in last_events.items():
                 emit(event, playbook)
 
         except IOError:
@@ -605,6 +617,6 @@ def get_running_playbook_id(playbook):
     wanted = plays.basename(playbook)
 
     running = plays.get_running_plays()
-    for id, play in running.iteritems():
+    for id, play in running.items():
         if plays.basename(play['playbook']) == wanted:
             return id

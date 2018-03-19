@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from flask import Flask
-import json
+from oslo_serialization import jsonutils
 import testtools
 
 from ardana_service.admin import bp
@@ -29,7 +29,7 @@ class TestAdmin(testtools.TestCase):
         #    calls are being executed without error
         test_app = app.test_client()
         resp = test_app.get('/api/v2/user')
-        user_dict = json.loads(resp.data)
+        user_dict = jsonutils.loads(resp.data)
 
         # Since we cannot control which username that this unit test runs
         # under, we only require that it return a non-empty username

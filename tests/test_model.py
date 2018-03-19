@@ -12,14 +12,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from contextlib import contextmanager
 import copy
 import os
+from oslo_log import log as logging
+import six
 import testtools
 import yaml
 
 from ardana_service import model
 
 TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), 'test_data')
+LOG = logging.getLogger(__name__)
+
+
+@contextmanager
+def log_level(level, name):
+    # Enable modifying logging level in a context manager
+    logger = logging.getLogger(name)
+    # Get the effective level of the underlying logging object, and modify it
+    old_level = logger.logger.getEffectiveLevel()
+    logger.logger.setLevel(level)
+    try:
+        yield logger
+    finally:
+        logger.logger.setLevel(old_level)
 
 
 class TestReadInvalidModels(testtools.TestCase):
@@ -29,7 +46,8 @@ class TestReadInvalidModels(testtools.TestCase):
 
     def test_read_invalid_yml(self):
         model_dir = os.path.join(TEST_DATA_DIR, 'invalid_yml')
-        self.assertRaises(yaml.YAMLError, model.read_model, model_dir)
+        with log_level(logging.CRITICAL, "ardana_service.model"):
+            self.assertRaises(yaml.YAMLError, model.read_model, model_dir)
 
     def test_read_invalid_dir(self):
         model_dir = os.path.join(TEST_DATA_DIR, 'doesnotexist')
@@ -42,7 +60,7 @@ class TestWriteModels(object):
     def test_no_changes(self):
         changes = model.write_model(self.data, self.model_dir, dry_run=True)
 
-        affected_files = [k for k, v in changes.iteritems()
+        affected_files = [k for k, v in changes.items()
                           if v['status'] != model.IGNORED]
         self.assertEqual(0, len(affected_files))
 
@@ -58,7 +76,7 @@ class TestWriteModels(object):
             self.data['inputModel']['servers'].append(clone)
 
         changes = model.write_model(self.data, self.model_dir, dry_run=True)
-        changed_files = [k for k, v in changes.iteritems()
+        changed_files = [k for k, v in changes.items()
                          if v['status'] == model.CHANGED]
 
         self.assertEqual(1, len(changed_files))
@@ -76,7 +94,7 @@ class TestWriteModels(object):
             self.data['inputModel']['disk-models'].append(clone)
 
         changes = model.write_model(self.data, self.model_dir, dry_run=True)
-        added_files = [k for k, v in changes.iteritems()
+        added_files = [k for k, v in changes.items()
                        if v['status'] == model.ADDED]
 
         self.assertEqual(num_to_add, len(added_files))
@@ -110,11 +128,11 @@ class TestWriteModels(object):
         changes = model.write_model(self.data, self.model_dir, dry_run=True)
 
         # There should be one file added with two disk models
-        added = {k: v for k, v in changes.iteritems()
+        added = {k: v for k, v in changes.items()
                  if v['status'] == model.ADDED}
 
         # Remove the product for comparison to the added data
-        new_data = added.values()[0]['data']
+        new_data = next(six.itervalues(added))['data']
 
         # Should have 2 new disk models in the file (FOO and BAR)
         self.assertEqual(['FOO', 'BAR'], [
@@ -127,15 +145,15 @@ class TestWriteModels(object):
         # Write the changes
         changes = model.write_model(self.data, self.model_dir, dry_run=True)
 
-        changed = {k: v for k, v in changes.iteritems()
+        changed = {k: v for k, v in changes.items()
                    if v['status'] != model.IGNORED}
         self.assertEqual(1, len(changed))
 
-        info = changed.values()[0]
+        info = next(six.itervalues(changed))
         self.assertEqual(model.ADDED, info['status'])
 
         # Remove the product for comparison to the added data
-        new_data = changed.values()[0]['data']
+        new_data = next(six.itervalues(changed))['data']
         new_data.pop('product')
 
         self.assertEqual(added_dict, new_data)
@@ -147,15 +165,15 @@ class TestWriteModels(object):
         # Write the changes
         changes = model.write_model(self.data, self.model_dir, dry_run=True)
 
-        changed = {k: v for k, v in changes.iteritems()
+        changed = {k: v for k, v in changes.items()
                    if v['status'] != model.IGNORED}
         self.assertEqual(1, len(changed))
 
-        info = changed.values()[0]
+        info = next(six.itervalues(changed))
         self.assertEqual(model.ADDED, info['status'])
 
         # Remove the product for comparison to the added data
-        new_data = changed.values()[0]['data']
+        new_data = next(six.itervalues(changed))['data']
         new_data.pop('product')
 
         self.assertEqual(added_list, new_data)
@@ -167,13 +185,13 @@ class TestWriteModels(object):
         # Write the changes
         changes = model.write_model(self.data, self.model_dir, dry_run=True)
 
-        changed = {k: v for k, v in changes.iteritems()
+        changed = {k: v for k, v in changes.items()
                    if v['status'] != model.IGNORED}
         self.assertEqual(1, len(changed))
 
         self.assertIn('cloudConfig.yml', changed)
 
-        info = changed.values()[0]
+        info = next(six.itervalues(changed))
         self.assertEqual(model.CHANGED, info['status'])
 
     def test_delete_list(self):
@@ -182,11 +200,11 @@ class TestWriteModels(object):
         # Write the changes
         changes = model.write_model(self.data, self.model_dir, dry_run=True)
 
-        changed = {k: v for k, v in changes.iteritems()
+        changed = {k: v for k, v in changes.items()
                    if v['status'] != model.IGNORED}
         self.assertEqual(1, len(changed))
 
-        info = changed.values()[0]
+        info = next(six.itervalues(changed))
         self.assertEqual(model.DELETED, info['status'])
 
         self.assertIn('data/control_plane.yml', changed)
@@ -212,11 +230,11 @@ class TestWriteTwoPassthroughs(testtools.TestCase, TestWriteModels):
         # Write the changes
         changes = model.write_model(self.data, self.model_dir, dry_run=True)
 
-        changed = {k: v for k, v in changes.iteritems()
+        changed = {k: v for k, v in changes.items()
                    if v['status'] != model.IGNORED}
         self.assertEqual(1, len(changed))
 
-        info = changed.values()[0]
+        info = next(six.itervalues(changed))
         self.assertEqual(model.CHANGED, info['status'])
 
         self.assertIn('data/neutron_passthrough.yml', changed)
@@ -233,14 +251,14 @@ class TestWriteTwoPassthroughs(testtools.TestCase, TestWriteModels):
         # Write the changes
         changes = model.write_model(self.data, self.model_dir, dry_run=True)
 
-        changed = {k: v for k, v in changes.iteritems()
+        changed = {k: v for k, v in changes.items()
                    if v['status'] != model.IGNORED}
         self.assertEqual(1, len(changed))
 
-        info = changed.values()[0]
+        info = next(six.itervalues(changed))
         self.assertEqual(model.ADDED, info['status'])
 
-        filename = changed.keys()[0]
+        filename = next(six.iterkeys(changed))
 
         # Should create some random filename that begins with pass-through
         self.assertTrue(filename.startswith('data/pass_through_'))
@@ -255,14 +273,14 @@ class TestWriteTwoPassthroughs(testtools.TestCase, TestWriteModels):
         # Write the changes
         changes = model.write_model(self.data, self.model_dir, dry_run=True)
 
-        changed = {k: v for k, v in changes.iteritems()
+        changed = {k: v for k, v in changes.items()
                    if v['status'] != model.IGNORED}
         self.assertEqual(1, len(changed))
 
-        info = changed.values()[0]
+        info = next(six.itervalues(changed))
         self.assertEqual(model.DELETED, info['status'])
 
-        filename = changed.keys()[0]
+        filename = next(six.iterkeys(changed))
         self.assertEqual('data/neutron_passthrough.yml', filename)
 
 
@@ -291,14 +309,14 @@ class TestWriteOnePassthrough(testtools.TestCase, TestWriteModels):
         changes = model.write_model(self.data, self.model_dir, dry_run=True)
 
         # All pass_through contents should be written to the existing file
-        changed = {k: v for k, v in changes.iteritems()
+        changed = {k: v for k, v in changes.items()
                    if v['status'] != model.IGNORED}
         self.assertEqual(1, len(changed))
 
-        info = changed.values()[0]
+        info = next(six.itervalues(changed))
         self.assertEqual(model.CHANGED, info['status'])
 
-        filename = changed.keys()[0]
+        filename = next(six.iterkeys(changed))
         self.assertEqual('data/pass_through.yml', filename)
 
         self.assertIn('foo', info['data']['pass-through']['global'])
@@ -311,14 +329,14 @@ class TestWriteOnePassthrough(testtools.TestCase, TestWriteModels):
         # Write the changes
         changes = model.write_model(self.data, self.model_dir, dry_run=True)
 
-        changed = {k: v for k, v in changes.iteritems()
+        changed = {k: v for k, v in changes.items()
                    if v['status'] != model.IGNORED}
         self.assertEqual(1, len(changed))
 
-        info = changed.values()[0]
+        info = next(six.itervalues(changed))
         self.assertEqual(model.DELETED, info['status'])
 
-        filename = changed.keys()[0]
+        filename = next(six.iterkeys(changed))
         self.assertEqual('data/pass_through.yml', filename)
 
 
@@ -345,14 +363,14 @@ class TestWriteNoPassthrough(testtools.TestCase, TestWriteModels):
         # Write the changes
         changes = model.write_model(self.data, self.model_dir, dry_run=True)
 
-        changed = {k: v for k, v in changes.iteritems()
+        changed = {k: v for k, v in changes.items()
                    if v['status'] != model.IGNORED}
         self.assertEqual(1, len(changed))
 
-        info = changed.values()[0]
+        info = next(six.itervalues(changed))
         self.assertEqual(model.ADDED, info['status'])
 
-        filename = changed.keys()[0]
+        filename = next(six.iterkeys(changed))
 
         # Should create some random filename that begins with pass-through
         self.assertTrue(filename.startswith('data/pass_through_'))

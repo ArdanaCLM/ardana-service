@@ -23,6 +23,7 @@ import os
 from oslo_config import cfg
 from oslo_log import log as logging
 import random
+import six
 import yaml
 
 from . import policy
@@ -100,7 +101,7 @@ def get_entity_operations():
 
     model = read_model()
     entity_operations = {}
-    for key, val in model['inputModel'].iteritems():
+    for key, val in model['inputModel'].items():
         ops = {}
         ops['get'] = 'GET ' + \
             url_for('model.get_entities', entity_name=key)
@@ -401,7 +402,8 @@ def update_model_file(name):
 def get_encrypted():
     """Returns whether the readied config processor output is encrypted.
 
-    .. :quickref: Model; Returns whether the config processor output is encrypted
+    .. :quickref: Model; Returns whether the config processor output is \
+        encrypted
 
     **Example Response**:
 
@@ -488,7 +490,8 @@ def get_cp_output_file(name):
 
     Returns the content as JSON.
 
-    .. :quickref: Model; Returns the contents of a file from the config processor output directory
+    .. :quickref: Model; Returns the contents of a file from the config \
+        processor output directory
 
     :query ready: ``true`` to return the file from the "ready" directory.
 
@@ -675,7 +678,7 @@ def read_model(model_dir=None):
 
 def add_doc_to_model(model, doc, relname):
 
-    for section, value in doc.iteritems():
+    for section, value in doc.items():
         # Add to fileInfo / sections
         model['fileInfo']['sections'][section].append(relname)
 
@@ -699,7 +702,7 @@ def add_doc_to_model(model, doc, relname):
             if section not in model['inputModel']:
                 model['inputModel'][section] = {}
 
-            for key, val in value.iteritems():
+            for key, val in value.items():
 
                 # if pass-through section contains a nested dictionary, add
                 #    each of the keys of that nested dict
@@ -764,13 +767,13 @@ def write_model(in_model, model_dir=None, dry_run=False):  # noqa: C901
 
     # Write portion of input model that correspond to existing files
     file_section_map = model['fileInfo']['fileSectionMap']
-    for filename, sections in file_section_map.iteritems():
+    for filename, sections in file_section_map.items():
         new_content = {}
 
         # sections is a list of sections in the file
         for section in sections:
 
-            if isinstance(section, basestring):
+            if isinstance(section, six.string_types):
                 # Skip the remaining processing if the entire section has been
                 # removed
                 if section not in model['inputModel']:
@@ -891,7 +894,7 @@ def write_model(in_model, model_dir=None, dry_run=False):  # noqa: C901
 
     # Write portion of input model that remain -- these have not been written
     # to any file
-    for section_name, contents in model['inputModel'].iteritems():
+    for section_name, contents in model['inputModel'].items():
         # Skip those sections that have been entirely written and removed
         if not contents:
             continue
@@ -970,7 +973,7 @@ def get_section_key_field(model, section_name):
 
     # Find a file that contains the given section and get its key field
     file_section_map = model['fileInfo']['fileSectionMap']
-    for filename, sections in file_section_map.iteritems():
+    for filename, sections in file_section_map.items():
         for section in sections:
             try:
                 if section_name in section:
