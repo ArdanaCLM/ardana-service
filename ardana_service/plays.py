@@ -1,3 +1,17 @@
+# (c) Copyright 2017-2018 SUSE LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 from flask import abort
 from flask import Blueprint
 from flask import jsonify
@@ -194,6 +208,14 @@ def get_play(id):
     return send_from_directory(get_log_dir_abs(), str(id) + META_EXT)
 
 
+def is_running(pid):
+    try:
+        os.kill(pid, 0)
+        return True
+    except OSError:
+        return False
+
+
 @bp.route("/api/v2/plays/<id>", methods=['DELETE'])
 def kill_play(id):
     """Kills the play with the given id if it is still running
@@ -221,15 +243,45 @@ def kill_play(id):
         with open(meta_file) as f:
             play = json.load(f)
 
-        os.kill(int(id), signal.SIGINT)
-        play['killed'] = True
-        with open(meta_file, "w") as f:
-            json.dump(play, f)
+    except IOError:
+        abort(404, "Unable to find play")
 
-        return "Success"
+    # play['pid'] is always an int, but cast it just to be safe
+    pid = int(play['pid'])
+    if not is_running(pid):
+        abort(410, 'Process is no longer running')
 
-    except (IOError, OSError):
-        abort(404, "Unable to find process and metadata")
+    try:
+        tries = 5
+        # Use SIGINT to give the process a chance to shut itself down
+        while(is_running(pid) and tries > 0):
+            os.kill(pid, signal.SIGINT)
+            tries -= 1
+            time.sleep(0.5)
+
+        # It refuses to shut down, so use the big hammer (SIGKILL)
+        if is_running(pid):
+            os.kill(pid, signal.SIGKILL)
+
+            tries = 5
+            # Wait a little for the process to die
+            while(is_running(pid) and tries > 0):
+                tries -= 1
+                time.sleep(0.5)
+
+    except OSError as e:
+        abort(404, "Unable to kill process %s" % e.message)
+
+    play['killed'] = True
+
+    # If the process has finally died, update the endTime
+    if not is_running(pid):
+        play['endTime'] = int(1000 * time.time())
+
+    with open(meta_file, "w") as f:
+        json.dump(play, f)
+
+    return "Success"
 
 
 @bp.route("/api/v2/plays/<id>/events")
