@@ -25,6 +25,7 @@ import yaml
 
 from . import model as model_api
 from . import playbooks
+from . import policy
 from . import versions
 
 LOG = logging.getLogger(__name__)
@@ -34,6 +35,7 @@ CONF = cfg.CONF
 
 
 @bp.route("/api/v2/servers/process", methods=['POST'])
+@policy.enforce('lifecycle:run_playbook')
 def add_server():
     """Add compute node
 
@@ -249,6 +251,7 @@ def add_server():
 
 
 @bp.route("/api/v2/servers/<id>/process", methods=['DELETE'])
+@policy.enforce('lifecycle:run_playbook')
 def remove_server(id):
     """Remove compute node
 

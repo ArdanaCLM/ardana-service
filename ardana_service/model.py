@@ -25,6 +25,7 @@ from oslo_log import log as logging
 import random
 import yaml
 
+from . import policy
 
 LOG = logging.getLogger(__name__)
 
@@ -43,6 +44,7 @@ PASS_THROUGH = 'pass-through'
 
 
 @bp.route("/api/v2/model", methods=['GET'])
+@policy.enforce('lifecycle:get_model')
 def get_model():
     """Returns the current input model.
 
@@ -61,6 +63,7 @@ def get_model():
 
 
 @bp.route("/api/v2/model", methods=['POST'])
+@policy.enforce('lifecycle:update_model')
 def update_model():
     """Replace the input model with the supplied JSON.
 
@@ -83,6 +86,7 @@ def update_model():
 
 
 @bp.route("/api/v2/model/entities", methods=['GET'])
+@policy.enforce('lifecycle:get_model')
 def get_entity_operations():
     """List top-level entities in the input model
 
@@ -119,6 +123,7 @@ def get_entity_operations():
 
 
 @bp.route("/api/v2/model/entities/<entity_name>", methods=['GET'])
+@policy.enforce('lifecycle:get_model')
 def get_entities(entity_name):
     """Get a whole entity
 
@@ -137,6 +142,7 @@ def get_entities(entity_name):
 
 
 @bp.route("/api/v2/model/entities/<entity_name>", methods=['PUT'])
+@policy.enforce('lifecycle:update_model')
 def update_entities(entity_name):
     """Replace a whole entity by name.
 
@@ -170,6 +176,7 @@ def get_entity_index(entities, id):
 
 
 @bp.route("/api/v2/model/entities/<entity_name>/<id>", methods=['GET'])
+@policy.enforce('lifecycle:get_model')
 def get_entity_by_id(entity_name, id):
     """Get an individual entry by id (name or index) from an array-type entity
 
@@ -192,6 +199,7 @@ def get_entity_by_id(entity_name, id):
 
 
 @bp.route("/api/v2/model/entities/<entity_name>/<id>", methods=['PUT'])
+@policy.enforce('lifecycle:update_model')
 def update_entity_by_id(entity_name, id):
     """Update an individual entry by id
 
@@ -217,6 +225,7 @@ def update_entity_by_id(entity_name, id):
 
 
 @bp.route("/api/v2/model/entities/<entity_name>/<id>", methods=['DELETE'])
+@policy.enforce('lifecycle:update_model')
 def delete_entity_by_id(entity_name, id):
     """Delete an individual entry by id
 
@@ -240,6 +249,7 @@ def delete_entity_by_id(entity_name, id):
 
 
 @bp.route("/api/v2/model/entities/<entity_name>", methods=['POST'])
+@policy.enforce('lifecycle:update_model')
 def create_entity(entity_name):
     """Add an entry to an array-type entity
 
@@ -266,6 +276,7 @@ def create_entity(entity_name):
 
 
 @bp.route("/api/v2/model/files", methods=['GET'])
+@policy.enforce('lifecycle:get_model')
 def get_all_files():
     """List yaml files in the model
 
@@ -334,6 +345,7 @@ def get_all_files():
 
 
 @bp.route("/api/v2/model/files/<path:name>", methods=['GET'])
+@policy.enforce('lifecycle:get_model')
 def get_model_file(name):
     """Get the contents of the given model file
 
@@ -356,6 +368,7 @@ def get_model_file(name):
 
 
 @bp.route("/api/v2/model/files/<path:name>", methods=['POST'])
+@policy.enforce('lifecycle:update_model')
 def update_model_file(name):
     """Update the contents of the given model file
 
@@ -384,6 +397,7 @@ def update_model_file(name):
 
 
 @bp.route("/api/v2/model/is_encrypted")
+@policy.enforce('lifecycle:get_model')
 def get_encrypted():
     """Returns whether the readied config processor output is encrypted.
 
@@ -419,6 +433,7 @@ def get_encrypted():
 
 
 @bp.route("/api/v2/model/cp_output")
+@policy.enforce('lifecycle:get_model')
 def list_cp_output():
     """Lists the config processor output files
 
@@ -467,6 +482,7 @@ def list_cp_output():
 
 
 @bp.route("/api/v2/model/cp_output/<path:name>")
+@policy.enforce('lifecycle:get_model')
 def get_cp_output_file(name):
     """Returns the contents of a file from the config processor output directory
 

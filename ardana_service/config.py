@@ -32,9 +32,6 @@ path_opts = [
                default=os.path.expanduser('~/openstack/my_cloud/config'),
                help='Location of openstack config files'),
 
-
-
-
     cfg.StrOpt('cp_output_dir',
                default=os.path.expanduser('~/scratch/cp/my_cloud/stage/info'),
                help='Config processor output dir'),
@@ -84,6 +81,10 @@ path_opts = [
                default=os.path.expanduser('~/openstack'),
                help='Top-level directory containing all of the customer''s '
                     'files, which are managed by git operations'),
+
+    cfg.StrOpt('policy_file',
+               default=None,
+               help='Custom policy file to use'),
 ]
 
 CONF = cfg.CONF

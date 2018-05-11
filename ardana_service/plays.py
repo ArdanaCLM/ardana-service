@@ -25,6 +25,8 @@ import signal
 import sys
 import time
 
+from . import policy
+
 LOG = logging.getLogger(__name__)
 bp = Blueprint('plays', __name__)
 CONF = cfg.CONF
@@ -39,6 +41,7 @@ plays = {}
 
 
 @bp.route("/api/v2/plays/<id>/log")
+@policy.enforce('lifecycle:get_play')
 def get_log(id):
     """Returns the log for the given ansible play.
 
@@ -68,6 +71,7 @@ def get_log(id):
 
 
 @bp.route("/api/v2/plays")
+@policy.enforce('lifecycle:get_play')
 def get_plays():
     """Returns the metadata about all ansible plays.
 
@@ -171,6 +175,7 @@ def get_plays():
 
 
 @bp.route("/api/v2/plays/<id>")
+@policy.enforce('lifecycle:get_play')
 def get_play(id):
     """Returns the metadata about the given play
 
@@ -217,6 +222,7 @@ def is_running(pid):
 
 
 @bp.route("/api/v2/plays/<id>", methods=['DELETE'])
+@policy.enforce('lifecycle:run_playbook')
 def kill_play(id):
     """Kills the play with the given id if it is still running
 
@@ -285,6 +291,7 @@ def kill_play(id):
 
 
 @bp.route("/api/v2/plays/<id>/events")
+@policy.enforce('lifecycle:get_play')
 def get_events(id):
     """Returns the events received for an ansible play.
 

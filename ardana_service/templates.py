@@ -20,6 +20,7 @@ import os
 from oslo_config import cfg
 from oslo_log import log as logging
 
+from . import policy
 
 LOG = logging.getLogger(__name__)
 bp = Blueprint('templates', __name__)
@@ -27,6 +28,7 @@ CONF = cfg.CONF
 
 
 @bp.route("/api/v2/templates")
+@policy.enforce('lifecycle:get_model')
 def get_all_templates():
     """Returns all available input model templates, aka examples
 
@@ -115,6 +117,7 @@ def get_all_templates():
 
 
 @bp.route("/api/v2/templates/<name>")
+@policy.enforce('lifecycle:get_model')
 def get_template(name):
     """Returns a particular template by name
 
