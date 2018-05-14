@@ -21,6 +21,7 @@ if __name__ == "__main__":
 from ardana_service import admin
 from ardana_service import config  # noqa: F401
 from ardana_service import config_processor
+from ardana_service import encoder
 from ardana_service import listener
 from ardana_service import model
 from ardana_service import playbooks
@@ -81,6 +82,8 @@ app.register_blueprint(versions.bp)
 app.logger                   # initialize flask logging (screwing up logging)
 app.logger.handlers = []     # clear out the newly creating logger
 app.logger.propagate = True  # let messages be handled by normal logging
+
+app.json_encoder = encoder.CustomJSONEncoder   # use our custom json encoder
 
 
 @app.before_request
