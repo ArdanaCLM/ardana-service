@@ -20,6 +20,7 @@ import os
 from oslo_config import cfg
 from oslo_log import log as logging
 
+from . import policy
 
 LOG = logging.getLogger(__name__)
 bp = Blueprint('versions', __name__)
@@ -27,6 +28,7 @@ CONF = cfg.CONF
 
 
 @bp.route("/api/v2/model/changes", methods=['DELETE'])
+@policy.enforce('lifecycle:update_model')
 def reset(dir=None):
     """Resets the input model to the last committed version.
 
@@ -46,6 +48,7 @@ def reset(dir=None):
 
 
 @bp.route("/api/v2/model/commit", methods=['POST'])
+@policy.enforce('lifecycle:update_model')
 def commit(dir=None):
     """Commits the current input model changes to the git repository.
 

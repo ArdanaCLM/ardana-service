@@ -33,6 +33,7 @@ import tempfile
 import time
 
 from . import plays
+from . import policy
 from . import socketio
 
 LOG = logging.getLogger(__name__)
@@ -67,6 +68,7 @@ STATIC_PLAYBOOKS = {
 
 
 @bp.route("/api/v2/playbooks")
+@policy.enforce('lifecycle:list_playbooks')
 def playbooks():
     """List available playbooks
 
@@ -118,6 +120,7 @@ def playbooks():
 
 
 @bp.route("/api/v2/playbooks/<name>", methods=['POST'])
+@policy.enforce('lifecycle:run_playbook')
 def run_playbook_rest(name):
     """Run an ansible playbook
 

@@ -21,6 +21,7 @@ import os
 from oslo_log import log as logging
 import time
 
+from . import policy
 from . import socketio
 from .playbooks import get_events_file
 
@@ -30,6 +31,7 @@ bp = Blueprint('listener', __name__)
 
 
 @bp.route("/api/v2/listener/playbook", methods=['POST'])
+@policy.enforce('lifecycle:playbook_listener')
 def playbook_event():
     """Event listener for playbook events
 

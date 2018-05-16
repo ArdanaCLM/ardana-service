@@ -27,6 +27,7 @@ import time
 
 from . import model
 from . import playbooks
+from . import policy
 
 LOG = logging.getLogger(__name__)
 bp = Blueprint('config_processor', __name__)
@@ -34,6 +35,7 @@ CONF = cfg.CONF
 
 
 @bp.route("/api/v2/config_processor", methods=['POST'])
+@policy.enforce('lifecycle:run_config_processor')
 def run_config_processor():
     """Validate the current input model
 

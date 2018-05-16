@@ -22,6 +22,8 @@ import pwd
 import threading
 import time
 
+from . import policy
+
 bp = Blueprint('admin', __name__)
 CONF = cfg.CONF
 
@@ -67,6 +69,7 @@ def heartbeat():
 
 
 @bp.route("/api/v2/user")
+@policy.enforce('lifecycle:get_user')
 def user():
     """Returns the username the service is running under
 
@@ -92,6 +95,7 @@ def update_trigger_file():
 
 
 @bp.route("/api/v2/restart", methods=['POST'])
+@policy.enforce('lifecycle:restart')
 def restart():
     """Requests the service to restart after a specified delay, in seconds
 

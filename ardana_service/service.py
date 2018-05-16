@@ -21,12 +21,15 @@ import os
 from oslo_config import cfg
 from oslo_log import log as logging
 
+from . import policy
+
 LOG = logging.getLogger(__name__)
 bp = Blueprint('service', __name__)
 CONF = cfg.CONF
 
 
 @bp.route("/api/v2/service/files", methods=['GET'])
+@policy.enforce('lifecycle:get_service_file')
 def get_all_files():
     """List available service configuration files
 
@@ -82,8 +85,9 @@ def get_all_files():
 
 
 @bp.route("/api/v2/service/files/<path:name>", methods=['GET'])
+@policy.enforce('lifecycle:get_service_file')
 def get_service_file(name):
-    """Retrieve or update a service configuration file
+    """Retrieve a service configuration file
 
     .. :quickref: Service Config; Retrieve the contents of a service config file
 
@@ -124,6 +128,7 @@ def get_service_file(name):
 
 
 @bp.route("/api/v2/service/files/<path:name>", methods=['POST'])
+@policy.enforce('lifecycle:update_service_file')
 def update_service_file(name):
     """Update a service configuration file
 
