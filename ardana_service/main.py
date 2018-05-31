@@ -112,7 +112,8 @@ def log_response(response):
 def enable_unsecured(handler):
     def _inner(environ, start_fn):
         unsecured = ['/api/v2/heartbeat',
-                     '/api/v2/version']
+                     '/api/v2/version',
+                     '/api/v2/listener/playbook']  # For posts from playbooks
         path = environ.get('PATH_INFO')
 
         if environ.get('HTTP_X_IDENTITY_STATUS') != 'Confirmed' and \
