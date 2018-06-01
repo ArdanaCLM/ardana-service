@@ -294,7 +294,11 @@ def remove_server(id):
        }
     """
 
-    body = request.get_json() or {}
+    try:
+        body = request.get_json()
+    except Exception as e:
+        body = {}
+        LOG.debug('DELETE server got empty json payload - this is probably ok')
 
     # Extract the keys of interest from the request body and normalize the
     # request arguments
