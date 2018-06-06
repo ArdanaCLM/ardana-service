@@ -100,10 +100,19 @@ def add_server():
     keys = ('commitMessage',
             'encryptionKey',
             'encryption-key')
-    opts = pick(body, keys)
+    opts = pick(body.get('process'), keys)
 
     if 'encryptionKey' in opts:
-        opts['encryption-key'] = opts.pop('encryptionKey')
+        # this is a hack workaround for the fact that add-server requires
+        # the encrypt extra-var, but the vast majority of playbook api
+        # calls expect it as an excryption-key parameter
+        # rekey is generally set to the empty string, though an option
+        # to pass through an explicit value is added here as a precaution
+        # against future usage
+        opts['extra-vars'] = {
+          'encrypt': opts.pop('encryption-key', ''),
+          'rekey': opts.pop('rekey', '')
+        }
 
     try:
         server_id = body['server']['id']
@@ -146,7 +155,7 @@ def add_server():
     def run_config_processor_playbook():
         LOG.info("Running config processor playbook")
 
-        payload = pick(opts, ('encryption-key',))
+        payload = pick(opts, ('extra-vars',))
         result = playbooks.run_playbook('config-processor-run', payload,
                                         play_id)
         # return the entire result object, including the promise and
