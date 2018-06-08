@@ -113,7 +113,9 @@ def enable_unsecured(handler):
     def _inner(environ, start_fn):
         unsecured = ['/api/v2/heartbeat',
                      '/api/v2/version',
-                     '/api/v2/listener/playbook']  # For posts from playbooks
+                     '/api/v2/listener/playbook',  # For posts from playbooks
+                     '/api/v2/is_secured',
+                     '/api/v2/login']
         path = environ.get('PATH_INFO')
 
         if environ.get('HTTP_X_IDENTITY_STATUS') != 'Confirmed' and \
@@ -137,7 +139,7 @@ def main():
     logging.setup(CONF, PROGRAM)
     CORS(app)
 
-    if 'keystone_authtoken' in CONF.list_all_sections():
+    if config.requires_auth():
         # Wrap with keystone middleware if configured to do so
         if not CONF.keystone_authtoken.delay_auth_decision:
             msg = "The [keystone_authtoken] section in the config file " \

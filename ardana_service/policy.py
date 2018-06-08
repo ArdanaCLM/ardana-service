@@ -19,6 +19,8 @@ from oslo_config import cfg
 from oslo_context import context
 from oslo_policy import policy
 
+from . import config
+
 CONF = cfg.CONF
 policy_file = CONF.paths.policy_file if hasattr(CONF, 'paths') else None
 enforcer = policy.Enforcer(CONF, policy_file=policy_file)
@@ -62,8 +64,7 @@ def enforce(rule):
         @wraps(func)
         def wrapper(*args, **kwargs):
             # Enforce the policy check only when configured for keystone auth
-            if 'keystone_authtoken' in CONF.list_all_sections() and \
-                    not authorize(request, rule):
+            if config.requires_auth() and not authorize(request, rule):
                 abort(403, "%s is disallowed by policy" % rule)
             return func(*args, **kwargs)
         return wrapper

@@ -96,3 +96,12 @@ CONF.register_opts(path_opts, 'paths')
 # containing for the ardana service
 def list_opts():
     return [('DEFAULT', flask_opts), ('paths', path_opts)]
+
+
+def requires_auth():
+    """Returns true if the service is configured for keystone auth
+
+    This function should only be used after the CONF object has been
+    populated with the contents of the config files and CLI options
+    """
+    return 'keystone_authtoken' in CONF.list_all_sections()
