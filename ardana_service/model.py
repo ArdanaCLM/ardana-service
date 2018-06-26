@@ -75,7 +75,7 @@ def update_model():
 
     .. :quickref: Model; Update the current input model
 
-    :status 200: when model is succesfully written
+    :status 200: when model is successfully written
     :status 400: failure to find or read model
     """
     model = request.get_json() or {}

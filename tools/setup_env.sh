@@ -84,6 +84,7 @@ if [ ! -d $DEST ] ; then
 
     # Install the config processor plugins into the python environment
     cd $DEST/$acp/ConfigurationProcessor
-    $VENV/bin/python setup.py install
+    $VENV/bin/python setup.py sdist
+    $VENV/bin/pip install dist/ardana-configurationprocessor-*.tar.gz
 fi
 
