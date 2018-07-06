@@ -98,7 +98,8 @@ def run_config_processor():
     start_time = int(time.time())
 
     try:
-        subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+        subprocess.check_output(cmd, stderr=subprocess.STDOUT,
+                                universal_newlines=True)
     except Exception as e:
         # Cannot get except subprocess.CalledProcessError to be caught, so
         # catch Exception

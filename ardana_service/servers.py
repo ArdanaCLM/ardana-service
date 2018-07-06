@@ -110,8 +110,8 @@ def add_server():
         # to pass through an explicit value is added here as a precaution
         # against future usage
         opts['extra-vars'] = {
-          'encrypt': opts.pop('encryption-key', ''),
-          'rekey': opts.pop('rekey', '')
+            'encrypt': opts.pop('encryption-key', ''),
+            'rekey': opts.pop('rekey', '')
         }
 
     try:
@@ -305,7 +305,7 @@ def remove_server(id):
 
     try:
         body = request.get_json()
-    except Exception as e:
+    except Exception:
         body = {}
         LOG.debug('DELETE server got empty json payload - this is probably ok')
 
