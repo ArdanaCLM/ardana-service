@@ -129,7 +129,7 @@ def restart():
     t = threading.Timer(delay_secs, update_trigger_file)
     t.start()
 
-    return 'Success'
+    return jsonify('Success')
 
 
 @bp.route("/api/v2/login", methods=['POST'])

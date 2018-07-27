@@ -287,7 +287,7 @@ def kill_play(id):
     with open(meta_file, "w") as f:
         json.dump(play, f)
 
-    return "Success"
+    return jsonify('Success')
 
 
 @bp.route("/api/v2/plays/<id>/events")
