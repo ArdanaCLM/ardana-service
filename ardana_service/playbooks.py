@@ -35,6 +35,7 @@ import time
 from . import plays
 from . import policy
 from . import socketio
+from . import sshagent
 
 LOG = logging.getLogger(__name__)
 
@@ -361,6 +362,7 @@ def start_playbook(playbook, args={}, cwd=None, cleanup=None, play_id=None):
     env = os.environ.copy()
     env['PYTHONUNBUFFERED'] = '1'
     env['PLAY_ID'] = str(id)
+    env.update(sshagent.sshagent.get_instance().agent_env)
 
     if sys.version_info.major < 3:
         ps = subprocess.Popen(cmd, cwd=cwd, env=env,

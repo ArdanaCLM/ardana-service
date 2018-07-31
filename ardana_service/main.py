@@ -29,6 +29,7 @@ from ardana_service import plays
 from ardana_service import servers
 from ardana_service import service
 from ardana_service import socketio
+from ardana_service import sshagent
 from ardana_service import templates
 from ardana_service import versions
 
@@ -43,6 +44,7 @@ from oslo_config import cfg
 from oslo_log import log as logging
 from oslo_middleware import healthcheck
 import time
+from werkzeug.serving import is_running_from_reloader
 
 PROGRAM = 'ardana_service'
 LOG = logging.getLogger(PROGRAM)
@@ -71,6 +73,7 @@ app.register_blueprint(servers.bp)
 app.register_blueprint(service.bp)
 app.register_blueprint(templates.bp)
 app.register_blueprint(versions.bp)
+app.register_blueprint(sshagent.bp)
 # Flask logging is broken, and it is a time bomb: by default it does nothing,
 # but the first time an exception happens, it creates a new logger that
 # interferes with normal python logging, which messes up all subsequent log
@@ -172,6 +175,13 @@ def main():
             f.write("Started at %s\n" % time.asctime())
 
     socketio.init_app(app)
+
+    # When we've truly started this for the first time, we only want to start
+    # our singleton ssh-agent once.  We must run this in the context of the
+    # reloader since the rest of the app also runs in that same context.
+    if is_running_from_reloader():
+        sshagent.sshagent.stop_old_instance()
+        sshagent.sshagent.start()
 
     # The 'log' parameter avoids running in debug mode, which suppresses the
     # debug message that is emitted on *every* incoming request.
