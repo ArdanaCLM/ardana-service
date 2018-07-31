@@ -22,6 +22,7 @@ from ardana_service import admin
 from ardana_service import config  # noqa: F401
 from ardana_service import config_processor
 from ardana_service import encoder
+from ardana_service import keystone
 from ardana_service import listener
 from ardana_service import model
 from ardana_service import playbooks
@@ -65,6 +66,7 @@ app.register_blueprint(admin.bp)
 app.register_blueprint(config_processor.bp)
 app.register_blueprint(playbooks.bp)
 app.register_blueprint(plays.bp)
+app.register_blueprint(keystone.bp)
 app.register_blueprint(listener.bp)
 app.register_blueprint(model.bp)
 app.register_blueprint(servers.bp)
