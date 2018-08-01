@@ -49,6 +49,7 @@ rules = [
     policy.RuleDefault('lifecycle:run_playbook', 'rule:admin_required'),
     policy.RuleDefault('lifecycle:update_model', 'rule:admin_required'),
     policy.RuleDefault('lifecycle:update_service_file', 'rule:admin_required'),
+    policy.RuleDefault('lifecycle:get_endpoints', 'rule:admin_required'),
 ]
 
 enforcer.register_defaults(rules)
