@@ -81,7 +81,7 @@ def update_model():
     model = request.get_json() or {}
     try:
         write_model(model)
-        return 'Success'
+        return jsonify('Success')
     except Exception:
         abort(400)
 
@@ -159,7 +159,7 @@ def update_entities(entity_name):
 
     model['inputModel'][entity_name] = new_entity
     write_model(model)
-    return 'Success'
+    return jsonify('Success')
 
 
 def get_entity_index(entities, id):
@@ -219,7 +219,7 @@ def update_entity_by_id(entity_name, id):
         index = get_entity_index(entities, id)
         entities[index] = new_entity
         write_model(model)
-        return 'Success'
+        return jsonify('Success')
 
     except (KeyError, IndexError):
         abort(404)
@@ -243,7 +243,7 @@ def delete_entity_by_id(entity_name, id):
         index = get_entity_index(entities, id)
         del(entities[index])
         write_model(model)
-        return 'Success'
+        return jsonify('Success')
 
     except (KeyError, IndexError):
         abort(404)
@@ -273,7 +273,7 @@ def create_entity(entity_name):
 
     entities.append(new_entity)
     write_model(model)
-    return 'Success'
+    return jsonify('Success')
 
 
 @bp.route("/api/v2/model/files", methods=['GET'])
@@ -391,7 +391,7 @@ def update_model_file(name):
     try:
         with open(filename, "w") as f:
             f.write(data)
-        return 'Success'
+        return jsonify('Success')
     except Exception as e:
         LOG.exception(e)
         abort(400)

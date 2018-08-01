@@ -44,7 +44,7 @@ def reset(dir=None):
     for f in repo.untracked_files:
         path = os.path.join(dir, f.a_path)
         os.unlink(path)
-    return "Success"
+    return jsonify('Success')
 
 
 @bp.route("/api/v2/model/commit", methods=['POST'])

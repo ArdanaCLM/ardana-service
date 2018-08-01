@@ -147,7 +147,7 @@ def update_service_file(name):
     try:
         with open(filename, "w") as f:
             f.write(data)
-        return 'Success'
+        return jsonify('Success')
     except Exception as e:
         LOG.exception(e)
         abort(400)
