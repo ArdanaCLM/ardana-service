@@ -16,6 +16,7 @@ from flask import Blueprint
 from flask import jsonify
 from flask import request
 from keystoneauth1 import session
+from keystoneclient.v3 import client
 import logging
 from oslo_config import cfg
 
@@ -29,9 +30,9 @@ LOG = logging.getLogger(__name__)
 @bp.route("/api/v2/endpoints", methods=['GET'])
 @policy.enforce('lifecycle:get_endpoints')
 def get_endpoints():
-    """Requests the endpoint list from keystone.
+    """Returns the endpoint list from keystone.
 
-    .. :quickref: Admin; Requests endpoint list
+    .. :quickref: Admin; Get endpoint list
 
     **Example Request**:
 
@@ -48,40 +49,51 @@ def get_endpoints():
                'type': 'identity',
                'description': 'OpenStack Identity',
                'enabled': true,
-               'region': 'region1',
                'endpoints': [
-                   {'interface': 'admin', 'url': 'http://localhost:35357/v3'},
-                   {'interface': 'public', 'url': 'http://localhost:5000/v3'},
-                   {'interface': 'internal', 'url': 'http://localhost:5000/v3'}
+                   {
+                    'interface': 'admin',
+                     'region': 'region1',
+                     'url': 'http://localhost:35357/v3'
+                   },
+                   {
+                    'interface': 'public',
+                     'region': 'region1',
+                     'url': 'http://localhost:5000/v3'
+                   },
+                   {
+                    'interface': 'internal',
+                     'region': 'region1',
+                     'url': 'http://localhost:5000/v3'
+                   }
                 ]
             }
           ]
-          "delay": 60
        }
     """
-    # Obtain a keyston session using the auth plugin injected by the keystone
+    # Obtain a keystone session using the auth plugin injected by the keystone
     # middleware
     sess = session.Session(auth=request.environ['keystone.token_auth'])
-
-    resp = sess.get('/services', endpoint_filter={'service_type': 'identity'})
-    services = resp.json()['services']
-
-    resp = sess.get('/endpoints', endpoint_filter={'service_type': 'identity'})
-    endpoints = resp.json()['endpoints']
+    keystone = client.Client(session=sess)
+    endpoints = keystone.endpoints.list()
+    services = keystone.services.list()
 
     results = []
     for service in services:
 
         # Populate item with several fields of interest from the service
-        want = ('name', 'type', 'enabled', 'description', 'region')
-        item = dict([(k, v) for k, v in service.items() if k in want])
+        item = {
+            'name': service.name,
+            'type': service.type,
+            'enabled': service.enabled,
+            'description': service.description,
+        }
 
         # Add list of endpoints for this service
-        item['urls'] = \
-            [{'interface': e['interface'],
-              'region': e['region'],
-              'url': e['url']}
-             for e in endpoints if e['service_id'] == service['id']]
+        item['endpoints'] = \
+            [{'interface': e.interface,
+              'region': e.region,
+              'url': e.url}
+             for e in endpoints if e.service_id == service.id]
 
         results.append(item)
 
