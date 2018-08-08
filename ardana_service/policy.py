@@ -41,6 +41,7 @@ rules = [
     policy.RuleDefault('lifecycle:get_play', 'rule:admin_required'),
     policy.RuleDefault('lifecycle:get_service_file', 'rule:admin_required'),
     policy.RuleDefault('lifecycle:get_user', 'rule:admin_required'),
+    policy.RuleDefault('lifecycle:list_packages', 'rule:admin_required'),
     policy.RuleDefault('lifecycle:list_playbooks', 'rule:admin_required'),
     policy.RuleDefault('lifecycle:playbook_listener', 'rule:admin_required'),
     policy.RuleDefault('lifecycle:restart', 'rule:admin_required'),

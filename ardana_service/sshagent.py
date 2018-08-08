@@ -141,7 +141,6 @@ class sshagent(object):
             if child:
                 child.close()
 
-
     @staticmethod
     def get_instance():
         return instance
