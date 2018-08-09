@@ -25,6 +25,7 @@ from ardana_service import encoder
 from ardana_service import keystone
 from ardana_service import listener
 from ardana_service import model
+from ardana_service import packages
 from ardana_service import playbooks
 from ardana_service import plays
 from ardana_service import servers
@@ -66,6 +67,7 @@ logging.set_defaults(default_log_levels=logging.get_default_log_levels() +
 app = Flask(PROGRAM)
 app.register_blueprint(admin.bp)
 app.register_blueprint(config_processor.bp)
+app.register_blueprint(packages.bp)
 app.register_blueprint(playbooks.bp)
 app.register_blueprint(plays.bp)
 app.register_blueprint(keystone.bp)

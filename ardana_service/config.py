@@ -87,8 +87,13 @@ path_opts = [
                help='Custom policy file to use'),
 
     cfg.StrOpt('ssh_agent_pid_file',
-               default='/var/run/ardana-service/ssh-agent.pid',
-               help='File containing pid of ssh-agent used by ardana-service')
+               default='/var/cache/ardana-service/ssh-agent.pid',
+               help='File containing pid of ssh-agent used by ardana-service'),
+
+    cfg.StrOpt('packages_file',
+               default='/var/cache/ardana-service/packages.json',
+               help='File containing packages available by deployer and remote'
+                    ' hosts')
 ]
 
 CONF = cfg.CONF
