@@ -57,6 +57,10 @@ path_opts = [
     cfg.StrOpt('cp_services_dir',
                default=os.path.expanduser('~/openstack/ardana/services'),
                help='Config processor services dir'),
+    cfg.StrOpt('cp_internal_dir',
+               default=os.path.expanduser(
+                   '~/scratch/cp/my_cloud/stage/internal'),
+               help='Config processor internal dir'),
 
 
     cfg.StrOpt('log_dir',

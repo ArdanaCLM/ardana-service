@@ -547,16 +547,61 @@ def get_cp_output_file(name):
     else:
         output_dir = CONF.paths.cp_output_dir
 
-    filename = os.path.join(output_dir, name).replace("_yml", ".yml")
-    if not filename.endswith(".yml"):
+    return read_yml_file(output_dir, name)
+
+
+@bp.route("/api/v2/model/cp_internal/<path:name>")
+@policy.enforce('lifecycle:get_model')
+def get_cp_internal_file(name):
+    """Returns the contents of a file from the config processor internal directory
+
+    Returns the content as JSON.
+
+    .. :quickref: Model; Returns the contents of a file from the config \
+        processor internal directory
+
+    :param path: name of the file
+
+    **Example Request**:
+
+    .. sourcecode:: http
+
+       GET /api/v2/model/cp_internal/ConfigFiles.yaml?ready=true HTTP/1.1
+       Content-Type: application/json
+
+    **Example Response**:
+
+    .. sourcecode:: http
+
+       HTTP/1.1 200 OK
+       Content-Type: application/json
+
+       {
+           "baremetal": "... and so on"
+       }
+    """
+    return read_yml_file(CONF.paths.cp_internal_dir, name, trusted=True)
+
+
+def read_yml_file(dir, name, trusted=False):
+
+    filename = os.path.join(dir, name).replace("_yml", ".yml")
+    (base, ext) = os.path.splitext(filename)
+    if not ext:
         filename += ".yml"
 
     try:
         with open(filename) as f:
-            lines = f.readlines()
-        raw = ''.join(lines)
+            # Files that are generated programatically, such as those from
+            # the config processor, may contain special python tags that can
+            # only be deserialized using yaml.load() -- yaml.safe_load()
+            # should be used on those files that can be directly manipulated by
+            # user input.
+            if trusted:
+                contents = yaml.load(f)
+            else:
+                contents = yaml.safe_load(f)
 
-        contents = yaml.safe_load(raw)
         return jsonify(contents)
 
     except (OSError, IOError):

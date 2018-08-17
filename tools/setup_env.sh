@@ -27,6 +27,7 @@ mkdir -p \
    data/scratch \
    data/cp/output \
    data/cp/ready \
+   data/cp/internal \
    log
 
 cd data
