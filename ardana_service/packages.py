@@ -14,30 +14,40 @@
 
 from flask import Blueprint
 from flask import jsonify
+import itertools
 import json
+import os
+from os.path import exists
 from oslo_config import cfg
 from oslo_log import log as logging
+from playbooks import run_playbook
+from plays import get_metadata_file
 import re
 import subprocess
 
 from . import policy
+from time import sleep
 
 LOG = logging.getLogger(__name__)
 bp = Blueprint('packages', __name__)
-pkg_file = cfg.CONF.paths.packages_file
+PKG_CACHE_FILE = cfg.CONF.paths.packages_cache
+HOST_TS_PKGS_FILE = cfg.CONF.paths.packages_hosts_data
+PACKAGES_PLAY = "_ardana-service-get-pkgdata"
 
 # contains current AND OLD openstack packages where
 # k: timestamped package
-# v: dictionary containing name and version
+# v: version
 pkg_cache = {}
 
-# contains current(available) openstack packages installed on the deployer
+# contains current/available openstack packages installed on the deployer
+# and installed packages on all the systems
 # k: name
-# v: version
-os_avail_pkgs = {}
+# v: version  i.e. {'available': vers, 'installed':[list of versions]}
+all_pkgs = {}
 
 re_ardana = re.compile(r'\bardana\b')
-re_openstack = re.compile(r'venv-openstack-(\w+?)-')
+re_openstack = re.compile(r'venv-openstack-(?P<name>[\w-]+)-')
+re_name_ts = re.compile(r'(?P<name>[\w-]+)-\d+T\d+Z')
 
 
 @bp.route("/api/v2/packages/ardana", methods=['GET'])
@@ -77,16 +87,16 @@ def get_deployer_packages():
     """
 
     global pkg_cache
-    global os_avail_pkgs
+    global all_pkgs
     ardana_pkgs = {}
-    os_avail_pkgs = {}
+    all_pkgs = {}
 
     # Load package cache
     try:
-        with open(pkg_file) as f:
-            pkg_cache = json.loads(f)
+        with open(PKG_CACHE_FILE) as f:
+            pkg_cache = json.load(f)
     except Exception as e:
-        LOG.info("Could not load %s: %s." % (pkg_file, e))
+        LOG.info("Could not load %s: %s." % (PKG_CACHE_FILE, e))
 
     # See what packages are installed on the deployer
     p = subprocess.Popen(['zypper', '--terse', 'packages', '--installed'],
@@ -108,16 +118,17 @@ def get_deployer_packages():
                         ['rpm', '--query', '--list', name_vers],
                         stdout=subprocess.PIPE)
                     rpm_lines = p.communicate()[0].split('\n')
-                    project = os_match.group(1)
-                    re_ts_pkg = re.compile(r"/(%s-\d+T\d+Z).tgz$" % project)
+                    project = os_match.group('name')
+                    re_ts_pkg = \
+                        re.compile(r"/(?P<name_ts>%s-\d+T\d+Z).tgz$" % project)
                     for rpm_line in rpm_lines:
                         ts_pkg_match = re_ts_pkg.search(rpm_line)
                         if ts_pkg_match:
-                            pkg_cache[ts_pkg_match.group(1)] = {
-                                'name': project,
-                                'version': vers
+                            pkg_cache[ts_pkg_match.group('name_ts')] = vers
+                            all_pkgs[project] = {
+                                'available': vers,
+                                'installed': []
                             }
-                            os_avail_pkgs[project] = vers
                             break
                 except OSError as e:
                     LOG.warning("Could not determine timestamped package for"
@@ -128,10 +139,10 @@ def get_deployer_packages():
 
     # Save package cache
     try:
-        with open(pkg_file, 'w') as f:
+        with open(PKG_CACHE_FILE, 'w') as f:
             json.dump(pkg_cache, f, indent=4, sort_keys=True)
     except Exception as e:
-        LOG.info("Could not save %s: %s." % (pkg_file, e))
+        LOG.info("Could not save %s: %s." % (PKG_CACHE_FILE, e))
 
     return jsonify([{'name': k, 'version': v} for k, v in ardana_pkgs.items()])
 
@@ -171,15 +182,66 @@ def get_installed_packages():
        < and so on >
 
     """
+    global all_pkgs
 
+    # Get the mapping of time-stamped package names -> package details
     get_deployer_packages()
-    # TODO(choyj): This section needs to be reworked to call a playbook and
-    #              gather data from all machines in the model
+
+    # Run the playbook to get package data from all the hosts in the model
+    proc_info = {}
+    try:
+        vars = {
+            "extra-vars": {
+                "host_ts_pkgs_file": HOST_TS_PKGS_FILE
+            }
+        }
+        play_id = run_playbook(PACKAGES_PLAY, vars)["id"]
+        # Poll for "code" and ignore its value because some hosts may be down.
+        while 'code' not in proc_info:
+            with open(get_metadata_file(play_id)) as f:
+                proc_info = json.load(f)
+            if 'code' not in proc_info:
+                sleep(1)
+    except Exception as e:
+        LOG.error("Could not get remote package information: %s" % e)
+        return jsonify("Remote package information unavailable", 404)
+
+    try:
+        with open(HOST_TS_PKGS_FILE) as f:
+            host_ts_pkgs = json.load(f)
+    except Exception as e:
+        LOG.error("Could not retrieve remote host pkg data from %s: %s"
+                  % (HOST_TS_PKGS_FILE, e))
+        return jsonify("Remote package information unavailable", 404)
+    finally:
+        if exists(HOST_TS_PKGS_FILE):
+            os.remove(HOST_TS_PKGS_FILE)
+
+    uniq_pkgs = set(itertools.chain.from_iterable(host_ts_pkgs.values()))
+
+    for pkg in uniq_pkgs:
+        pkg_match = re_name_ts.match(pkg)
+        if not pkg_match:
+            LOG.warning('Unrecognized package format: %s' % pkg)
+            continue
+        name = pkg_match.group('name')
+
+        if not all_pkgs.get(name):
+            LOG.warning('Unrecognized service name: %s' % name)
+            continue
+
+        version = pkg_cache.get(pkg)
+        if version:
+            all_pkgs[name]['installed'].append(version)
+        else:
+            # We don't know what version this is, so we'll just add
+            # the timestamped package name in there (should never happen)
+            all_pkgs[name]['installed'].append(pkg)
     pkgs = [
         {
             'name': k,
-            'installed': [v],
-            'available': v
-        } for k, v in os_avail_pkgs.items()]
+            'installed': v['installed'],
+            'available': v['available']
+        } for k, v in all_pkgs.items()]
 
     return jsonify(pkgs)

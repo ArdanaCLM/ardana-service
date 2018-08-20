@@ -14,6 +14,7 @@
 
 from flask import abort
 from flask import Blueprint
+from flask import jsonify
 from flask import request
 from git import Repo
 import os
