@@ -94,10 +94,14 @@ path_opts = [
                default='/var/cache/ardana-service/ssh-agent.pid',
                help='File containing pid of ssh-agent used by ardana-service'),
 
-    cfg.StrOpt('packages_file',
+    cfg.StrOpt('packages_cache',
                default='/var/cache/ardana-service/packages.json',
                help='File containing packages available by deployer and remote'
-                    ' hosts')
+                    ' hosts'),
+    cfg.StrOpt('packages_hosts_data',
+               default='/var/tmp/host_ts_pkgs_file',
+               help='Temporary file containing all hosts\' timestamped '
+                    'Openstack packages linked to a service'),
 ]
 
 CONF = cfg.CONF
