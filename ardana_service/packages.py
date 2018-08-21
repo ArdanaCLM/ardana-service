@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from .playbooks import run_playbook
+from .plays import get_metadata_file
 from flask import Blueprint
 from flask import jsonify
 import itertools
@@ -20,8 +22,6 @@ import os
 from os.path import exists
 from oslo_config import cfg
 from oslo_log import log as logging
-from playbooks import run_playbook
-from plays import get_metadata_file
 import re
 import subprocess
 
