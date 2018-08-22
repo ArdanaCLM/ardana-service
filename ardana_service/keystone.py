@@ -72,7 +72,8 @@ def get_endpoints():
     """
     # Obtain a keystone session using the auth plugin injected by the keystone
     # middleware
-    sess = session.Session(auth=request.environ['keystone.token_auth'])
+    sess = session.Session(auth=request.environ['keystone.token_auth'],
+                           verify=not CONF.keystone_authtoken.insecure)
     keystone = client.Client(session=sess)
     endpoints = keystone.endpoints.list()
     services = keystone.services.list()
