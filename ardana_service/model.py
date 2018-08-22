@@ -16,8 +16,11 @@ import collections
 import copy
 from flask import abort
 from flask import Blueprint
+from flask import json
 from flask import jsonify
 from flask import request
+from flask import safe_join
+from flask import send_from_directory
 from flask import url_for
 import os
 from oslo_config import cfg
@@ -547,7 +550,7 @@ def get_cp_output_file(name):
     else:
         output_dir = CONF.paths.cp_output_dir
 
-    return read_yml_file(output_dir, name)
+    return jsonify(read_yml_file(output_dir, name))
 
 
 @bp.route("/api/v2/model/cp_internal/<path:name>")
@@ -580,7 +583,34 @@ def get_cp_internal_file(name):
            "baremetal": "... and so on"
        }
     """
-    return read_yml_file(CONF.paths.cp_internal_dir, name, trusted=True)
+
+    # The yaml files in this directory tend to be *very* large, and it is
+    # inefficient to convert them from yaml to json every time.  Instead
+    # we will convert them as needed and cache the json.
+
+    filename = name.replace("_yml", ".yml")
+
+    (base, ext) = os.path.splitext(filename)
+    json_filename = base + '.json'
+
+    internal_dir = CONF.paths.cp_internal_dir
+
+    # Convert internal_dir to an absolute path for send_from_directory
+    if not os.path.isabs(internal_dir):
+        internal_dir = os.path.normpath(os.path.join(os.getcwd(),
+                                                     internal_dir))
+
+    yaml_path = safe_join(internal_dir, filename)
+    json_path = safe_join(internal_dir, json_filename)
+
+    if not os.path.exists(json_path) or \
+            os.path.getmtime(json_path) < os.path.getmtime(yaml_path):
+
+        contents = read_yml_file(internal_dir, filename, trusted=True)
+        with open(json_path, "w") as f:
+            json.dump(contents, f)
+
+    return send_from_directory(internal_dir, json_filename)
 
 
 def read_yml_file(dir, name, trusted=False):
@@ -602,7 +632,7 @@ def read_yml_file(dir, name, trusted=False):
             else:
                 contents = yaml.safe_load(f)
 
-        return jsonify(contents)
+        return contents
 
     except (OSError, IOError):
         LOG.error("Unable to read %s", filename)
