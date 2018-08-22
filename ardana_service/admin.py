@@ -17,8 +17,8 @@ from flask import Blueprint
 from flask import jsonify
 from flask import request
 from keystoneauth1 import exceptions as exc
+from keystoneauth1 import session as ks_session
 from keystoneclient.auth.identity import v3
-from keystoneclient import session as ks_session
 from keystoneclient.v3 import client as ks_client
 import logging
 import os
@@ -197,7 +197,8 @@ def _authenticate(auth_url, username=None, password=None,
                                 user_domain_name=user_domain_name,
                                 unscoped=True)
 
-    session = ks_session.Session(user_agent=USER_AGENT)
+    session = ks_session.Session(user_agent=USER_AGENT,
+                                 verify=not CONF.keystone_authtoken.insecure)
     try:
         # Trigger keystone to verify the credentials
         unscoped_auth_ref = unscoped_auth.get_access(session)
