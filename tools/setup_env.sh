@@ -55,6 +55,9 @@ if [ ! -d ardana-ansible ] ; then
     git clone ${GIT_BASE}/ardana/ardana-ansible
 fi
 
+# Create a fake playbook to enable keystone-status playbook to run
+touch ardana-ansible/keystone-status.yml
+
 if [ ! -d ardana-input-model ] ; then
     git clone ${GIT_BASE}/ardana/ardana-input-model
 fi
