@@ -86,7 +86,7 @@ def get_endpoints():
             'name': service.name,
             'type': service.type,
             'enabled': service.enabled,
-            'description': service.description,
+            'description': getattr(service, 'description','')
         }
 
         # Add list of endpoints for this service
