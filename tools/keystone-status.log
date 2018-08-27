@@ -1,0 +1,144 @@
+
+PLAY [localhost] **************************************************************
+
+GATHERING FACTS ***************************************************************
+ok: [localhost]
+
+TASK: [pbstart.yml pb_start_playbook] *****************************************
+ok: [localhost] => {
+    "msg": "Playbook started - keystone-status.yml"
+}
+
+msg: Playbook started - keystone-status.yml
+
+msg: Playbook started - keystone-status.yml
+
+PLAY [KEY-API] ****************************************************************
+
+GATHERING FACTS ***************************************************************
+ok: [ardana-ccp-c1-m1]
+ok: [ardana-ccp-c1-m2]
+
+TASK: [keystone-common | keystone-common | main | Include dependent yml files] ***
+ok: [ardana-ccp-c1-m2] => (item=keystone_deploy_config.yml)
+ok: [ardana-ccp-c1-m1] => (item=keystone_deploy_config.yml)
+ok: [ardana-ccp-c1-m1] => (item=../defaults/keystone_admin.yml)
+ok: [ardana-ccp-c1-m2] => (item=../defaults/keystone_admin.yml)
+
+TASK: [keystone-common | keystone-common | main | Display variables that are configured for KEY-API] ***
+skipping: [ardana-ccp-c1-m1]
+
+TASK: [keystone-common | keystone-common | main | Display variables for the inventory host] ***
+skipping: [ardana-ccp-c1-m1]
+
+TASK: [keystone-common | keystone-common | main | Look for the default token provider] ***
+changed: [ardana-ccp-c1-m2]
+
+cmd: grep '^provider\s*=' /opt/stack/service/keystone/etc/keystone.conf 2>&1 | grep '^provider\s*=' | sed 's/.*=\s*//'
+
+start: 2018-08-22 15:47:00.819755
+
+end: 2018-08-22 15:47:00.852613
+
+delta: 0:00:00.032858
+
+stdout: uuid
+
+cmd: grep '^provider\s*=' /opt/stack/service/keystone/etc/keystone.conf 2>&1 | grep '^provider\s*=' | sed 's/.*=\s*//'
+
+start: 2018-08-22 15:47:00.819755
+
+end: 2018-08-22 15:47:00.852613
+
+delta: 0:00:00.032858
+
+stdout: uuid
+changed: [ardana-ccp-c1-m1]
+
+cmd: grep '^provider\s*=' /opt/stack/service/keystone/etc/keystone.conf 2>&1 | grep '^provider\s*=' | sed 's/.*=\s*//'
+
+start: 2018-08-22 15:47:23.388543
+
+end: 2018-08-22 15:47:23.419577
+
+delta: 0:00:00.031034
+
+stdout: uuid
+
+cmd: grep '^provider\s*=' /opt/stack/service/keystone/etc/keystone.conf 2>&1 | grep '^provider\s*=' | sed 's/.*=\s*//'
+
+start: 2018-08-22 15:47:23.388543
+
+end: 2018-08-22 15:47:23.419577
+
+delta: 0:00:00.031034
+
+stdout: uuid
+
+TASK: [keystone-common | keystone-common | main | Display current Keystone token provider] ***
+skipping: [ardana-ccp-c1-m1]
+skipping: [ardana-ccp-c1-m2]
+
+TASK: [keystone-common | keystone-common | main | Set token provider] *********
+skipping: [ardana-ccp-c1-m1]
+skipping: [ardana-ccp-c1-m2]
+
+TASK: [keystone-common | keystone-common | main | Display Keystone token provider] ***
+skipping: [ardana-ccp-c1-m2]
+skipping: [ardana-ccp-c1-m1]
+
+TASK: [osconfig-iptables | osconfig-iptables | main | Set os-specific variables] ***
+ok: [ardana-ccp-c1-m1]
+ok: [ardana-ccp-c1-m2]
+
+TASK: [osconfig-iptables | osconfig-iptables | install | RedHat- Prevent potential sample iptables] ***
+skipping: [ardana-ccp-c1-m1] => (item=/etc/sysconfig/iptables)
+skipping: [ardana-ccp-c1-m1] => (item=/etc/sysconfig/ip6tables)
+skipping: [ardana-ccp-c1-m2] => (item=/etc/sysconfig/iptables)
+skipping: [ardana-ccp-c1-m2] => (item=/etc/sysconfig/ip6tables)
+
+TASK: [osconfig-iptables | osconfig-iptables | install | Install the required packages] ***
+ok: [ardana-ccp-c1-m2] => (item=iptables)
+ok: [ardana-ccp-c1-m1] => (item=iptables)
+
+TASK: [osconfig-iptables | osconfig-iptables | install | Disable unsupported OS services] ***
+ok: [ardana-ccp-c1-m2] => (item=SuSEfirewall2_init)
+ok: [ardana-ccp-c1-m2] => (item=SuSEfirewall2)
+ok: [ardana-ccp-c1-m1] => (item=SuSEfirewall2_init)
+ok: [ardana-ccp-c1-m1] => (item=SuSEfirewall2)
+
+TASK: [osconfig-iptables | osconfig-iptables | install | Enable services] *****
+skipping: [ardana-ccp-c1-m1]
+skipping: [ardana-ccp-c1-m2]
+
+TASK: [FND-AP2 | FND-AP2 | main | Load OS dependent vars] *********************
+ok: [ardana-ccp-c1-m2] => (item=/var/lib/ardana/scratch/ansible/next/ardana/ansible/roles/FND-AP2/vars/sles.yml)
+ok: [ardana-ccp-c1-m1] => (item=/var/lib/ardana/scratch/ansible/next/ardana/ansible/roles/FND-AP2/vars/sles.yml)
+
+TASK: [KEY-API | KEY-API | main | Set os-specific variables] ******************
+ok: [ardana-ccp-c1-m1]
+ok: [ardana-ccp-c1-m2]
+
+TASK: [KEY-API | status | include required variables] *************************
+ok: [ardana-ccp-c1-m1]
+ok: [ardana-ccp-c1-m2]
+
+TASK: [KEY-API | status | Register keystone status] ***************************
+ok: [ardana-ccp-c1-m1]
+ok: [ardana-ccp-c1-m2]
+
+PLAY [localhost] **************************************************************
+
+TASK: [pbfinish.yml pb_finish_playbook] ***************************************
+ok: [localhost] => {
+    "msg": "Playbook finished - keystone-status.yml"
+}
+
+msg: Playbook finished - keystone-status.yml
+
+msg: Playbook finished - keystone-status.yml
+
+PLAY RECAP ********************************************************************
+ardana-ccp-c1-m1           : ok=11   changed=1    unreachable=0 failed=0
+ardana-ccp-c1-m2           : ok=11   changed=1    unreachable=0 failed=0
+localhost                  : ok=3    changed=0    unreachable=0 failed=0

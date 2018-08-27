@@ -16,8 +16,11 @@ import collections
 import copy
 from flask import abort
 from flask import Blueprint
+from flask import json
 from flask import jsonify
 from flask import request
+from flask import safe_join
+from flask import send_from_directory
 from flask import url_for
 import os
 from oslo_config import cfg
@@ -547,17 +550,89 @@ def get_cp_output_file(name):
     else:
         output_dir = CONF.paths.cp_output_dir
 
-    filename = os.path.join(output_dir, name).replace("_yml", ".yml")
-    if not filename.endswith(".yml"):
+    return jsonify(read_yml_file(output_dir, name))
+
+
+@bp.route("/api/v2/model/cp_internal/<path:name>")
+@policy.enforce('lifecycle:get_model')
+def get_cp_internal_file(name):
+    """Returns the contents of a file from the config processor internal directory
+
+    Returns the content as JSON.
+
+    .. :quickref: Model; Returns the contents of a file from the config \
+        processor internal directory
+
+    :param path: name of the file
+
+    **Example Request**:
+
+    .. sourcecode:: http
+
+       GET /api/v2/model/cp_internal/ConfigFiles.yaml?ready=true HTTP/1.1
+       Content-Type: application/json
+
+    **Example Response**:
+
+    .. sourcecode:: http
+
+       HTTP/1.1 200 OK
+       Content-Type: application/json
+
+       {
+           "baremetal": "... and so on"
+       }
+    """
+
+    # The yaml files in this directory tend to be *very* large, and it is
+    # inefficient to convert them from yaml to json every time.  Instead
+    # we will convert them as needed and cache the json.
+
+    filename = name.replace("_yml", ".yml")
+
+    (base, ext) = os.path.splitext(filename)
+    json_filename = base + '.json'
+
+    internal_dir = CONF.paths.cp_internal_dir
+
+    # Convert internal_dir to an absolute path for send_from_directory
+    if not os.path.isabs(internal_dir):
+        internal_dir = os.path.normpath(os.path.join(os.getcwd(),
+                                                     internal_dir))
+
+    yaml_path = safe_join(internal_dir, filename)
+    json_path = safe_join(internal_dir, json_filename)
+
+    if not os.path.exists(json_path) or \
+            os.path.getmtime(json_path) < os.path.getmtime(yaml_path):
+
+        contents = read_yml_file(internal_dir, filename, trusted=True)
+        with open(json_path, "w") as f:
+            json.dump(contents, f)
+
+    return send_from_directory(internal_dir, json_filename)
+
+
+def read_yml_file(dir, name, trusted=False):
+
+    filename = os.path.join(dir, name).replace("_yml", ".yml")
+    (base, ext) = os.path.splitext(filename)
+    if not ext:
         filename += ".yml"
 
     try:
         with open(filename) as f:
-            lines = f.readlines()
-        raw = ''.join(lines)
+            # Files that are generated programatically, such as those from
+            # the config processor, may contain special python tags that can
+            # only be deserialized using yaml.load() -- yaml.safe_load()
+            # should be used on those files that can be directly manipulated by
+            # user input.
+            if trusted:
+                contents = yaml.load(f)
+            else:
+                contents = yaml.safe_load(f)
 
-        contents = yaml.safe_load(raw)
-        return jsonify(contents)
+        return contents
 
     except (OSError, IOError):
         LOG.error("Unable to read %s", filename)

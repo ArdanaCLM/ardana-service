@@ -13,9 +13,11 @@
 # limitations under the License.
 
 from __future__ import print_function
+import glob
 import os
 import re
 import requests
+import shutil
 import subprocess
 import sys
 import time
@@ -28,6 +30,11 @@ main_opts = [
     cfg.PortOpt('port',
                 default=9085,
                 help='Port number to listen on.'),
+]
+
+path_opts = [
+    cfg.StrOpt('cp_internal_dir',
+               help='Config processor internal dir'),
 ]
 
 test_opts = [
@@ -50,6 +57,7 @@ test_opts = [
 
 CONF = cfg.CONF
 CONF.register_opts(main_opts)
+CONF.register_opts(path_opts, 'paths')
 CONF.register_opts(test_opts, 'testing')
 
 # strip off config file processing args from sys.argv sys.argv
@@ -120,6 +128,25 @@ if len(sys.argv) > 2 and cmd_name.startswith('python') and \
         except subprocess.CalledProcessError as e:
             print(e.output)
             sys.exit(e.returncode)
+
+        # In a production environment when the configuration processor
+        # is run as part of the installation process, it will create and
+        # populate several directories including an 'internal' one with
+        # a couple of files.  These files are later used by the day 2
+        # topology pages.  In a dev/test environment, the following will
+        # populate this directory from the output of the Validate step
+        # in the installer, which runs the real config processor but
+        # writes its output into a temp dir that is removed afterward
+
+        for pos, arg in enumerate(sys.argv):
+            if arg == '-o':
+                out_topdir = sys.argv[pos + 1]
+                break
+
+        internal_files = glob.glob(out_topdir + "/*/2.0/stage/internal/*")
+        for f in internal_files:
+            shutil.copy(f, CONF.paths.cp_internal_dir)
+
 
 elif cmd_name == 'ansible-playbook':
 
