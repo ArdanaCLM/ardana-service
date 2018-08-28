@@ -12,7 +12,7 @@ Standalone Deployment
 ^^^^^^^^^^^^^^^^^^^^^
 The Ardana Lifecycle Manager Service will be delivered with the installer bits.  An
 ansible playbook, deployer-init, is employed to set up the deployer which,
-among man other things, calls the dayzero-deploy playbook to start up the installer
+among man other things, calls the installui-deploy playbook to start up the installer
 UI and its related services including the Ardana Service. In its initial configuration,
 the Ardana Service will perform no authorization; there are no credentials required
 to start or run the installer, nor to perform REST calls to the Ardana Service

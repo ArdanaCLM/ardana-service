@@ -1,4 +1,4 @@
-$$EVENT: start dayzero-site.yml
+$$EVENT: start installui-wipe-and-site.yml
 $$EVENT: start site.yml
 
 PLAY [localhost] ************************************************************** 
@@ -26311,4 +26311,4 @@ padawan-ccp-comp0003-mgmt  : ok=518  changed=133  unreachable=0    failed=0
 padawan-ccp-comp0004-mgmt  : ok=520  changed=271  unreachable=0    failed=0   
 
 $$EVENT: stop site.yml
-$$EVENT: stop dayzero-site.yml
+$$EVENT: stop installui-wipe-and-site.yml

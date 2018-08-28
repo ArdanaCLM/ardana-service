@@ -40,7 +40,7 @@ The following endpoints were removed:
 
 * ``/osinstall`` , which called several ansible playbooks.  Callers instead should use the
   ``/playbooks`` endpoint to run a single ansible playbook that in turn executes all of these same tasks, such as
-  ``dayzero-os-provision.yml``.
+  ``installui-os-provision.yml``.
 
 * ``/model/expanded``. The ``/model/cp_output`` can be used instead to obtain the same information
 
