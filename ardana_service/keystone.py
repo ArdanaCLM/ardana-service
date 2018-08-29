@@ -15,9 +15,12 @@
 from flask import Blueprint
 from flask import jsonify
 from flask import request
+import json
 from keystoneauth1 import session
 from keystoneclient.v3 import client
 import logging
+from os.path import dirname
+from os.path import join
 from oslo_config import cfg
 
 from . import policy
@@ -70,6 +73,13 @@ def get_endpoints():
           ]
        }
     """
+
+    if cfg.CONF.testing.use_mock:
+        mock_json = "tools/endpoints.json"
+        json_file = join(dirname(dirname(__file__)), mock_json)
+        with open(json_file) as f:
+            return jsonify(json.load(f))
+
     # Obtain a keystone session using the auth plugin injected by the keystone
     # middleware
     sess = session.Session(auth=request.environ['keystone.token_auth'],
