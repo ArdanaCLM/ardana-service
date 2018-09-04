@@ -1,0 +1,121 @@
+[
+    {
+        "available": "2.2.1-19.155", 
+        "installed": [
+            "2.2.1-19.155"
+        ], 
+        "name": "monasca"
+    }, 
+    {
+        "available": "9.0.2-19.153", 
+        "installed": [
+            "9.0.2-19.153"
+        ], 
+        "name": "ceilometer"
+    }, 
+    {
+        "available": "5.0.2-19.100", 
+        "installed": [
+            "5.0.2-19.100"
+        ], 
+        "name": "manila"
+    }, 
+    {
+        "available": "1.0.2-19.130", 
+        "installed": [
+            "1.0.2-19.130"
+        ], 
+        "name": "octavia"
+    }, 
+    {
+        "available": "5.0.0-11.196", 
+        "installed": [
+            "5.0.0-11.196"
+        ], 
+        "name": "freezer"
+    }, 
+    {
+        "available": "9.0.1-18.227", 
+        "installed": [
+            "9.0.1-18.227"
+        ], 
+        "name": "heat"
+    }, 
+    {
+        "available": "12.0.1-18.92", 
+        "installed": [
+            "12.0.1-18.92"
+        ], 
+        "name": "keystone"
+    }, 
+    {
+        "available": "16.0.3-21.135", 
+        "installed": [
+            "16.0.3-21.135"
+        ], 
+        "name": "nova"
+    }, 
+    {
+        "available": "11.0.2-30.72", 
+        "installed": [
+            "11.0.2-30.72"
+        ], 
+        "name": "horizon"
+    }, 
+    {
+        "available": "5.0.2-18.280", 
+        "installed": [
+            "5.0.2-18.280"
+        ], 
+        "name": "magnum"
+    }, 
+    {
+        "available": "9.1.3-19.211", 
+        "installed": [
+            "9.1.3-19.211"
+        ], 
+        "name": "ironic"
+    }, 
+    {
+        "available": "11.0.2-21.164", 
+        "installed": [
+            "11.0.2-21.164"
+        ], 
+        "name": "cinder"
+    }, 
+    {
+        "available": "5.0.1-18.146", 
+        "installed": [
+            "5.0.1-18.146"
+        ], 
+        "name": "barbican"
+    }, 
+    {
+        "available": "2.15.2-18.100", 
+        "installed": [
+            "2.15.2-18.100"
+        ], 
+        "name": "swift"
+    }, 
+    {
+        "available": "15.0.1-19.106", 
+        "installed": [
+            "15.0.1-19.106"
+        ], 
+        "name": "glance"
+    }, 
+    {
+        "available": "11.0.2-23.156", 
+        "installed": [
+            "11.0.2-23.156"
+        ], 
+        "name": "neutron"
+    }, 
+    {
+        "available": "5.0.1-18.95", 
+        "installed": [
+            "5.0.1-18.95"
+        ], 
+        "name": "designate"
+    }
+]

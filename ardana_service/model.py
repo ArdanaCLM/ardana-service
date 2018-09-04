@@ -27,6 +27,7 @@ from oslo_config import cfg
 from oslo_log import log as logging
 import random
 import six
+import subprocess
 import yaml
 
 from . import policy
@@ -584,12 +585,95 @@ def get_cp_internal_file(name):
        }
     """
 
-    # The yaml files in this directory tend to be *very* large, and it is
-    # inefficient to convert them from yaml to json every time.  Instead
-    # we will convert them as needed and cache the json.
+    (internal_dir, json_filename, contents) = \
+        get_cp_internal_contents_or_path(name)
 
+    return send_from_directory(internal_dir, json_filename)
+
+
+@bp.route("/api/v2/model/deployed_servers", methods=['GET'])
+@policy.enforce('lifecycle:get_deployed_servers')
+def get_deployed_servers():
+    """Returns deployed servers from CloudModel and ansible resources
+
+    Returns the content as JSON.
+
+    .. :quickref: Model; Returns the contents of a file from the config
+        processor internal directory
+
+    **Example Request**:
+
+    .. sourcecode:: http
+
+        GET /api/v2/model/deployed_servers  HTTP/1.1
+        Content-Type: application/json
+
+    **Example Response**:
+
+    .. sourcecode:: http
+
+        HTTP/1.1 200 OK
+        Content-Type: application/json
+
+        [
+            {
+                "hostname": "ardana-ccp-c0-m1",
+                "id": "deployer",
+                "ip-addr": "192.168.110.254",
+                "role": "STD-ARDANA-ROLE"
+            },
+            {
+                "hostname": "ardana-ccp-c1-m1",
+                "id": "cp1-0001",
+                "ip-addr": "192.168.110.3",
+                "role": "STD-CONTROLLER-ROLE"
+            },
+            {
+                "hostname": "ardana-ccp-c1-m2",
+                "id": "cp1-0002",
+                "ip-addr": "192.168.110.4",
+                "role": "STD-CONTROLLER-ROLE"
+            },
+            {
+                "hostname": "ardana-ccp-comp0001",
+                "id": "cm1-0001",
+                "ip-addr": "192.168.110.5",
+                "role": "STD-COMPUTE-ROLE"
+            }
+        ]
+    """
+
+    deployed_servers = []
+    cleaned_hosts = []
+    try:
+        cloud_model = read_cp_internal_json('CloudModel.yaml')
+        if cloud_model:
+            hosts = cloud_model['internal']['servers']
+            if hosts:
+                cleaned_hosts = [{
+                    'id': host['id'], 'role': host['role'],
+                    'ip-addr': host['addr'],
+                    'hostname': host['ardana_ansible_host']
+                } for host in hosts]
+            deployed_names = get_deployed_hostnames()
+            if deployed_names:
+                deployed_servers = \
+                    [cHost for cHost in cleaned_hosts if cHost['hostname']
+                     in deployed_names]
+
+            return jsonify(deployed_servers)
+    except Exception as e:
+        LOG.exception("Failed to get deployed servers")
+        LOG.exception(e)
+        abort(500, "Failed to get deployed servers")
+
+
+# Given the name of the internal config-processor file, return
+# the absolute path of the internal dir, the new json filename it
+# created (or existing one), and the dictionary containing
+# the content
+def get_cp_internal_contents_or_path(name):
     filename = name.replace("_yml", ".yml")
-
     (base, ext) = os.path.splitext(filename)
     json_filename = base + '.json'
 
@@ -600,17 +684,71 @@ def get_cp_internal_file(name):
         internal_dir = os.path.normpath(os.path.join(os.getcwd(),
                                                      internal_dir))
 
+    # The yaml files in this directory tend to be *very* large, and it is
+    # inefficient to convert them from yaml to json every time.  Instead
+    # we will convert them as needed and cache the json.
     yaml_path = safe_join(internal_dir, filename)
     json_path = safe_join(internal_dir, json_filename)
 
+    contents = {}
     if not os.path.exists(json_path) or \
             os.path.getmtime(json_path) < os.path.getmtime(yaml_path):
-
         contents = read_yml_file(internal_dir, filename, trusted=True)
         with open(json_path, "w") as f:
             json.dump(contents, f)
 
-    return send_from_directory(internal_dir, json_filename)
+    return internal_dir, json_filename, contents
+
+
+# read the json output file of an internal cp file
+def read_cp_internal_json(name):
+
+    (internal_dir, json_filename, contents) = \
+        get_cp_internal_contents_or_path(name)
+
+    if not contents:
+        json_path = safe_join(internal_dir, json_filename)
+        try:
+            with open(json_path) as f:
+                contents = json.load(f)
+        except Exception as e:
+            LOG.exception("Failed to read %s", json_path)
+            LOG.exception(e)
+            abort(500, "Failed to read %s", json_path)
+
+    return contents
+
+
+# ansible resources -i ~/scratch/ansible/next/ardana/ansible/hosts/verb_hosts
+# --list-hosts
+# returns a list of servernames from the result of ready-deployment.yml run
+# if this is relatively reliable to detect the deployed servers
+def get_deployed_hostnames():
+
+    # mock for running ansible resources command without cloud
+    if cfg.CONF.testing.use_mock:
+        mock_json = "tools/deployed_hostnames.json"
+        json_file = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)), mock_json)
+        with open(json_file) as f:
+            return json.load(f)
+
+    hostnames = []
+    vb_option = CONF.paths.playbooks_dir + '/hosts/verb_hosts'
+    try:
+        p = subprocess.Popen(
+            ['ansible', 'resources', '-i', vb_option, '--list-hosts'],
+            stdout=subprocess.PIPE)
+        names_lines = p.communicate()[0].decode('utf-8').split('\n')
+        # clean up the output
+        if names_lines:
+            hostnames = [name.strip() for name in names_lines if len(name) > 0]
+    except OSError as e:
+        LOG.exception("Failed to run ansible resources list-hosts command")
+        LOG.exception(e)
+        abort(500, "Failed to run ansible resources list-hosts command")
+
+    return hostnames
 
 
 def read_yml_file(dir, name, trusted=False):

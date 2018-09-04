@@ -1,0 +1,170 @@
+[
+    {
+        "name": "ardana-logging", 
+        "version": "8.0+git.1534266929.80777a7-104.2"
+    }, 
+    {
+        "name": "ardana-nova", 
+        "version": "8.0+git.1534350622.6998ffe-115.2"
+    }, 
+    {
+        "name": "ardana-service", 
+        "version": "8.0+git.1534266541.609927c-87.1"
+    }, 
+    {
+        "name": "ardana-freezer", 
+        "version": "8.0+git.1534266805.c9ea29b-73.2"
+    }, 
+    {
+        "name": "ardana-service-ansible", 
+        "version": "8.0+git.1534266559.69b9e83-36.2"
+    }, 
+    {
+        "name": "ardana-memcached", 
+        "version": "8.0+git.1534266982.498c352-20.2"
+    }, 
+    {
+        "name": "ardana-barbican", 
+        "version": "8.0+git.1534266594.8136db7-62.2"
+    }, 
+    {
+        "name": "ardana-cluster", 
+        "version": "8.0+git.1534266734.ec4822f-59.2"
+    }, 
+    {
+        "name": "ardana", 
+        "version": "2017.2-33.16"
+    }, 
+    {
+        "name": "ardana-spark", 
+        "version": "8.0+git.1534267176.a5f3a22-55.2"
+    }, 
+    {
+        "name": "ardana-tempest", 
+        "version": "8.0+git.1534267246.0175549-65.2"
+    }, 
+    {
+        "name": "ardana-opsconsole", 
+        "version": "8.0+git.1534267103.829be13-41.2"
+    }, 
+    {
+        "name": "python-ardana-packager", 
+        "version": "0.0.3-10.260"
+    }, 
+    {
+        "name": "ardana-monasca", 
+        "version": "8.0+git.1534350692.8eb4816-141.2"
+    }, 
+    {
+        "name": "ardana-opsconsole-ui", 
+        "version": "8.0+git.1534267140.4cca39a-41.1"
+    }, 
+    {
+        "name": "python-ardana-configurationprocessor", 
+        "version": "0.3.1-8.5"
+    }, 
+    {
+        "name": "ardana-installer-ui", 
+        "version": "8.0+git.1534432886.e6b943f-122.2"
+    }, 
+    {
+        "name": "ardana-ironic", 
+        "version": "8.0+git.1534266893.1d69df7-60.2"
+    }, 
+    {
+        "name": "ardana-swift", 
+        "version": "8.0+git.1534267211.78fb7e3-63.2"
+    }, 
+    {
+        "name": "ardana-heat", 
+        "version": "8.0+git.1534266859.b179d0f-28.2"
+    }, 
+    {
+        "name": "ardana-ansible", 
+        "version": "8.0+git.1534515010.3fc8c97-198.1"
+    }, 
+    {
+        "name": "ardana-ses", 
+        "version": "8.0+git.1534266377.61cfcbf-1.22.2"
+    }, 
+    {
+        "name": "ardana-monasca-transform", 
+        "version": "8.0+git.1534267017.4bbecd9-45.2"
+    }, 
+    {
+        "name": "ardana-designate", 
+        "version": "8.0+git.1534266787.434a134-52.2"
+    }, 
+    {
+        "name": "ardana-ceilometer", 
+        "version": "8.0+git.1534266629.0bb5d54-46.2"
+    }, 
+    {
+        "name": "ardana-neutron", 
+        "version": "8.0+git.1534267051.f2ab856-91.2"
+    }, 
+    {
+        "name": "ardana-octavia", 
+        "version": "8.0+git.1534267086.b7dbe77-35.2"
+    }, 
+    {
+        "name": "patterns-cloud-ardana", 
+        "version": "20180607-67.5"
+    }, 
+    {
+        "name": "ardana-mq", 
+        "version": "8.0+git.1534267034.f95e1ec-32.2"
+    }, 
+    {
+        "name": "python-ardana-opsconsole-server", 
+        "version": "8.0+git.1533326559.d98c230-7.11"
+    }, 
+    {
+        "name": "ardana-osconfig", 
+        "version": "8.0+git.1534267158.da38df8-150.2"
+    }, 
+    {
+        "name": "ardana-cassandra", 
+        "version": "8.0+git.1534266612.44dcb20-77.2"
+    }, 
+    {
+        "name": "ardana-magnum", 
+        "version": "8.0+git.1534266946.b552296-39.2"
+    }, 
+    {
+        "name": "ardana-installer-server", 
+        "version": "8.0+git.1534192381.ff6322a-23.1"
+    }, 
+    {
+        "name": "ardana-db", 
+        "version": "8.0+git.1534266770.1b13e95-71.2"
+    }, 
+    {
+        "name": "ardana-tls", 
+        "version": "8.0+git.1534267264.6b1e899-36.2"
+    }, 
+    {
+        "name": "ardana-input-model", 
+        "version": "8.0+git.1534266395.9275df5-110.2"
+    }, 
+    {
+        "name": "ardana-cobbler", 
+        "version": "8.0+git.1534780521.780753b-68.1"
+    }, 
+    {
+        "name": "ardana-horizon", 
+        "version": "8.0+git.1534266876.2867a49-53.2"
+    }, 
+    {
+        "name": "ardana-glance", 
+        "version": "8.0+git.1534266823.b1807b6-49.3"
+    }, 
+    {
+        "name": "ardana-cinder", 
+        "version": "8.0+git.1534266699.6942287-76.3"
+    }, 
+    {
+        "name": "ardana-keystone", 
+        "version": "8.0+git.1534266911.85354cb-75.2"
+    }
+]

@@ -1,0 +1,462 @@
+[
+    {
+        "description": "Cinder Volume V3 Service", 
+        "enabled": true, 
+        "endpoints": [
+            {
+                "interface": "internal", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:8776/v3/%(tenant_id)s"
+            }, 
+            {
+                "interface": "public", 
+                "region": "region1", 
+                "url": "https://myardana.test:8776/v3/%(tenant_id)s"
+            }, 
+            {
+                "interface": "admin", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:8776/v3/%(tenant_id)s"
+            }
+        ], 
+        "name": "cinderv3", 
+        "type": "volumev3"
+    }, 
+    {
+        "description": "Horizon Dashboard", 
+        "enabled": true, 
+        "endpoints": [
+            {
+                "interface": "internal", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:443"
+            }, 
+            {
+                "interface": "admin", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:443"
+            }, 
+            {
+                "interface": "public", 
+                "region": "region1", 
+                "url": "https://myardana.test:443"
+            }
+        ], 
+        "name": "horizon", 
+        "type": "dashboard"
+    }, 
+    {
+        "description": "Identity Service", 
+        "enabled": true, 
+        "endpoints": [
+            {
+                "interface": "internal", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:5000/"
+            }, 
+            {
+                "interface": "public", 
+                "region": "region1", 
+                "url": "https://myardana.test:5000/"
+            }, 
+            {
+                "interface": "admin", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:35357/"
+            }
+        ], 
+        "name": "keystone", 
+        "type": "identity"
+    }, 
+    {
+        "description": "Barbican as a Key Manager Service (created via barbican deploy)", 
+        "enabled": true, 
+        "endpoints": [
+            {
+                "interface": "public", 
+                "region": "region1", 
+                "url": "https://myardana.test:9311"
+            }, 
+            {
+                "interface": "admin", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:9311"
+            }, 
+            {
+                "interface": "internal", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:9311"
+            }
+        ], 
+        "name": "barbican", 
+        "type": "key-manager"
+    }, 
+    {
+        "description": "DNS Service", 
+        "enabled": true, 
+        "endpoints": [
+            {
+                "interface": "internal", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:9001"
+            }, 
+            {
+                "interface": "admin", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:9001"
+            }, 
+            {
+                "interface": "public", 
+                "region": "region1", 
+                "url": "https://myardana.test:9001"
+            }
+        ], 
+        "name": "designate", 
+        "type": "dns"
+    }, 
+    {
+        "description": "OpenStack Orchestration Service", 
+        "enabled": true, 
+        "endpoints": [
+            {
+                "interface": "internal", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:8004/v1/%(tenant_id)s"
+            }, 
+            {
+                "interface": "public", 
+                "region": "region1", 
+                "url": "https://myardana.test:8004/v1/%(tenant_id)s"
+            }, 
+            {
+                "interface": "admin", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:8004/v1/%(tenant_id)s"
+            }
+        ], 
+        "name": "heat", 
+        "type": "orchestration"
+    }, 
+    {
+        "description": "Ceilometer Service", 
+        "enabled": true, 
+        "endpoints": [
+            {
+                "interface": "internal", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:8777/"
+            }, 
+            {
+                "interface": "public", 
+                "region": "region1", 
+                "url": "https://myardana.test:8777/"
+            }, 
+            {
+                "interface": "admin", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:8777/"
+            }
+        ], 
+        "name": "ceilometer", 
+        "type": "metering"
+    }, 
+    {
+        "description": "Cinder Volume Service", 
+        "enabled": true, 
+        "endpoints": [
+            {
+                "interface": "public", 
+                "region": "region1", 
+                "url": "https://myardana.test:8776/v1/%(tenant_id)s"
+            }, 
+            {
+                "interface": "admin", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:8776/v1/%(tenant_id)s"
+            }, 
+            {
+                "interface": "internal", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:8776/v1/%(tenant_id)s"
+            }
+        ], 
+        "name": "cinder", 
+        "type": "volume"
+    }, 
+    {
+        "description": "Nova Placement API Service", 
+        "enabled": true, 
+        "endpoints": [
+            {
+                "interface": "internal", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:8780/"
+            }, 
+            {
+                "interface": "public", 
+                "region": "region1", 
+                "url": "https://myardana.test:8780/"
+            }, 
+            {
+                "interface": "admin", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:8780/"
+            }
+        ], 
+        "name": "placement", 
+        "type": "placement"
+    }, 
+    {
+        "description": "Monasca monitoring service", 
+        "enabled": true, 
+        "endpoints": [
+            {
+                "interface": "internal", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:8070/v2.0"
+            }, 
+            {
+                "interface": "public", 
+                "region": "region1", 
+                "url": "https://myardana.test:8070/v2.0"
+            }, 
+            {
+                "interface": "admin", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:8070/v2.0"
+            }
+        ], 
+        "name": "monasca", 
+        "type": "monitoring"
+    }, 
+    {
+        "description": "Ardana Service", 
+        "enabled": true, 
+        "endpoints": [
+            {
+                "interface": "internal", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:9085"
+            }, 
+            {
+                "interface": "admin", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:9085"
+            }, 
+            {
+                "interface": "public", 
+                "region": "region1", 
+                "url": "https://myardana.test:9085"
+            }
+        ], 
+        "name": "ardana", 
+        "type": "lifecycle"
+    }, 
+    {
+        "description": "Freezer Backup Service", 
+        "enabled": true, 
+        "endpoints": [
+            {
+                "interface": "internal", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:9090"
+            }, 
+            {
+                "interface": "public", 
+                "region": "region1", 
+                "url": "https://myardana.test:9090"
+            }, 
+            {
+                "interface": "admin", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:9090"
+            }
+        ], 
+        "name": "freezer", 
+        "type": "backup"
+    }, 
+    {
+        "description": "container service", 
+        "enabled": true, 
+        "endpoints": [
+            {
+                "interface": "internal", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:9511/v1"
+            }, 
+            {
+                "interface": "public", 
+                "region": "region1", 
+                "url": "https://myardana.test:9511/v1"
+            }, 
+            {
+                "interface": "admin", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:9511/v1"
+            }
+        ], 
+        "name": "magnum", 
+        "type": "container-infra"
+    }, 
+    {
+        "description": "Swift Object Storage Service", 
+        "enabled": true, 
+        "endpoints": [
+            {
+                "interface": "public", 
+                "region": "region1", 
+                "url": "https://myardana.test:8080/v1/AUTH_%(tenant_id)s"
+            }, 
+            {
+                "interface": "internal", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:8080/v1/AUTH_%(tenant_id)s"
+            }, 
+            {
+                "interface": "admin", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:8080/v1/AUTH_%(tenant_id)s"
+            }
+        ], 
+        "name": "swift", 
+        "type": "object-store"
+    }, 
+    {
+        "description": "Image Service", 
+        "enabled": true, 
+        "endpoints": [
+            {
+                "interface": "admin", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:9292"
+            }, 
+            {
+                "interface": "internal", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:9292"
+            }, 
+            {
+                "interface": "public", 
+                "region": "region1", 
+                "url": "https://myardana.test:9292"
+            }
+        ], 
+        "name": "glance", 
+        "type": "image"
+    }, 
+    {
+        "description": "Operations Console Service", 
+        "enabled": true, 
+        "endpoints": [
+            {
+                "interface": "admin", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:9095/api/v1/"
+            }, 
+            {
+                "interface": "public", 
+                "region": "region1", 
+                "url": "https://myardana.test:9095/api/v1/"
+            }, 
+            {
+                "interface": "internal", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:9095/api/v1/"
+            }
+        ], 
+        "name": "opsconsole", 
+        "type": "opsconsole"
+    }, 
+    {
+        "description": "Cinder Volume V2 Service", 
+        "enabled": true, 
+        "endpoints": [
+            {
+                "interface": "internal", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:8776/v2/%(tenant_id)s"
+            }, 
+            {
+                "interface": "admin", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:8776/v2/%(tenant_id)s"
+            }, 
+            {
+                "interface": "public", 
+                "region": "region1", 
+                "url": "https://myardana.test:8776/v2/%(tenant_id)s"
+            }
+        ], 
+        "name": "cinderv2", 
+        "type": "volumev2"
+    }, 
+    {
+        "description": "Kronos logging service", 
+        "enabled": true, 
+        "endpoints": [
+            {
+                "interface": "public", 
+                "region": "region1", 
+                "url": "https://myardana.test:5607/v3.0"
+            }, 
+            {
+                "interface": "internal", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:5607/v3.0"
+            }, 
+            {
+                "interface": "admin", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:5607/v3.0"
+            }
+        ], 
+        "name": "kronos", 
+        "type": "logging"
+    }, 
+    {
+        "description": "OpenStack Networking Service", 
+        "enabled": true, 
+        "endpoints": [
+            {
+                "interface": "internal", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:9696/"
+            }, 
+            {
+                "interface": "admin", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:9696/"
+            }, 
+            {
+                "interface": "public", 
+                "region": "region1", 
+                "url": "https://myardana.test:9696/"
+            }
+        ], 
+        "name": "neutron", 
+        "type": "network"
+    }, 
+    {
+        "description": "Compute Service", 
+        "enabled": true, 
+        "endpoints": [
+            {
+                "interface": "admin", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:8774/v2.1/%(tenant_id)s"
+            }, 
+            {
+                "interface": "internal", 
+                "region": "region1", 
+                "url": "https://192.168.245.6:8774/v2.1/%(tenant_id)s"
+            }, 
+            {
+                "interface": "public", 
+                "region": "region1", 
+                "url": "https://myardana.test:8774/v2.1/%(tenant_id)s"
+            }
+        ], 
+        "name": "nova", 
+        "type": "compute"
+    }
+]

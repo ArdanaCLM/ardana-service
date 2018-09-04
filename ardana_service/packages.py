@@ -14,12 +14,15 @@
 
 from .playbooks import run_playbook
 from .plays import get_metadata_file
+from flask import abort
 from flask import Blueprint
 from flask import jsonify
 import itertools
 import json
 import os
+from os.path import dirname
 from os.path import exists
+from os.path import join
 from oslo_config import cfg
 from oslo_log import log as logging
 import re
@@ -86,6 +89,12 @@ def get_deployer_packages():
        ]
     """
 
+    if cfg.CONF.testing.use_mock:
+        mock_json = "tools/packages_ardana.json"
+        json_file = join(dirname(dirname(__file__)), mock_json)
+        with open(json_file) as f:
+            return jsonify(json.load(f))
+
     global pkg_cache
     global all_pkgs
     ardana_pkgs = {}
@@ -99,9 +108,14 @@ def get_deployer_packages():
         LOG.info("Could not load %s: %s." % (PKG_CACHE_FILE, e))
 
     # See what packages are installed on the deployer
-    p = subprocess.Popen(['zypper', '--terse', 'packages', '--installed'],
-                         stdout=subprocess.PIPE)
-    zyp_lines = p.communicate()[0].split('\n')
+    try:
+        p = subprocess.Popen(['zypper', '--terse', 'packages', '--installed'],
+                             stdout=subprocess.PIPE)
+        zyp_lines = p.communicate()[0].decode('utf-8').split('\n')
+    except OSError:
+        LOG.error("zypper unavailable or not working on this system")
+        abort(503, 'zypper unavailable on this host')
+
     for line in zyp_lines:
         fields = line.split('|')
         # if this is a valid line and the package is installed
@@ -182,6 +196,12 @@ def get_installed_packages():
        < and so on >
 
     """
+    if cfg.CONF.testing.use_mock:
+        mock_json = "tools/packages_openstack.json"
+        json_file = join(dirname(dirname(__file__)), mock_json)
+        with open(json_file) as f:
+            return jsonify(json.load(f))
+
     global all_pkgs
 
     # Get the mapping of time-stamped package names -> package details
@@ -204,7 +224,7 @@ def get_installed_packages():
                 sleep(1)
     except Exception as e:
         LOG.error("Could not get remote package information: %s" % e)
-        return jsonify("Remote package information unavailable", 404)
+        abort(404, "Remote package information unavailable")
 
     try:
         with open(HOST_TS_PKGS_FILE) as f:
@@ -212,7 +232,7 @@ def get_installed_packages():
     except Exception as e:
         LOG.error("Could not retrieve remote host pkg data from %s: %s"
                   % (HOST_TS_PKGS_FILE, e))
-        return jsonify("Remote package information unavailable", 404)
+        abort(404, "Remote package information unavailable")
     finally:
         if exists(HOST_TS_PKGS_FILE):
             os.remove(HOST_TS_PKGS_FILE)
