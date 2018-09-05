@@ -151,3 +151,23 @@ def update_service_file(name):
     except Exception as e:
         LOG.exception(e)
         abort(400)
+
+
+@bp.route("/api/v2/service/files/<path:name>", methods=['DELETE'])
+@policy.enforce('lifecycle:update_service_file')
+def delete_service_file(name):
+    """Delete a service configuration file
+
+    .. :quickref: Service Config; Delete a service configuration file
+
+    :param path: service config file name
+    """
+
+    filename = os.path.join(CONF.paths.config_dir, name)
+    try:
+        if os.path.exists(filename):
+            os.remove(filename)
+        return jsonify('Success')
+    except OSError as e:
+        LOG.exception(e)
+        abort(400)
