@@ -99,9 +99,8 @@ path_opts = [
                help='File containing packages available by deployer and remote'
                     ' hosts'),
     cfg.StrOpt('packages_hosts_data',
-               default='/var/tmp/host_ts_pkgs_file',
-               help='Temporary file containing all hosts\' timestamped '
-                    'Openstack packages linked to a service'),
+               default='/var/tmp/host_pkgs_file',
+               help='Temporary file containing all hosts\' packages data'),
 ]
 
 CONF = cfg.CONF
