@@ -229,7 +229,8 @@ def run_playbook(name, payload=None, play_id=None):
 
     # Prevent some special playbooks from multiple concurrent invocations
     if name in ("site", "config-processor-run", "config-processor-clean",
-                "ready-deployment", "dayzero-os-provision"):
+                "ready-deployment", "dayzero-os-provision", "wipe_disks",
+                "ardana-gen-hosts-file", "monasca-deploy"):
         if get_running_playbook_id(name):
             abort(403, "Already running")
 

@@ -1,0 +1,130 @@
+$$EVENT: start monasca-deploy.yml
+
+$$47649:  /usr/bin/ansible-playbook -i hosts/localhost monasca-deploy.yml -e encrypt= -e rekey=
+$$47650:
+$$47864:  PLAY [localhost] **************************************************************
+$$47865:  GATHERING FACTS ***************************************************************
+$$48490:  ok: [ardana-ccp-c1-m2]
+          ok: [ardana-ccp-c1-m1]
+$$48491:  TASK: [monasca-agent | monasca-agent | main | Set os-specific variables] ******
+          skipping: [ardana-ccp-c1-m1]
+          skipping: [ardana-ccp-c1-m2]
+
+$$48528:  TASK: [monasca-agent | monasca-agent | stop | Stop Monasca-Agent] *************
+          skipping: [ardana-ccp-c1-m1]
+          skipping: [ardana-ccp-c1-m2]
+
+$$48663:  TASK: [monasca-agent | monasca-agent | _check_upgraded_pkgs | Check upgraded packages] ***
+          skipping: [ardana-ccp-c1-m2] => (item=monasca_agent_required_packages)
+          skipping: [ardana-ccp-c1-m1] => (item=monasca_agent_required_packages)
+
+$$48664:  TASK: [monasca-agent | monasca-agent | install | Install required packages] ***
+          skipping: [ardana-ccp-c1-m1] => (item=monasca_agent_required_packages)
+          skipping: [ardana-ccp-c1-m2] => (item=monasca_agent_required_packages)
+
+$$48672:  TASK: [monasca-agent | monasca-agent | install-legacy | Update venv cache] ****
+          skipping: [ardana-ccp-c1-m1]
+          skipping: [ardana-ccp-c1-m2]
+
+$$48779:  TASK: [monasca-agent | monasca-agent | install-legacy | Install monasca-agent service] ***
+          skipping: [ardana-ccp-c1-m1]
+          skipping: [ardana-ccp-c1-m2]
+
+$$48887:  TASK: [monasca-agent | monasca-agent | configure | Setup user] ****************
+          skipping: [ardana-ccp-c1-m1]
+          skipping: [ardana-ccp-c1-m2]
+
+$$49790:  TASK: [monasca-agent | monasca-agent | configure | create /opt/monasca] *******
+          skipping: [ardana-ccp-c1-m1]
+          skipping: [ardana-ccp-c1-m2]
+
+$$107579: TASK: [monasca-agent | monasca-agent | configure | copy sudoers] **************
+          skipping: [ardana-ccp-c1-m1]
+          skipping: [ardana-ccp-c1-m2]
+
+$$107591: TASK: [monasca-agent | monasca-agent | configure | create conf.d dir and custom plugin dirs] ***
+          skipping: [ardana-ccp-c1-m1] => (item=/etc/monasca)
+          skipping: [ardana-ccp-c1-m1] => (item=/etc/monasca/agent)
+          skipping: [ardana-ccp-c1-m1] => (item=/etc/monasca/agent/conf.d)
+          skipping: [ardana-ccp-c1-m1] => (item=/usr/lib/monasca/agent/custom_checks.d/)
+          skipping: [ardana-ccp-c1-m1] => (item=/usr/lib/monasca/agent/custom_detect.d/)
+          skipping: [ardana-ccp-c1-m2] => (item=/etc/monasca)
+          skipping: [ardana-ccp-c1-m2] => (item=/etc/monasca/agent)
+          skipping: [ardana-ccp-c1-m2] => (item=/etc/monasca/agent/conf.d)
+          skipping: [ardana-ccp-c1-m2] => (item=/usr/lib/monasca/agent/custom_checks.d/)
+          skipping: [ardana-ccp-c1-m2] => (item=/usr/lib/monasca/agent/custom_detect.d/)
+
+$$112600: TASK: [monasca-agent | monasca-agent | configure | create monasca log dir] ****
+          skipping: [ardana-ccp-c1-m2]
+          skipping: [ardana-ccp-c1-m1]
+
+          TASK: [monasca-agent | monasca-agent | configure | create agent log dir] ******
+          skipping: [ardana-ccp-c1-m1]
+          skipping: [ardana-ccp-c1-m2]
+
+$$112700: TASK: [monasca-agent | monasca-agent | configure | configure log file ownership] ***
+          skipping: [ardana-ccp-c1-m1] => (item=collector.log)
+          skipping: [ardana-ccp-c1-m1] => (item=forwarder.log)
+          skipping: [ardana-ccp-c1-m2] => (item=collector.log)
+          skipping: [ardana-ccp-c1-m1] => (item=statsd.log)
+          skipping: [ardana-ccp-c1-m1] => (item=supervisord.log)
+          skipping: [ardana-ccp-c1-m2] => (item=forwarder.log)
+          skipping: [ardana-ccp-c1-m2] => (item=statsd.log)
+          skipping: [ardana-ccp-c1-m2] => (item=supervisord.log)
+
+$$112830: TASK: [monasca-agent | monasca-agent | configure | Determine paths for RHEL systemd setup] ***
+          skipping: [ardana-ccp-c1-m1]
+          skipping: [ardana-ccp-c1-m2]
+
+$$112840: TASK: [monasca-agent | monasca-agent | configure | Copy systemd file from venv to expected systemd location] ***
+          skipping: [ardana-ccp-c1-m1]
+          skipping: [ardana-ccp-c1-m2]
+
+$$112850: TASK: [monasca-agent | monasca-agent | configure | Change permission for agent systemd service file] ***
+          skipping: [ardana-ccp-c1-m1]
+          skipping: [ardana-ccp-c1-m2]
+
+$$112855: TASK: [monasca-agent | monasca-agent | configure | Create tmpfiles.d file to handle reboots for agent process pid file] ***
+          skipping: [ardana-ccp-c1-m1]
+          skipping: [ardana-ccp-c1-m2]
+
+$$112860: TASK: [monasca-agent | monasca-agent | configure | Create run directory for agent process pid file] ***
+          skipping: [ardana-ccp-c1-m1]
+          skipping: [ardana-ccp-c1-m2]
+
+$$112862: TASK: [Determine hostname and target hostname for each compute node] **********
+ok: [ardana-ccp-c1-m2] => (item=ardana-ccp-comp0001)
+ok: [ardana-ccp-c1-m1] => (item=ardana-ccp-comp0001)
+
+$$112865: TASK: [Create compute node hostnames and target hostnames lists] **************
+ok: [ardana-ccp-c1-m1]
+ok: [ardana-ccp-c1-m2]
+
+$$112866: TASK: [Get the lists for all hosts to have liveness checks] *******************
+ok: [ardana-ccp-c1-m1]
+ok: [ardana-ccp-c1-m2]
+
+$$113070: TASK: [Determine the hostname and target hostname for this host] **************
+ok: [ardana-ccp-c1-m1]
+ok: [ardana-ccp-c1-m2]
+
+$$113071: TASK: [Setup ping active checks for control hosts] ****************************
+ok: [ardana-ccp-c1-m2]
+
+cmd:
+/usr/bin/monasca-setup
+--user
+monasca-agent
+--agent_service_name
+openstack-monasca-agent
+-d
+HostAlive
+-a
+target_hostname=ardana-ccp-c0-m1-mgmt,ardana-ccp-c1-m1-mgmt hostname=deployer,ardana-ccp-c1-m1-host type=ping
+
+$$113072: PLAY RECAP ********************************************************************
+ardana-ccp-c1-m1           : ok=13   changed=0    unreachable=0    failed=0
+ardana-ccp-c1-m2           : ok=13   changed=0    unreachable=0    failed=0
+
+
+$$EVENT: stop monasca-deploy.yml
