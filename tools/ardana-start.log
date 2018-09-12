@@ -1,0 +1,130 @@
+$$EVENT: start ardana-start.yml
+
+$$47649:  /usr/bin/ansible-playbook -i hosts/verb_hosts ardana-start.yml -e encrypt= -e rekey=
+$$47650:
+$$47864:  PLAY [all] **************************************************************
+$$47865:  GATHERING FACTS ***************************************************************
+$$48490:  ok: [ardana-ccp-ccp-comp0001]
+
+$$48491:  PLAY [Start the Monasca Agent on all systems] *********************************
+
+          TASK: [monasca-agent | monasca-agent | main | Set os-specific variables] ******
+          skipping: [ardana-ccp-comp0001]
+
+
+$$48528: TASK: [monasca-agent | monasca-agent | install | Install the monasca-agent service] ***
+         skipping: [ardana-ccp-comp0001] => (item=openstack-monasca-agent)
+         skipping: [ardana-ccp-comp0001] => (item=python-monasca-common)
+
+$$48663:  TASK: [monasca-agent | monasca-agent | configure | create conf.d dir and custom plugin dirs] ***
+          skipping: [ardana-ccp-comp0001] => (item=/etc/monasca)
+          skipping: [ardana-ccp-comp0001] => (item=/etc/monasca/agent)
+          skipping: [ardana-ccp-comp0001] => (item=/etc/monasca/agent/conf.d)
+          skipping: [ardana-ccp-comp0001] => (item=/usr/lib/monasca/agent/custom_checks.d/)
+          skipping: [ardana-ccp-comp0001] => (item=/usr/lib/monasca/agent/custom_detect.d/)
+
+
+$$48664:  TASK: [monasca-agent | monasca-agent | configure | Create symlinks for RHEL case] ***
+          skipping: [ardana-ccp-comp0001] => (item={'path': '/usr/local/bin/monasca-setup', 'src': u'/opt/stack/service/monasca-agent/venv/usr/bin/monasca-setup'})
+          skipping: [ardana-ccp-comp0001] => (item={'path': u'/opt/stack/service/monasca-agent/venv/share', 'src': u'/opt/stack/service/monasca-agent/venv/usr/share'})
+
+$$48672:  PLAY [localhost] **************************************************************
+
+          TASK: [ARD-SVC | set is_localhost false] **************************************
+          ok: [localhost]
+
+$$48779:  TASK: [ARD-SVC | set is_localhost true if needed] *****************************
+          skipping: [localhost]
+
+          TASK: [ARD-SVC | Set which hosts to use] **************************************
+          ok: [localhost]
+
+$$48887:  PLAY [localhost] **************************************************************
+
+          TASK: [ARD-SVC | common | Stat openstack path] ********************************
+          ok: [localhost]
+
+$$49790:  TASK: [osconfig-iptables | osconfig-iptables | main | Set os-specific variables] ***
+          ok: [ardana-ccp-comp0001]
+
+$$107579: TASK: [osconfig-iptables | osconfig-iptables | install | Install the required packages] ***
+          ok: [ardana-ccp-comp0001] => (item=iptables)
+
+$$107579: TASK: [osconfig-iptables | osconfig-iptables | install | Disable unsupported OS services] ***
+          ok: [ardana-ccp-comp0001] => (item=SuSEfirewall2_init)
+          ok: [ardana-ccp-comp0001] => (item=SuSEfirewall2)
+
+          TASK: [osconfig-iptables | osconfig-iptables | install | Enable services] *****
+          skipping: [ardana-ccp-comp0001]
+
+          TASK: [FND-AP2 | FND-AP2 | main | Load OS dependent vars] *********************
+          ok: [ardana-ccp-comp0001] => (item=/var/lib/ardana/scratch/ansible/next/ardana/ansible/roles/FND-AP2/vars/sles.yml)
+
+          TASK: [NOV-CMP | NOV-CMP | main | Set os-specific variables] ******************
+          ok: [ardana-ccp-comp0001]
+
+$$107591: TASK: [nova-monasca | start | Run Monasca agent Nova detection plugin] ********
+          ok: [ardana-ccp-comp0001]
+
+cmd:
+/usr/bin/monasca-setup
+--user
+monasca-agent
+--agent_service_name
+openstack-monasca-agent
+-d
+nova
+
+stderr: INFO:   Monitoring by process_name(s): nova-compute for service: compute.
+INFO:   No process found listening on 8774 skipping setup of http_check for the compute API.
+INFO: Configuring Nova
+INFO: No changes found for plugins ['Nova'], skipping restart of Monasca Agent
+
+cmd:
+/usr/bin/monasca-setup
+--user
+monasca-agent
+--agent_service_name
+openstack-monasca-agent
+-d
+nova
+
+$$112600: TASK: [neutron-common | neutron-common | main | Set os-specific variables] ****
+          ok: [ardana-ccp-comp0001]
+          TASK: [neutron-lbaasv2-agent | start | Start the Neutron LBAASv2 Agent] *******
+          ok: [ardana-ccp-comp0001]
+
+$$112700: TASK: [CND-SVC | CND-SVC | main | include OS specific variables] **************
+          ok: [ardana-ccp-comp0001]
+
+$$112830: TASK: [CND-SVC | start | Notify systemd of changes] ***************************
+          changed: [ardana-ccp-comp0001]
+
+
+$$112840: TASK: [include_vars ../defaults/keystone_credentials.yml] *********************
+          ok: [ardana-ccp-comp0001]
+
+$$112850: TASK: [freezer-agent | start | Activate the latest install] *******************
+skipping: [ardana-ccp-comp0001]
+
+$$112855: TASK: [freezer-agent | start | Make sure keystone is reachable] ***************
+          ok: [ardana-ccp-comp0001]
+
+$$112860: TASK: [freezer-agent | start | Restart freezer-scheduler] *********************
+          skipping: [ardana-ccp-comp0001]
+
+$$112862: TASK: [freezer-agent | start | Ensure freezer-scheduler is started] ***********
+          ok: [ardana-ccp-comp0001]
+
+$$112865: PLAY [localhost] **************************************************************
+
+          TASK: [ardana-extra-start.yml dummy play] *************************************
+          ok: [localhost] => {
+                "msg": "Skipping - nothing to do here"
+          }
+
+$$113072: PLAY RECAP ********************************************************************
+ardana-ccp-comp0001        : ok=76   changed=1    unreachable=0    failed=0
+localhost                  : ok=7    changed=0    unreachable=0    failed=0
+
+$$EVENT: stop ardana-start.yml

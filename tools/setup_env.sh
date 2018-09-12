@@ -63,6 +63,7 @@ touch ardana-ansible/keystone-status.yml
 touch ardana-ansible/ardana-gen-hosts-file.yml
 touch ardana-ansible/monasca-deploy.yml
 touch ardana-ansible/wipe_disks.yml
+touch ardana-ansible/ardana-start.yml
 
 if [ ! -d ardana-input-model ] ; then
     git clone ${GIT_BASE}/ardana/ardana-input-model
