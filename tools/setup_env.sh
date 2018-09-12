@@ -58,6 +58,12 @@ fi
 # Create a fake playbook to enable keystone-status playbook to run
 touch ardana-ansible/keystone-status.yml
 
+# Make sure the playbook is there or create fake playbooks if they are not
+# avaiable for adding compute nodes
+touch ardana-ansible/ardana-gen-hosts-file.yml
+touch ardana-ansible/monasca-deploy.yml
+touch ardana-ansible/wipe_disks.yml
+
 if [ ! -d ardana-input-model ] ; then
     git clone ${GIT_BASE}/ardana/ardana-input-model
 fi

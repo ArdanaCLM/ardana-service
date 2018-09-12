@@ -1,0 +1,55 @@
+$$EVENT: start ardana-gen-hosts-file.yml
+
+$$47649:  /usr/bin/ansible-playbook -i hosts/localhost ardana-gen-hosts-file.yml -e encrypt= -e rekey=
+$$47864:  PLAY [localhost] **************************************************************
+$$47865:  GATHERING FACTS ***************************************************************
+$$48490:  ok: [localhost]
+
+$$48491:  TASK: [pbstart.yml pb_start_playbook] *****************************************
+ok: [localhost] => {
+    "msg": "Playbook started - ardana-gen-hosts-file.yml"
+}
+
+msg: Playbook started - ardana-gen-hosts-file.yml
+
+msg: Playbook started - ardana-gen-hosts-file.yml
+
+$$48528:  PLAY [all] ********************************************************************
+
+$$48663:  GATHERING FACTS ***************************************************************
+ok: [ardana-ccp-c0-m1]
+ok: [ardana-ccp-comp0001]
+
+$$48664:  TASK: [osconfig | osconfig | main | Include platform vars] ********************
+ok: [ardana-ccp-c0-m1] => (item=/var/lib/ardana/scratch/ansible/next/ardana/ansible/roles/osconfig/vars/suse.yml)
+ok: [ardana-ccp-c1-m1] => (item=/var/lib/ardana/scratch/ansible/next/ardana/ansible/roles/osconfig/vars/suse.yml)
+ok: [ardana-ccp-c1-m2] => (item=/var/lib/ardana/scratch/ansible/next/ardana/ansible/roles/osconfig/vars/suse.yml)
+ok: [localhost] => (item=/var/lib/ardana/scratch/ansible/next/ardana/ansible/roles/osconfig/vars/suse.yml)
+ok: [ardana-ccp-comp0001] => (item=/var/lib/ardana/scratch/ansible/next/ardana/ansible/roles/osconfig/vars/suse.yml)
+
+$$48672:  TASK: [osconfig | setup-hosts-file | Update /etc/hosts] ***********************
+ok: [localhost]
+ok: [ardana-ccp-comp0001]
+ok: [ardana-ccp-c0-m1]
+ok: [ardana-ccp-c1-m2]
+ok: [ardana-ccp-c1-m1]
+
+$$87579:  PLAY [localhost] **************************************************************
+
+TASK: [pbfinish.yml pb_finish_playbook] ***************************************
+ok: [localhost] => {
+    "msg": "Playbook finished - ardana-gen-hosts-file.yml"
+}
+
+msg: Playbook finished - ardana-gen-hosts-file.yml
+
+msg: Playbook finished - ardana-gen-hosts-file.yml
+
+PLAY RECAP ********************************************************************
+ardana-ccp-c0-m1           : ok=3    changed=0    unreachable=0    failed=0
+ardana-ccp-c1-m1           : ok=2    changed=0    unreachable=0    failed=0
+ardana-ccp-c1-m2           : ok=2    changed=0    unreachable=0    failed=0
+ardana-ccp-comp0001        : ok=3    changed=0    unreachable=0    failed=0
+localhost                  : ok=5    changed=0    unreachable=0    failed=0
+
+$$EVENT: stop ardana-gen-hosts-file.yml

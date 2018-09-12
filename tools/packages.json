@@ -1,0 +1,2406 @@
+{
+    "cloud_installed_packages": [
+        {
+            "name": "python-retrying",
+            "versions": [
+                "1.3.3-1.52"
+            ]
+        },
+        {
+            "name": "mariadb-tools",
+            "versions": [
+                "10.2.15-1.18"
+            ]
+        },
+        {
+            "name": "python-glanceclient",
+            "versions": [
+                "2.8.0-4.307"
+            ]
+        },
+        {
+            "name": "ardana-monasca-transform",
+            "versions": [
+                "8.0+git.1534267017.4bbecd9-45.2"
+            ]
+        },
+        {
+            "name": "python-backports_abc",
+            "versions": [
+                "0.5-1.20"
+            ]
+        },
+        {
+            "name": "python-blinker",
+            "versions": [
+                "1.4-2.2"
+            ]
+        },
+        {
+            "name": "python-oslo.versionedobjects",
+            "versions": [
+                "1.26.1-4.254"
+            ]
+        },
+        {
+            "name": "python-setuptools",
+            "versions": [
+                "36.5.0-1.18"
+            ]
+        },
+        {
+            "name": "python-falcon",
+            "versions": [
+                "1.0.0-2.93"
+            ]
+        },
+        {
+            "name": "python-fixtures",
+            "versions": [
+                "3.0.0-2.19"
+            ]
+        },
+        {
+            "name": "patterns-cloud-ardana",
+            "versions": [
+                "20180607-67.5"
+            ]
+        },
+        {
+            "name": "python-gnocchiclient",
+            "versions": [
+                "3.1.1-8.296"
+            ]
+        },
+        {
+            "name": "dnsmasq-utils",
+            "versions": [
+                "2.78-18.3.1"
+            ]
+        },
+        {
+            "name": "python-packaging",
+            "versions": [
+                "16.8-1.16"
+            ]
+        },
+        {
+            "name": "python-psutil",
+            "versions": [
+                "5.2.2-1.76"
+            ]
+        },
+        {
+            "name": "python-pip",
+            "versions": [
+                "9.0.1-4.6"
+            ]
+        },
+        {
+            "name": "python-openstackclient",
+            "versions": [
+                "3.12.1-4.104"
+            ]
+        },
+        {
+            "name": "mariadb-galera",
+            "versions": [
+                "10.2.15-1.18"
+            ]
+        },
+        {
+            "name": "python-GitPython",
+            "versions": [
+                "2.1.8-1.25"
+            ]
+        },
+        {
+            "name": "python-requests-kerberos",
+            "versions": [
+                "0.11.0-1.29"
+            ]
+        },
+        {
+            "name": "python-docker-pycreds",
+            "versions": [
+                "0.2.1-1.33"
+            ]
+        },
+        {
+            "name": "python-Flask-Cors",
+            "versions": [
+                "3.0.3-1.31"
+            ]
+        },
+        {
+            "name": "cal10n",
+            "versions": [
+                "0.7.4-8.618"
+            ]
+        },
+        {
+            "name": "libxmlsec1-openssl1",
+            "versions": [
+                "1.2.24-2.4.3"
+            ]
+        },
+        {
+            "name": "python-msgpack-python",
+            "versions": [
+                "0.4.8-2.19"
+            ]
+        },
+        {
+            "name": "ardana",
+            "versions": [
+                "2017.2-33.16"
+            ]
+        },
+        {
+            "name": "venv-openstack-cinder-x86_64",
+            "versions": [
+                "11.0.2-21.164"
+            ]
+        },
+        {
+            "name": "python-monasca-common",
+            "versions": [
+                "2.3.1~dev1-8.87"
+            ]
+        },
+        {
+            "name": "memcached",
+            "versions": [
+                "1.5.6-1.2"
+            ]
+        },
+        {
+            "name": "python-flup",
+            "versions": [
+                "1.0.3.dev_20110405-2.10.52"
+            ]
+        },
+        {
+            "name": "novnc",
+            "versions": [
+                "1.0.0-5.4"
+            ]
+        },
+        {
+            "name": "python-backports.ssl_match_hostname",
+            "versions": [
+                "3.5.0.1-3.59"
+            ]
+        },
+        {
+            "name": "python-positional",
+            "versions": [
+                "1.1.1-1.52"
+            ]
+        },
+        {
+            "name": "venv-openstack-neutron-x86_64",
+            "versions": [
+                "11.0.2-23.156"
+            ]
+        },
+        {
+            "name": "python-neutron-lib",
+            "versions": [
+                "1.9.1-3.368"
+            ]
+        },
+        {
+            "name": "openstack-freezer-scheduler",
+            "versions": [
+                "5.0.1~dev8-5.162"
+            ]
+        },
+        {
+            "name": "ardana-cinder",
+            "versions": [
+                "8.0+git.1534266699.6942287-76.3"
+            ]
+        },
+        {
+            "name": "python-cinderclient",
+            "versions": [
+                "3.1.0-4.345"
+            ]
+        },
+        {
+            "name": "python-magnumclient",
+            "versions": [
+                "2.7.0-4.117"
+            ]
+        },
+        {
+            "name": "python-designate-tempest-plugin",
+            "versions": [
+                "0.3.0-3.34"
+            ]
+        },
+        {
+            "name": "venv-openstack-ironic-x86_64",
+            "versions": [
+                "9.1.3-19.211"
+            ]
+        },
+        {
+            "name": "python-lxml",
+            "versions": [
+                "3.6.1-6.2"
+            ]
+        },
+        {
+            "name": "python-fasteners",
+            "versions": [
+                "0.14.1-2.18"
+            ]
+        },
+        {
+            "name": "python-jsonpath-rw",
+            "versions": [
+                "1.4.0-1.52"
+            ]
+        },
+        {
+            "name": "logstash",
+            "versions": [
+                "2.4.1-5.9.2"
+            ]
+        },
+        {
+            "name": "python-ply",
+            "versions": [
+                "3.10-1.20"
+            ]
+        },
+        {
+            "name": "ardana-ironic",
+            "versions": [
+                "8.0+git.1534266893.1d69df7-60.2"
+            ]
+        },
+        {
+            "name": "python-oslo.serialization",
+            "versions": [
+                "2.20.2-4.109"
+            ]
+        },
+        {
+            "name": "python-Flask-SocketIO",
+            "versions": [
+                "2.9.3-1.34"
+            ]
+        },
+        {
+            "name": "apache2-mod_wsgi",
+            "versions": [
+                "4.5.18-2.26"
+            ]
+        },
+        {
+            "name": "python-ntplib",
+            "versions": [
+                "0.3.3-1.48"
+            ]
+        },
+        {
+            "name": "openstack-monasca-agent",
+            "versions": [
+                "2.2.4~dev3-5.75"
+            ]
+        },
+        {
+            "name": "python-appdirs",
+            "versions": [
+                "1.4.3-1.17"
+            ]
+        },
+        {
+            "name": "libnetfilter_cttimeout1",
+            "versions": [
+                "1.0.0-9.1"
+            ]
+        },
+        {
+            "name": "python-meld3",
+            "versions": [
+                "1.0.2-1.46"
+            ]
+        },
+        {
+            "name": "python-alembic",
+            "versions": [
+                "0.9.5-3.508"
+            ]
+        },
+        {
+            "name": "python-statsd",
+            "versions": [
+                "3.2.1-1.80"
+            ]
+        },
+        {
+            "name": "python-barbican-tempest-plugin",
+            "versions": [
+                "0.0.1~dev43-4.33"
+            ]
+        },
+        {
+            "name": "python-gabbi",
+            "versions": [
+                "1.35.0-4.45"
+            ]
+        },
+        {
+            "name": "ardana-swiftlm-drive-provision",
+            "versions": [
+                "3.1.0-4.10"
+            ]
+        },
+        {
+            "name": "python-testrepository",
+            "versions": [
+                "0.0.20-2.19"
+            ]
+        },
+        {
+            "name": "python-amqp",
+            "versions": [
+                "2.1.3-1.20"
+            ]
+        },
+        {
+            "name": "libmariadb3",
+            "versions": [
+                "3.0.3-1.15"
+            ]
+        },
+        {
+            "name": "python-pexpect",
+            "versions": [
+                "3.1-1.1"
+            ]
+        },
+        {
+            "name": "rabbitmq-server-plugins",
+            "versions": [
+                "3.6.15-23.21"
+            ]
+        },
+        {
+            "name": "python-debtcollector",
+            "versions": [
+                "1.17.1-1.128"
+            ]
+        },
+        {
+            "name": "python-Paste",
+            "versions": [
+                "2.0.3-1.66"
+            ]
+        },
+        {
+            "name": "python-dogpile.cache",
+            "versions": [
+                "0.6.4-1.16"
+            ]
+        },
+        {
+            "name": "ardana-swift",
+            "versions": [
+                "8.0+git.1534267211.78fb7e3-63.2"
+            ]
+        },
+        {
+            "name": "python-pika",
+            "versions": [
+                "0.10.0-1.52"
+            ]
+        },
+        {
+            "name": "python-greenlet",
+            "versions": [
+                "0.4.10-1.65"
+            ]
+        },
+        {
+            "name": "python-oslo.service",
+            "versions": [
+                "1.25.1-4.75"
+            ]
+        },
+        {
+            "name": "python-logutils",
+            "versions": [
+                "0.3.3-1.63"
+            ]
+        },
+        {
+            "name": "python-websockify",
+            "versions": [
+                "0.8.0-2.18"
+            ]
+        },
+        {
+            "name": "python-keyring",
+            "versions": [
+                "10.4.0-1.35"
+            ]
+        },
+        {
+            "name": "mariadb",
+            "versions": [
+                "10.2.15-1.18"
+            ]
+        },
+        {
+            "name": "python-pyroute2",
+            "versions": [
+                "0.4.21-1.21"
+            ]
+        },
+        {
+            "name": "conntrack-tools",
+            "versions": [
+                "1.4.2-5.2"
+            ]
+        },
+        {
+            "name": "python-jsonpath-rw-ext",
+            "versions": [
+                "1.0.0-1.51"
+            ]
+        },
+        {
+            "name": "python-monasca-tempest-plugin",
+            "versions": [
+                "0.1.0-3.29"
+            ]
+        },
+        {
+            "name": "python-kombu",
+            "versions": [
+                "4.0.1-1.22"
+            ]
+        },
+        {
+            "name": "kafka",
+            "versions": [
+                "0.10.2.2-1.3"
+            ]
+        },
+        {
+            "name": "python-tzlocal",
+            "versions": [
+                "1.4-1.27"
+            ]
+        },
+        {
+            "name": "python-ironicclient",
+            "versions": [
+                "1.17.0-4.241"
+            ]
+        },
+        {
+            "name": "ardana-swiftlm-log-tailer",
+            "versions": [
+                "3.1.0-4.10"
+            ]
+        },
+        {
+            "name": "venv-openstack-ceilometer-x86_64",
+            "versions": [
+                "9.0.2-19.153"
+            ]
+        },
+        {
+            "name": "python-futures",
+            "versions": [
+                "3.0.2-14.1"
+            ]
+        },
+        {
+            "name": "python-ardana-configurationprocessor",
+            "versions": [
+                "0.3.1-8.5"
+            ]
+        },
+        {
+            "name": "erlang",
+            "versions": [
+                "20.2.2-1.50"
+            ]
+        },
+        {
+            "name": "python-warlock",
+            "versions": [
+                "1.0.1-8.5"
+            ]
+        },
+        {
+            "name": "libnetfilter_cthelper0",
+            "versions": [
+                "1.0.0-7.1"
+            ]
+        },
+        {
+            "name": "python-beautifulsoup4",
+            "versions": [
+                "4.6.0-1.28"
+            ]
+        },
+        {
+            "name": "python-ddt",
+            "versions": [
+                "1.1.0-1.51"
+            ]
+        },
+        {
+            "name": "python-glob2",
+            "versions": [
+                "0.6-1.3"
+            ]
+        },
+        {
+            "name": "python-ecdsa",
+            "versions": [
+                "0.13-5.2.1"
+            ]
+        },
+        {
+            "name": "python-heat-tempest-plugin",
+            "versions": [
+                "0.1.0-5.23"
+            ]
+        },
+        {
+            "name": "python-pyOpenSSL",
+            "versions": [
+                "17.2.0-1.31"
+            ]
+        },
+        {
+            "name": "ardana-cobbler",
+            "versions": [
+                "8.0+git.1534780521.780753b-68.1"
+            ]
+        },
+        {
+            "name": "python-itsdangerous",
+            "versions": [
+                "0.24-1.20"
+            ]
+        },
+        {
+            "name": "ardana-horizon",
+            "versions": [
+                "8.0+git.1534266876.2867a49-53.2"
+            ]
+        },
+        {
+            "name": "ardana-keystone",
+            "versions": [
+                "8.0+git.1534266911.85354cb-75.2"
+            ]
+        },
+        {
+            "name": "ardana-magnum",
+            "versions": [
+                "8.0+git.1534266946.b552296-39.2"
+            ]
+        },
+        {
+            "name": "python-cinderlm",
+            "versions": [
+                "0.0.2+git.1534266717.b15dc9d-8.1"
+            ]
+        },
+        {
+            "name": "python-oslo.rootwrap",
+            "versions": [
+                "5.9.2-4.140"
+            ]
+        },
+        {
+            "name": "python-osc-lib",
+            "versions": [
+                "1.7.0-3.469"
+            ]
+        },
+        {
+            "name": "xtrabackup",
+            "versions": [
+                "2.4.10-1.18"
+            ]
+        },
+        {
+            "name": "python-ujson",
+            "versions": [
+                "1.35-1.48"
+            ]
+        },
+        {
+            "name": "ardana-cluster",
+            "versions": [
+                "8.0+git.1534266734.ec4822f-59.2"
+            ]
+        },
+        {
+            "name": "ardana-ses",
+            "versions": [
+                "8.0+git.1534266377.61cfcbf-1.22.2"
+            ]
+        },
+        {
+            "name": "python-oslo.context",
+            "versions": [
+                "2.17.1-4.179"
+            ]
+        },
+        {
+            "name": "python-neutronclient",
+            "versions": [
+                "6.5.0-4.257"
+            ]
+        },
+        {
+            "name": "python-html",
+            "versions": [
+                "1.16-1.40"
+            ]
+        },
+        {
+            "name": "openstack-tempest-test",
+            "versions": [
+                "17.0.0-6.34"
+            ]
+        },
+        {
+            "name": "venv-openstack-monasca-ceilometer-x86_64",
+            "versions": [
+                "1.5.1-9.156"
+            ]
+        },
+        {
+            "name": "python-cmd2",
+            "versions": [
+                "0.6.7-1.9"
+            ]
+        },
+        {
+            "name": "venv-openstack-heat-x86_64",
+            "versions": [
+                "9.0.1-18.227"
+            ]
+        },
+        {
+            "name": "ardana-installer-server",
+            "versions": [
+                "8.0+git.1534192381.ff6322a-23.1"
+            ]
+        },
+        {
+            "name": "python-kubernetes",
+            "versions": [
+                "2.0.0-2.174"
+            ]
+        },
+        {
+            "name": "python-oauth2client",
+            "versions": [
+                "4.1.2-1.46"
+            ]
+        },
+        {
+            "name": "elasticsearch",
+            "versions": [
+                "2.4.2-3.34"
+            ]
+        },
+        {
+            "name": "python-iso8601",
+            "versions": [
+                "0.1.11-2.19"
+            ]
+        },
+        {
+            "name": "python-PyECLib",
+            "versions": [
+                "1.5.0-1.17"
+            ]
+        },
+        {
+            "name": "python-elasticsearch",
+            "versions": [
+                "2.4.1-1.48"
+            ]
+        },
+        {
+            "name": "python-heatclient",
+            "versions": [
+                "1.11.1-4.194"
+            ]
+        },
+        {
+            "name": "python-websockify-common",
+            "versions": [
+                "0.8.0-2.18"
+            ]
+        },
+        {
+            "name": "python-oslo.policy",
+            "versions": [
+                "1.25.2-4.162"
+            ]
+        },
+        {
+            "name": "openstack-freezer-agent",
+            "versions": [
+                "5.0.1~dev8-5.162"
+            ]
+        },
+        {
+            "name": "erlang-epmd",
+            "versions": [
+                "20.2.2-1.50"
+            ]
+        },
+        {
+            "name": "python-paramiko",
+            "versions": [
+                "2.2.3-2.1"
+            ]
+        },
+        {
+            "name": "python-futurist",
+            "versions": [
+                "1.3.1-1.38"
+            ]
+        },
+        {
+            "name": "openstack-monasca-log-api",
+            "versions": [
+                "2.3.1~dev9-4.292"
+            ]
+        },
+        {
+            "name": "python-linecache2",
+            "versions": [
+                "1.0.0-2.19"
+            ]
+        },
+        {
+            "name": "python-tinydb",
+            "versions": [
+                "3.7.0-1.24"
+            ]
+        },
+        {
+            "name": "ardana-cassandra",
+            "versions": [
+                "8.0+git.1534266612.44dcb20-77.2"
+            ]
+        },
+        {
+            "name": "storm",
+            "versions": [
+                "1.0.5-4.4"
+            ]
+        },
+        {
+            "name": "python-virtualenv",
+            "versions": [
+                "15.1.0-1.18"
+            ]
+        },
+        {
+            "name": "mariadb-client",
+            "versions": [
+                "10.2.15-1.18"
+            ]
+        },
+        {
+            "name": "python-contextlib2",
+            "versions": [
+                "0.5.4-1.52"
+            ]
+        },
+        {
+            "name": "python-swiftlm",
+            "versions": [
+                "3.1.0-4.10"
+            ]
+        },
+        {
+            "name": "storm-supervisor",
+            "versions": [
+                "1.0.5-4.4"
+            ]
+        },
+        {
+            "name": "ardana-designate",
+            "versions": [
+                "8.0+git.1534266787.434a134-52.2"
+            ]
+        },
+        {
+            "name": "python-simplegeneric",
+            "versions": [
+                "0.8.1-1.52"
+            ]
+        },
+        {
+            "name": "python-weakrefmethod",
+            "versions": [
+                "1.0.3-4.75"
+            ]
+        },
+        {
+            "name": "ardana-mq",
+            "versions": [
+                "8.0+git.1534267034.f95e1ec-32.2"
+            ]
+        },
+        {
+            "name": "python-ryu",
+            "versions": [
+                "4.15-6.174"
+            ]
+        },
+        {
+            "name": "python-pecan",
+            "versions": [
+                "1.2.1-1.53"
+            ]
+        },
+        {
+            "name": "python-cliff",
+            "versions": [
+                "2.8.0-3.459"
+            ]
+        },
+        {
+            "name": "ardana-db",
+            "versions": [
+                "8.0+git.1534266770.1b13e95-71.2"
+            ]
+        },
+        {
+            "name": "python-networkx",
+            "versions": [
+                "1.11-1.59"
+            ]
+        },
+        {
+            "name": "python-websocket-client",
+            "versions": [
+                "0.44.0-1.18"
+            ]
+        },
+        {
+            "name": "python-redis",
+            "versions": [
+                "2.10.5-1.18"
+            ]
+        },
+        {
+            "name": "python-waitress",
+            "versions": [
+                "0.9.0-1.51"
+            ]
+        },
+        {
+            "name": "python-unicodecsv",
+            "versions": [
+                "0.14.1-1.51"
+            ]
+        },
+        {
+            "name": "python-mock",
+            "versions": [
+                "2.0.0-2.20"
+            ]
+        },
+        {
+            "name": "python-rfc3986",
+            "versions": [
+                "1.1.0-1.18"
+            ]
+        },
+        {
+            "name": "python-eventlet",
+            "versions": [
+                "0.20.0-4.8"
+            ]
+        },
+        {
+            "name": "venv-openstack-magnum-x86_64",
+            "versions": [
+                "5.0.2-18.280"
+            ]
+        },
+        {
+            "name": "python-conf_d",
+            "versions": [
+                "0.0.4-4.24"
+            ]
+        },
+        {
+            "name": "python-Werkzeug",
+            "versions": [
+                "0.12.2-1.20"
+            ]
+        },
+        {
+            "name": "python-Tempita",
+            "versions": [
+                "0.5.2-2.18"
+            ]
+        },
+        {
+            "name": "python-PyYAML",
+            "versions": [
+                "3.12-26.6.1"
+            ]
+        },
+        {
+            "name": "python-os-xenapi",
+            "versions": [
+                "0.2.0-3.205"
+            ]
+        },
+        {
+            "name": "galera-3-wsrep-provider",
+            "versions": [
+                "25.3.23-6.26"
+            ]
+        },
+        {
+            "name": "python-Flask",
+            "versions": [
+                "0.12.1-1.20"
+            ]
+        },
+        {
+            "name": "cassandra",
+            "versions": [
+                "3.11.2-3.31"
+            ]
+        },
+        {
+            "name": "zookeeper-server",
+            "versions": [
+                "3.4.9-1.95"
+            ]
+        },
+        {
+            "name": "python-colorama",
+            "versions": [
+                "0.2.7-1.9"
+            ]
+        },
+        {
+            "name": "ardana-memcached",
+            "versions": [
+                "8.0+git.1534266982.498c352-20.2"
+            ]
+        },
+        {
+            "name": "ardana-opsconsole-ui",
+            "versions": [
+                "8.0+git.1534267140.4cca39a-41.1"
+            ]
+        },
+        {
+            "name": "libxmlsec1-1",
+            "versions": [
+                "1.2.24-2.4.3"
+            ]
+        },
+        {
+            "name": "python-gevent",
+            "versions": [
+                "1.1.2-1.62"
+            ]
+        },
+        {
+            "name": "python-swiftclient",
+            "versions": [
+                "3.4.0-4.293"
+            ]
+        },
+        {
+            "name": "python-keystoneclient",
+            "versions": [
+                "3.13.0-4.385"
+            ]
+        },
+        {
+            "name": "python-funcsigs",
+            "versions": [
+                "1.0.2-2.18"
+            ]
+        },
+        {
+            "name": "python-keystoneauth1",
+            "versions": [
+                "3.1.0-3.498"
+            ]
+        },
+        {
+            "name": "mariadb-errormessages",
+            "versions": [
+                "10.2.15-1.18"
+            ]
+        },
+        {
+            "name": "python-smmap2",
+            "versions": [
+                "2.0.3-1.26"
+            ]
+        },
+        {
+            "name": "python-stevedore",
+            "versions": [
+                "1.25.1-2.175"
+            ]
+        },
+        {
+            "name": "python-monasca-statsd",
+            "versions": [
+                "1.7.1~dev3-9.151"
+            ]
+        },
+        {
+            "name": "openstack-suse-sudo",
+            "versions": [
+                "2015.2-5.53"
+            ]
+        },
+        {
+            "name": "python-voluptuous",
+            "versions": [
+                "0.9.3-1.51"
+            ]
+        },
+        {
+            "name": "rabbitmq-server",
+            "versions": [
+                "3.6.15-23.21"
+            ]
+        },
+        {
+            "name": "python-docutils",
+            "versions": [
+                "0.13.1-1.20"
+            ]
+        },
+        {
+            "name": "python-pykerberos",
+            "versions": [
+                "1.1.13-1.53"
+            ]
+        },
+        {
+            "name": "venv-openstack-monasca-x86_64",
+            "versions": [
+                "2.2.1-19.155"
+            ]
+        },
+        {
+            "name": "ardana-service",
+            "versions": [
+                "8.0+git.1534266541.609927c-87.1"
+            ]
+        },
+        {
+            "name": "python-xattr",
+            "versions": [
+                "0.9.2-1.21"
+            ]
+        },
+        {
+            "name": "xmlsec1",
+            "versions": [
+                "1.2.24-2.4.3"
+            ]
+        },
+        {
+            "name": "python-openstacksdk",
+            "versions": [
+                "0.9.17-4.314"
+            ]
+        },
+        {
+            "name": "python-psycopg2",
+            "versions": [
+                "2.7.3-1.23"
+            ]
+        },
+        {
+            "name": "python-os-testr",
+            "versions": [
+                "0.8.2-1.30"
+            ]
+        },
+        {
+            "name": "python-elasticsearch-curator",
+            "versions": [
+                "4.2.2-1.75"
+            ]
+        },
+        {
+            "name": "python-wsgi_intercept",
+            "versions": [
+                "1.5.0-1.32"
+            ]
+        },
+        {
+            "name": "python-monascaclient",
+            "versions": [
+                "1.7.1-4.186"
+            ]
+        },
+        {
+            "name": "python-supervisor",
+            "versions": [
+                "3.3.3-4.64"
+            ]
+        },
+        {
+            "name": "python-asn1crypto",
+            "versions": [
+                "0.22.0-1.20"
+            ]
+        },
+        {
+            "name": "python-PyMySQL",
+            "versions": [
+                "0.7.6-1.52"
+            ]
+        },
+        {
+            "name": "ardana-installer-ui",
+            "versions": [
+                "8.0+git.1534432886.e6b943f-122.2"
+            ]
+        },
+        {
+            "name": "supportutils-plugin-suse-openstack-cloud",
+            "versions": [
+                "8.0.1517821178.f3fe1db-8.20"
+            ]
+        },
+        {
+            "name": "python-traceback2",
+            "versions": [
+                "1.4.0-2.18"
+            ]
+        },
+        {
+            "name": "python-monotonic",
+            "versions": [
+                "1.3-1.20"
+            ]
+        },
+        {
+            "name": "python-marathon",
+            "versions": [
+                "0.9.0-3.49"
+            ]
+        },
+        {
+            "name": "mysql-connector-java",
+            "versions": [
+                "5.1.42-5.4.1"
+            ]
+        },
+        {
+            "name": "python-APScheduler",
+            "versions": [
+                "3.3.1-2.25"
+            ]
+        },
+        {
+            "name": "venv-openstack-designate-x86_64",
+            "versions": [
+                "5.0.1-18.95"
+            ]
+        },
+        {
+            "name": "python-requests",
+            "versions": [
+                "2.18.2-1.189"
+            ]
+        },
+        {
+            "name": "python-idna",
+            "versions": [
+                "2.5-1.20"
+            ]
+        },
+        {
+            "name": "ardana-tls",
+            "versions": [
+                "8.0+git.1534267264.6b1e899-36.2"
+            ]
+        },
+        {
+            "name": "python-enum-compat",
+            "versions": [
+                "0.0.2-1.17"
+            ]
+        },
+        {
+            "name": "libmysqlclient18",
+            "versions": [
+                "10.0.35-29.20.3"
+            ]
+        },
+        {
+            "name": "python-oslo.db",
+            "versions": [
+                "4.25.1-4.219"
+            ]
+        },
+        {
+            "name": "ardana-nova",
+            "versions": [
+                "8.0+git.1534350622.6998ffe-115.2"
+            ]
+        },
+        {
+            "name": "kibana",
+            "versions": [
+                "4.6.3-1.43"
+            ]
+        },
+        {
+            "name": "python-extras",
+            "versions": [
+                "1.0.0-2.19"
+            ]
+        },
+        {
+            "name": "python-ardana-packager",
+            "versions": [
+                "0.0.3-10.260"
+            ]
+        },
+        {
+            "name": "python-enum34",
+            "versions": [
+                "1.1.6-1.23"
+            ]
+        },
+        {
+            "name": "python-python-logstash",
+            "versions": [
+                "0.4.6.git.1471439941.a8be251-1.6"
+            ]
+        },
+        {
+            "name": "keepalived",
+            "versions": [
+                "1.4.1-1.2"
+            ]
+        },
+        {
+            "name": "python-designateclient",
+            "versions": [
+                "2.7.0-4.271"
+            ]
+        },
+        {
+            "name": "python-ovsdbapp",
+            "versions": [
+                "0.4.2-1.6"
+            ]
+        },
+        {
+            "name": "python-oslo.middleware",
+            "versions": [
+                "3.30.1-4.315"
+            ]
+        },
+        {
+            "name": "python-iniparse",
+            "versions": [
+                "0.4-1.9"
+            ]
+        },
+        {
+            "name": "venv-openstack-barbican-x86_64",
+            "versions": [
+                "5.0.1-18.146"
+            ]
+        },
+        {
+            "name": "openstack-freezer",
+            "versions": [
+                "5.0.1~dev8-5.162"
+            ]
+        },
+        {
+            "name": "python-singledispatch",
+            "versions": [
+                "3.4.0.3-1.53"
+            ]
+        },
+        {
+            "name": "python-python-mimeparse",
+            "versions": [
+                "1.6.0-1.18"
+            ]
+        },
+        {
+            "name": "spark",
+            "versions": [
+                "1.6.3-6.27"
+            ]
+        },
+        {
+            "name": "python-cffi",
+            "versions": [
+                "1.10.0-2.2"
+            ]
+        },
+        {
+            "name": "python-castellan",
+            "versions": [
+                "0.12.2-1.12"
+            ]
+        },
+        {
+            "name": "python-cachetools",
+            "versions": [
+                "1.1.6-1.52"
+            ]
+        },
+        {
+            "name": "python-urllib3",
+            "versions": [
+                "1.22-3.3"
+            ]
+        },
+        {
+            "name": "ardana-input-model",
+            "versions": [
+                "8.0+git.1534266395.9275df5-110.2"
+            ]
+        },
+        {
+            "name": "ardana-heat",
+            "versions": [
+                "8.0+git.1534266859.b179d0f-28.2"
+            ]
+        },
+        {
+            "name": "python-toml",
+            "versions": [
+                "0.9.2-2.17"
+            ]
+        },
+        {
+            "name": "python-jsonpatch",
+            "versions": [
+                "1.1-8.5"
+            ]
+        },
+        {
+            "name": "python-chardet",
+            "versions": [
+                "3.0.4-2.18"
+            ]
+        },
+        {
+            "name": "ardana-logging",
+            "versions": [
+                "8.0+git.1534266929.80777a7-104.2"
+            ]
+        },
+        {
+            "name": "python-PyJWT",
+            "versions": [
+                "1.5.2-1.47"
+            ]
+        },
+        {
+            "name": "python-oslo.config",
+            "versions": [
+                "4.11.1-4.424"
+            ]
+        },
+        {
+            "name": "venv-openstack-glance-x86_64",
+            "versions": [
+                "15.0.1-19.106"
+            ]
+        },
+        {
+            "name": "python-python-memcached",
+            "versions": [
+                "1.58-1.52"
+            ]
+        },
+        {
+            "name": "ardana-neutron",
+            "versions": [
+                "8.0+git.1534267051.f2ab856-91.2"
+            ]
+        },
+        {
+            "name": "python-novaclient",
+            "versions": [
+                "9.1.1-4.132"
+            ]
+        },
+        {
+            "name": "python-oslo.utils",
+            "versions": [
+                "3.28.2-4.82"
+            ]
+        },
+        {
+            "name": "python-taskflow",
+            "versions": [
+                "2.14.1-3.259"
+            ]
+        },
+        {
+            "name": "python-ardana-opsconsole-server",
+            "versions": [
+                "8.0+git.1533326559.d98c230-7.11"
+            ]
+        },
+        {
+            "name": "ardana-freezer",
+            "versions": [
+                "8.0+git.1534266805.c9ea29b-73.2"
+            ]
+        },
+        {
+            "name": "liberasurecode1",
+            "versions": [
+                "1.5.0-1.18"
+            ]
+        },
+        {
+            "name": "venv-openstack-manila-x86_64",
+            "versions": [
+                "5.0.2-19.100"
+            ]
+        },
+        {
+            "name": "ardana-glance",
+            "versions": [
+                "8.0+git.1534266823.b1807b6-49.3"
+            ]
+        },
+        {
+            "name": "ansible1",
+            "versions": [
+                "1.9.6-18.22"
+            ]
+        },
+        {
+            "name": "python-jsonpointer",
+            "versions": [
+                "1.0-8.5"
+            ]
+        },
+        {
+            "name": "python-wrapt",
+            "versions": [
+                "1.10.10-1.18"
+            ]
+        },
+        {
+            "name": "python-jmespath",
+            "versions": [
+                "0.9.0-1.59"
+            ]
+        },
+        {
+            "name": "python-ipaddress",
+            "versions": [
+                "1.0.18-1.22"
+            ]
+        },
+        {
+            "name": "python-oslo.log",
+            "versions": [
+                "3.30.2-4.94"
+            ]
+        },
+        {
+            "name": "crudini",
+            "versions": [
+                "0.9-1.19"
+            ]
+        },
+        {
+            "name": "ardana-service-ansible",
+            "versions": [
+                "8.0+git.1534266559.69b9e83-36.2"
+            ]
+        },
+        {
+            "name": "python-os-client-config",
+            "versions": [
+                "1.28.0-3.236"
+            ]
+        },
+        {
+            "name": "python-WebOb",
+            "versions": [
+                "1.7.3-1.30"
+            ]
+        },
+        {
+            "name": "python-decorator",
+            "versions": [
+                "4.1.2-1.19"
+            ]
+        },
+        {
+            "name": "venv-openstack-octavia-x86_64",
+            "versions": [
+                "1.0.2-19.130"
+            ]
+        },
+        {
+            "name": "python-python-editor",
+            "versions": [
+                "1.0.3-1.112"
+            ]
+        },
+        {
+            "name": "venv-openstack-nova-x86_64",
+            "versions": [
+                "16.0.3-21.135"
+            ]
+        },
+        {
+            "name": "python-py",
+            "versions": [
+                "1.4.34-1.20"
+            ]
+        },
+        {
+            "name": "python-jsonschema",
+            "versions": [
+                "2.4.0-5.2.4"
+            ]
+        },
+        {
+            "name": "python-oslotest",
+            "versions": [
+                "2.17.1-4.189"
+            ]
+        },
+        {
+            "name": "python-socketIO-client",
+            "versions": [
+                "0.7.2-1.32"
+            ]
+        },
+        {
+            "name": "python-Mako",
+            "versions": [
+                "1.0.7-1.86"
+            ]
+        },
+        {
+            "name": "venv-openstack-freezer-x86_64",
+            "versions": [
+                "5.0.0-11.196"
+            ]
+        },
+        {
+            "name": "ardana-opsconsole",
+            "versions": [
+                "8.0+git.1534267103.829be13-41.2"
+            ]
+        },
+        {
+            "name": "python-neutron-lbaas",
+            "versions": [
+                "11.0.4~dev4-4.67"
+            ]
+        },
+        {
+            "name": "ardana-octavia",
+            "versions": [
+                "8.0+git.1534267086.b7dbe77-35.2"
+            ]
+        },
+        {
+            "name": "python-WebTest",
+            "versions": [
+                "2.0.23-1.81"
+            ]
+        },
+        {
+            "name": "python-sh",
+            "versions": [
+                "1.12.14-1.6"
+            ]
+        },
+        {
+            "name": "storm-nimbus",
+            "versions": [
+                "1.0.5-4.4"
+            ]
+        },
+        {
+            "name": "python-PySocks",
+            "versions": [
+                "1.6.6-1.19"
+            ]
+        },
+        {
+            "name": "python-rsa",
+            "versions": [
+                "3.4.2-1.19"
+            ]
+        },
+        {
+            "name": "python-Pykka",
+            "versions": [
+                "1.2.1-1.28"
+            ]
+        },
+        {
+            "name": "python-zaqarclient",
+            "versions": [
+                "1.7.0-4.272"
+            ]
+        },
+        {
+            "name": "python-os-brick",
+            "versions": [
+                "1.15.5-4.108"
+            ]
+        },
+        {
+            "name": "python-os-win",
+            "versions": [
+                "2.2.0-4.175"
+            ]
+        },
+        {
+            "name": "python-oslo.concurrency",
+            "versions": [
+                "3.21.1-4.314"
+            ]
+        },
+        {
+            "name": "python-sqlparse",
+            "versions": [
+                "0.2.3-1.20"
+            ]
+        },
+        {
+            "name": "python-pycadf",
+            "versions": [
+                "2.6.0-1.5"
+            ]
+        },
+        {
+            "name": "venv-openstack-swift-x86_64",
+            "versions": [
+                "2.15.2-18.100"
+            ]
+        },
+        {
+            "name": "python-deprecation",
+            "versions": [
+                "1.0.1-1.20"
+            ]
+        },
+        {
+            "name": "python-SecretStorage",
+            "versions": [
+                "2.3.1-1.34"
+            ]
+        },
+        {
+            "name": "ardana-tempest",
+            "versions": [
+                "8.0+git.1534267246.0175549-65.2"
+            ]
+        },
+        {
+            "name": "ardana-barbican",
+            "versions": [
+                "8.0+git.1534266594.8136db7-62.2"
+            ]
+        },
+        {
+            "name": "python-MarkupSafe",
+            "versions": [
+                "1.0-1.19"
+            ]
+        },
+        {
+            "name": "ardana-spark",
+            "versions": [
+                "8.0+git.1534267176.a5f3a22-55.2"
+            ]
+        },
+        {
+            "name": "venv-openstack-horizon-x86_64",
+            "versions": [
+                "11.0.2-30.72"
+            ]
+        },
+        {
+            "name": "python-python-dateutil",
+            "versions": [
+                "2.6.1-1.18"
+            ]
+        },
+        {
+            "name": "python-tenacity",
+            "versions": [
+                "4.4.0-3.473"
+            ]
+        },
+        {
+            "name": "python-tornado",
+            "versions": [
+                "4.4.3-5.110"
+            ]
+        },
+        {
+            "name": "suse-openstack-cloud-release-cd",
+            "versions": [
+                "8-1.67"
+            ]
+        },
+        {
+            "name": "python-bcrypt",
+            "versions": [
+                "3.1.3-1.24"
+            ]
+        },
+        {
+            "name": "python-pytest",
+            "versions": [
+                "3.0.7-1.20"
+            ]
+        },
+        {
+            "name": "python-Babel",
+            "versions": [
+                "2.3.4-2.20"
+            ]
+        },
+        {
+            "name": "python-httplib2",
+            "versions": [
+                "0.10.3-6.23"
+            ]
+        },
+        {
+            "name": "python-pytz",
+            "versions": [
+                "2017.2-1.21"
+            ]
+        },
+        {
+            "name": "python-testtools",
+            "versions": [
+                "2.3.0-1.18"
+            ]
+        },
+        {
+            "name": "ardana-osconfig",
+            "versions": [
+                "8.0+git.1534267158.da38df8-150.2"
+            ]
+        },
+        {
+            "name": "python-Routes",
+            "versions": [
+                "2.3.1-1.80"
+            ]
+        },
+        {
+            "name": "python-PyNaCl",
+            "versions": [
+                "1.1.2-1.22"
+            ]
+        },
+        {
+            "name": "python-netaddr",
+            "versions": [
+                "0.7.19-1.18"
+            ]
+        },
+        {
+            "name": "python-dnspython",
+            "versions": [
+                "1.14.0-1.52"
+            ]
+        },
+        {
+            "name": "python-freezer",
+            "versions": [
+                "5.0.1~dev8-5.162"
+            ]
+        },
+        {
+            "name": "python-monasca-agent",
+            "versions": [
+                "2.2.4~dev3-5.75"
+            ]
+        },
+        {
+            "name": "cassandra-tools",
+            "versions": [
+                "3.11.2-3.31"
+            ]
+        },
+        {
+            "name": "python-oslo.privsep",
+            "versions": [
+                "1.22.1-2.67"
+            ]
+        },
+        {
+            "name": "python-glance-check",
+            "versions": [
+                "0.0.1.dev1-3.35"
+            ]
+        },
+        {
+            "name": "python-Jinja2",
+            "versions": [
+                "2.9.6-1.19"
+            ]
+        },
+        {
+            "name": "python-monasca-log-api",
+            "versions": [
+                "2.3.1~dev9-4.292"
+            ]
+        },
+        {
+            "name": "openstack-swift",
+            "versions": [
+                "2.15.2~dev26-4.6"
+            ]
+        },
+        {
+            "name": "python-certifi",
+            "versions": [
+                "2017.4.17-1.18"
+            ]
+        },
+        {
+            "name": "python-pyasn1",
+            "versions": [
+                "0.3.7-4.25"
+            ]
+        },
+        {
+            "name": "python-cryptography",
+            "versions": [
+                "2.0.3-1.20"
+            ]
+        },
+        {
+            "name": "python-repoze.lru",
+            "versions": [
+                "0.6-8.18"
+            ]
+        },
+        {
+            "name": "python-tempest",
+            "versions": [
+                "17.0.0-6.34"
+            ]
+        },
+        {
+            "name": "python-promise",
+            "versions": [
+                "2.1-1.21"
+            ]
+        },
+        {
+            "name": "python-python-socketio",
+            "versions": [
+                "1.8.4-1.34"
+            ]
+        },
+        {
+            "name": "python-docker",
+            "versions": [
+                "2.4.2-2.13"
+            ]
+        },
+        {
+            "name": "openstack-tempest",
+            "versions": [
+                "17.0.0-6.34"
+            ]
+        },
+        {
+            "name": "ardana-swiftlm-uptime-mon",
+            "versions": [
+                "3.1.0-4.10"
+            ]
+        },
+        {
+            "name": "python-freezerclient",
+            "versions": [
+                "1.5.0-3.134"
+            ]
+        },
+        {
+            "name": "python-ceilometerclient",
+            "versions": [
+                "2.9.0-4.314"
+            ]
+        },
+        {
+            "name": "python-pyasn1-modules",
+            "versions": [
+                "0.1.4-1.2"
+            ]
+        },
+        {
+            "name": "python-magnum",
+            "versions": [
+                "5.0.2~dev27-4.185"
+            ]
+        },
+        {
+            "name": "python-oslo.cache",
+            "versions": [
+                "1.25.1-4.64"
+            ]
+        },
+        {
+            "name": "python-neutron",
+            "versions": [
+                "11.0.6~dev66-4.20"
+            ]
+        },
+        {
+            "name": "python-WSME",
+            "versions": [
+                "0.8.0-1.71"
+            ]
+        },
+        {
+            "name": "python-pyparsing",
+            "versions": [
+                "2.2.0-1.17"
+            ]
+        },
+        {
+            "name": "python-barbicanclient",
+            "versions": [
+                "4.5.2-6.53"
+            ]
+        },
+        {
+            "name": "haproxy",
+            "versions": [
+                "1.6.11-10.2"
+            ]
+        },
+        {
+            "name": "python-tinyrpc",
+            "versions": [
+                "0.5-1.26"
+            ]
+        },
+        {
+            "name": "python-mox3",
+            "versions": [
+                "0.7.0-1.10"
+            ]
+        },
+        {
+            "name": "python-swift",
+            "versions": [
+                "2.15.2~dev26-4.6"
+            ]
+        },
+        {
+            "name": "venv-openstack-keystone-x86_64",
+            "versions": [
+                "12.0.1-18.92"
+            ]
+        },
+        {
+            "name": "python-testscenarios",
+            "versions": [
+                "0.5.0-2.18"
+            ]
+        },
+        {
+            "name": "python-sqlalchemy-migrate",
+            "versions": [
+                "0.11.0-1.29"
+            ]
+        },
+        {
+            "name": "python-pycrypto",
+            "versions": [
+                "2.6.1-1.20"
+            ]
+        },
+        {
+            "name": "python-gitdb2",
+            "versions": [
+                "2.0.3-1.25"
+            ]
+        },
+        {
+            "name": "git",
+            "versions": [
+                "2.12.3-27.14.1"
+            ]
+        },
+        {
+            "name": "python-oauthlib",
+            "versions": [
+                "0.7.2-2.3"
+            ]
+        },
+        {
+            "name": "python-ovs",
+            "versions": [
+                "2.7.0-3.67"
+            ]
+        },
+        {
+            "name": "python-pika-pool",
+            "versions": [
+                "0.1.3-1.48"
+            ]
+        },
+        {
+            "name": "python-automaton",
+            "versions": [
+                "1.12.1-1.62"
+            ]
+        },
+        {
+            "name": "python-suds-jurko",
+            "versions": [
+                "0.6-1.59"
+            ]
+        },
+        {
+            "name": "ardana-ceilometer",
+            "versions": [
+                "8.0+git.1534266629.0bb5d54-46.2"
+            ]
+        },
+        {
+            "name": "python-SQLAlchemy",
+            "versions": [
+                "1.1.12-1.18"
+            ]
+        },
+        {
+            "name": "python-oslo.i18n",
+            "versions": [
+                "3.17.1-4.219"
+            ]
+        },
+        {
+            "name": "python-oslo.reports",
+            "versions": [
+                "1.22.1-4.119"
+            ]
+        },
+        {
+            "name": "python-python-subunit",
+            "versions": [
+                "1.2.0-2.19"
+            ]
+        },
+        {
+            "name": "python-cssselect",
+            "versions": [
+                "0.9.1-1.53"
+            ]
+        },
+        {
+            "name": "python-oslo.vmware",
+            "versions": [
+                "2.23.1-4.64"
+            ]
+        },
+        {
+            "name": "python-unittest2",
+            "versions": [
+                "1.1.0-2.18"
+            ]
+        },
+        {
+            "name": "erlang-sd_notify",
+            "versions": [
+                "0.1-2.56"
+            ]
+        },
+        {
+            "name": "python-pyinotify",
+            "versions": [
+                "0.9.6-8.1"
+            ]
+        },
+        {
+            "name": "python-pbr",
+            "versions": [
+                "3.1.1-1.222"
+            ]
+        },
+        {
+            "name": "python-vine",
+            "versions": [
+                "1.1.4-1.20"
+            ]
+        },
+        {
+            "name": "python-botocore",
+            "versions": [
+                "1.5.67-26.3.1"
+            ]
+        },
+        {
+            "name": "python-kazoo",
+            "versions": [
+                "2.2.1-1.52"
+            ]
+        },
+        {
+            "name": "python-osprofiler",
+            "versions": [
+                "1.11.0-1.41"
+            ]
+        },
+        {
+            "name": "ardana-monasca",
+            "versions": [
+                "8.0+git.1534350692.8eb4816-141.2"
+            ]
+        },
+        {
+            "name": "python-oslo.messaging",
+            "versions": [
+                "5.30.2-4.305"
+            ]
+        },
+        {
+            "name": "python-python-engineio",
+            "versions": [
+                "2.0.2-1.36"
+            ]
+        },
+        {
+            "name": "ardana-ansible",
+            "versions": [
+                "8.0+git.1534515010.3fc8c97-198.1"
+            ]
+        },
+        {
+            "name": "python-passlib",
+            "versions": [
+                "1.7.1-1.29"
+            ]
+        },
+        {
+            "name": "python-Beaver",
+            "versions": [
+                "8.0+git.1502900605.3e0068a-17.20"
+            ]
+        },
+        {
+            "name": "libjsmn0",
+            "versions": [
+                "20161012-1.72"
+            ]
+        },
+        {
+            "name": "python-click",
+            "versions": [
+                "6.7-1.19"
+            ]
+        },
+        {
+            "name": "python-PasteDeploy",
+            "versions": [
+                "1.5.2-1.52"
+            ]
+        },
+        {
+            "name": "python-pymongo",
+            "versions": [
+                "3.1.1-1.55"
+            ]
+        },
+        {
+            "name": "python-keystonemiddleware",
+            "versions": [
+                "4.17.0-6.261"
+            ]
+        },
+        {
+            "name": "python-python-openid",
+            "versions": [
+                "2.2.5-2.12.52"
+            ]
+        },
+        {
+            "name": "suse-openstack-cloud-release",
+            "versions": [
+                "8-1.67"
+            ]
+        },
+        {
+            "name": "slf4j",
+            "versions": [
+                "1.7.12-3.3.1"
+            ]
+        },
+        {
+            "name": "python-requestsexceptions",
+            "versions": [
+                "1.3.0-1.20"
+            ]
+        }
+    ],
+    "openstack_venv_packages": [
+        {
+            "available": "2.2.1-19.155",
+            "installed": [
+                "2.2.1-19.155"
+            ],
+            "name": "monasca"
+        },
+        {
+            "available": "9.0.2-19.153",
+            "installed": [],
+            "name": "ceilometer"
+        },
+        {
+            "available": "5.0.2-19.100",
+            "installed": [],
+            "name": "manila"
+        },
+        {
+            "available": "1.5.1-9.156",
+            "installed": [
+                "1.5.1-9.156"
+            ],
+            "name": "monasca-ceilometer"
+        },
+        {
+            "available": "1.0.2-19.130",
+            "installed": [
+                "1.0.2-19.130"
+            ],
+            "name": "octavia"
+        },
+        {
+            "available": "5.0.0-11.196",
+            "installed": [
+                "5.0.0-11.196"
+            ],
+            "name": "freezer"
+        },
+        {
+            "available": "9.0.1-18.227",
+            "installed": [
+                "9.0.1-18.227"
+            ],
+            "name": "heat"
+        },
+        {
+            "available": "12.0.1-18.92",
+            "installed": [
+                "12.0.1-18.92"
+            ],
+            "name": "keystone"
+        },
+        {
+            "available": "16.0.3-21.135",
+            "installed": [
+                "16.0.3-21.135"
+            ],
+            "name": "nova"
+        },
+        {
+            "available": "11.0.2-30.72",
+            "installed": [
+                "11.0.2-30.72"
+            ],
+            "name": "horizon"
+        },
+        {
+            "available": "5.0.2-18.280",
+            "installed": [
+                "5.0.2-18.280"
+            ],
+            "name": "magnum"
+        },
+        {
+            "available": "9.1.3-19.211",
+            "installed": [],
+            "name": "ironic"
+        },
+        {
+            "available": "11.0.2-21.164",
+            "installed": [
+                "11.0.2-21.164"
+            ],
+            "name": "cinder"
+        },
+        {
+            "available": "5.0.1-18.146",
+            "installed": [
+                "5.0.1-18.146"
+            ],
+            "name": "barbican"
+        },
+        {
+            "available": "2.15.2-18.100",
+            "installed": [
+                "2.15.2-18.100"
+            ],
+            "name": "swift"
+        },
+        {
+            "available": "15.0.1-19.106",
+            "installed": [
+                "15.0.1-19.106"
+            ],
+            "name": "glance"
+        },
+        {
+            "available": "11.0.2-23.156",
+            "installed": [
+                "11.0.2-23.156"
+            ],
+            "name": "neutron"
+        },
+        {
+            "available": "5.0.1-18.95",
+            "installed": [
+                "5.0.1-18.95"
+            ],
+            "name": "designate"
+        }
+    ]
+}
