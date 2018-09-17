@@ -1,4 +1,4 @@
-$$EVENT: start dayzero-pre-deployment.yml
+$$EVENT: start installui-pre-deployment.yml
 
 $$EVENT: start config-processor-run.yml
 
@@ -429,4 +429,4 @@ $$122317:  PLAY RECAP **********************************************************
 $$122317:  localhost                  : ok=32   changed=15   unreachable=0    failed=0
 
 $$EVENT: stop ready-deployment.yml
-$$EVENT: stop dayzero-pre-deployment.yml
+$$EVENT: stop installui-pre-deployment.yml
