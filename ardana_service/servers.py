@@ -102,17 +102,15 @@ def add_server():
             'encryption-key')
     opts = pick(body.get('process'), keys)
 
+    # rekey is always blank because we will never rekey anything
+    opts['extra-vars'] = {
+        'encrypt': '',
+        'rekey': ''
+    }
     if 'encryptionKey' in opts:
-        # this is a hack workaround for the fact that add-server requires
-        # the encrypt extra-var, but the vast majority of playbook api
-        # calls expect it as an excryption-key parameter
-        # rekey is generally set to the empty string, though an option
-        # to pass through an explicit value is added here as a precaution
-        # against future usage
-        opts['extra-vars'] = {
-            'encrypt': opts.pop('encryption-key', ''),
-            'rekey': opts.pop('rekey', '')
-        }
+        opts['extra-vars']['encrypt'] = opts.pop('encryptionKey')
+    elif 'encryption-key' in opts:
+        opts['extra-vars']['encrypt'] = opts.pop('encryption-key')
 
     try:
         server_id = body['server']['id']
@@ -316,8 +314,17 @@ def remove_server(id):
             'encryption-key')
     opts = pick(body, keys)
 
+    # rekey is always blank because we will never rekey anything
+    opts['extra-vars'] = {
+        'encrypt': '',
+        'rekey': '',
+        'remove_deleted_servers': 'y',
+        'free_unused_addresses': 'y'
+    }
     if 'encryptionKey' in opts:
-        opts['encryption-key'] = opts.pop('encryptionKey')
+        opts['extra-vars']['encrypt'] = opts.pop('encryptionKey')
+    elif 'encryption-key' in opts:
+        opts['extra-vars']['encrypt'] = opts.pop('encryption-key')
 
     if 'commitMessage' not in opts:
         opts['commitMessage'] = 'Remove server %s' % id
@@ -357,7 +364,7 @@ def remove_server(id):
     def run_config_processor_playbook():
         LOG.info("Running config processor playbook")
 
-        payload = pick(opts, ('encryption-key',))
+        payload = pick(opts, ('extra-vars',))
         result = playbooks.run_playbook('config-processor-run', payload,
                                         play_id)
         # return the entire result object, including the promise and
