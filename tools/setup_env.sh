@@ -63,6 +63,12 @@ touch ardana-ansible/keystone-status.yml
 touch ardana-ansible/ardana-gen-hosts-file.yml
 touch ardana-ansible/monasca-deploy.yml
 touch ardana-ansible/wipe_disks.yml
+touch ardana-ansible/ardana-start.yml
+
+# Support legacy playbook names for Cloud 8 in dev env
+touch ardana-ansible/dayzero-os-provision.yml
+touch ardana-ansible/dayzero-pre-deployment.yml
+touch ardana-ansible/dayzero-site.yml
 
 # Support legacy playbook names for Cloud 8 in dev env
 touch ardana-ansible/dayzero-os-provision.yml
