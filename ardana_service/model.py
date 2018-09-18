@@ -649,12 +649,14 @@ def get_deployed_servers():
         cloud_model = read_cp_internal_json('CloudModel.yaml')
         if cloud_model:
             hosts = cloud_model['internal']['servers']
+
             if hosts:
                 cleaned_hosts = [{
                     'id': host['id'], 'role': host['role'],
                     'ip-addr': host['addr'],
                     'hostname': host['ardana_ansible_host']
-                } for host in hosts]
+                } for host in hosts if 'ardana_ansible_host' in host]
+
             deployed_names = get_deployed_hostnames()
             if deployed_names:
                 deployed_servers = \
