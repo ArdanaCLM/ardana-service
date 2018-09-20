@@ -361,6 +361,7 @@ def start_playbook(playbook, args={}, cwd=None, cleanup=None, play_id=None):
     env = os.environ.copy()
     env['PYTHONUNBUFFERED'] = '1'
     env['PLAY_ID'] = str(id)
+    env['NOTIFY_URL'] = CONF.url
     env.update(sshagent.sshagent.get_instance().agent_env)
 
     if sys.version_info.major < 3:
