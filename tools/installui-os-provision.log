@@ -1,5 +1,5 @@
 $$847880: /usr/bin/ansible-playbook -i hosts/localhost installui-os-provision.yml -e hlmuser_password=stack -e nodelist=compute1,compute2 -e failed_nodes=compute1,compute2
-$$EVENT: start dayzero-os-provision.yml
+$$EVENT: start installui-os-provision.yml
 $$847880:  
 $$848679: PLAY [localhost] ************************************************************** 
 $$848679: GATHERING FACTS *************************************************************** 
@@ -493,4 +493,4 @@ $$2211607: compute1                   : ok=25   changed=13   unreachable=0    fa
 $$2211607: compute2                   : ok=25   changed=13   unreachable=0    failed=0   
 $$2211607: localhost                  : ok=129  changed=52   unreachable=0    failed=0   
 $$EVENT: stop bm-reimage.yml
-$$EVENT: stop dayzero-os-provision.yml
+$$EVENT: stop installui-os-provision.yml

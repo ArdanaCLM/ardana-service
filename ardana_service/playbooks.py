@@ -58,10 +58,8 @@ STATIC_PLAYBOOKS = {
     'config-processor-run',
     'config-processor-clean',
     'ready-deployment',
-    'dayzero-os-provision',
-    'dayzero-pre-deployment'}
-
-# TODO(jack) SCRD-2228 Refactor/rename the dayzero-* playbooks as installui-*
+    'installui-os-provision',
+    'installui-pre-deployment'}
 
 # TODO(gary) Consider creating a function to archive old plays (create a tgz
 #    of log and metadata).  This feature is not mentioned anywhere, but the
@@ -229,7 +227,7 @@ def run_playbook(name, payload=None, play_id=None):
 
     # Prevent some special playbooks from multiple concurrent invocations
     if name in ("site", "config-processor-run", "config-processor-clean",
-                "ready-deployment", "dayzero-os-provision", "wipe_disks",
+                "ready-deployment", "installui-os-provision", "wipe_disks",
                 "ardana-gen-hosts-file", "monasca-deploy"):
         if get_running_playbook_id(name):
             abort(403, "Already running")
@@ -363,6 +361,7 @@ def start_playbook(playbook, args={}, cwd=None, cleanup=None, play_id=None):
     env = os.environ.copy()
     env['PYTHONUNBUFFERED'] = '1'
     env['PLAY_ID'] = str(id)
+    env['NOTIFY_URL'] = CONF.url
     env.update(sshagent.sshagent.get_instance().agent_env)
 
     if sys.version_info.major < 3:
