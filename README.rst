@@ -10,6 +10,12 @@ REST Service to interact with the Ardana Lifecycle Manager.
 
 Getting started
 ---------------
+For a local dev environment with mock data, start by
+downloading local copies of the Ardana repositories using tools/setup_env.sh
+
+If there is an error about pycrypto, make sure that ``python-devel`` and
+``gcc`` are installed
+
 Start the service with::
 
     tox -e runserver

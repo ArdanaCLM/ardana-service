@@ -202,6 +202,10 @@ def _authenticate(auth_url, username=None, password=None,
     try:
         # Trigger keystone to verify the credentials
         unscoped_auth_ref = unscoped_auth.get_access(session)
+
+    except exc.connection.ConnectFailure as e:
+        abort(503, str(e))
+
     except exc.ClientException as e:
         abort(401, str(e))
 

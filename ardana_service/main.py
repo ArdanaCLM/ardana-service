@@ -37,6 +37,7 @@ from ardana_service import templates
 from ardana_service import versions
 
 from flask import Flask
+from flask import jsonify
 from flask import request
 from flask_cors import CORS
 from keystonemiddleware import auth_token
@@ -93,6 +94,19 @@ app.logger.handlers = []     # clear out the newly creating logger
 app.logger.propagate = True  # let messages be handled by normal logging
 
 app.json_encoder = encoder.CustomJSONEncoder   # use our custom json encoder
+
+
+@app.errorhandler(400)
+@app.errorhandler(401)
+@app.errorhandler(403)
+@app.errorhandler(404)
+@app.errorhandler(410)
+@app.errorhandler(500)
+@app.errorhandler(503)
+def json_errors(error):
+    response = jsonify({'code': error.code, 'description': error.description})
+    response.status_code = error.code
+    return response
 
 
 @app.before_request
