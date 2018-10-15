@@ -18,7 +18,7 @@ git rev-parse || exit
 
 cd $(git rev-parse --show-toplevel)
 
-GIT_BASE=${GIT_BASE:-https://git.suse.provo.cloud}
+GIT_BASE=${GIT_BASE:-git://git.suse.provo.cloud}
 
 # Create dirs for customer data, scratch area
 mkdir -p \
@@ -99,7 +99,7 @@ if [ ! -d $DEST ] ; then
     $VENV/bin/pip install --upgrade setuptools
 
     # Install the config processor plugins into the python environment
-    cd $DEST/$acp/ConfigurationProcessor
+    cd $DEST/$acp
     $VENV/bin/python setup.py sdist
     $VENV/bin/pip install dist/ardana-configurationprocessor-*.tar.gz
 fi
