@@ -52,14 +52,27 @@ test_opts = [
 ]
 CONF.register_opts(test_opts, 'testing')
 
+# playbooks names
+CONFIG_PROCESSOR_RUN_PLAYBOOK = 'config-processor-run'
+CONFIG_PROCESSOR_CLEAN_PLAYBOOK = 'config-processor-clean'
+READY_DEPLOYMENT_PLAYBOOK = 'ready-deployment'
+SITE_PLAYBOOK = 'site'
+WIPE_DISKS_PLAYBOOK = 'wipe_disks'
+ARDANA_GEN_HOSTS_FILE_PLAYBOOK = 'ardana-gen-hosts-file'
+MONASCA_DEPLOY_PLAYBOOK = 'monasca-deploy'
+
+OS_PROVISION_PLAYBOOK = 'dayzero-os-provision'
+PRE_DEPLOYMENT_PLAYBOOK = 'dayzero-pre-deployment'
+
+
 # These playbooks are run from a directory that exists even before
 # the ready-deployment has been done (CONF.paths.pre_playbooks_dir)
 STATIC_PLAYBOOKS = {
-    'config-processor-run',
-    'config-processor-clean',
-    'ready-deployment',
-    'installui-os-provision',
-    'installui-pre-deployment'}
+    CONFIG_PROCESSOR_RUN_PLAYBOOK,
+    CONFIG_PROCESSOR_CLEAN_PLAYBOOK,
+    READY_DEPLOYMENT_PLAYBOOK,
+    OS_PROVISION_PLAYBOOK,
+    PRE_DEPLOYMENT_PLAYBOOK}
 
 # TODO(gary) Consider creating a function to archive old plays (create a tgz
 #    of log and metadata).  This feature is not mentioned anywhere, but the
@@ -226,9 +239,9 @@ def run_playbook(name, payload=None, play_id=None):
     args = get_command_args(payload, cwd)
 
     # Prevent some special playbooks from multiple concurrent invocations
-    if name in ("site", "config-processor-run", "config-processor-clean",
-                "ready-deployment", "installui-os-provision", "wipe_disks",
-                "ardana-gen-hosts-file", "monasca-deploy"):
+    if name in (SITE_PLAYBOOK, CONFIG_PROCESSOR_RUN_PLAYBOOK, CONFIG_PROCESSOR_CLEAN_PLAYBOOK,
+                READY_DEPLOYMENT_PLAYBOOK, OS_PROVISION_PLAYBOOK, WIPE_DISKS_PLAYBOOK,
+                ARDANA_GEN_HOSTS_FILE_PLAYBOOK, MONASCA_DEPLOY_PLAYBOOK):
         if get_running_playbook_id(name):
             abort(403, "Already running")
 
