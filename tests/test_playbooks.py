@@ -69,11 +69,25 @@ class TestArgProcessing(testtools.TestCase):
         args = playbooks.get_command_args({'--inventory': 'foo'})
         self.assertEqual("foo", args['--inventory'])
 
-    def test_encryption_key(self):
-        key = "blahblahblah"
-        args = playbooks.get_command_args({'encryption-key': key})
-        self.assertNotIn('--encryption-key', args)
+    def test_vault_pass_extra_vars_as_dict(self):
+        dict = {"encrypt": "testdddd"}
+        args = playbooks.get_command_args({"extraVars": dict})
         self.assertIn('--vault-password-file', args)
+
+    def test_no_vault_pass_extra_vars_as_dict(self):
+        dict = {"encrypt": ""}
+        args = playbooks.get_command_args({"extraVars": dict})
+        self.assertNotIn('--vault-password-file', args)
+
+    def test_vault_pass_extra_vars_as_list(self):
+        list = ["encrypt=testdddd"]
+        args = playbooks.get_command_args({"extraVars": list})
+        self.assertIn('--vault-password-file', args)
+
+    def test_no_vault_pass_extra_vars_as_list(self):
+        list = ["encrypt="]
+        args = playbooks.get_command_args({"extraVars": list})
+        self.assertNotIn('--vault-password-file', args)
 
     def test_has_no_verbose(self):
         args = playbooks.get_command_args({"verbose": "0"})

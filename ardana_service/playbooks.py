@@ -284,6 +284,7 @@ def get_command_args(payload=None, cwd=None):
     # convert it to the latter.  In either case, the final version is
     # converted into a string for passing to `ansible-playbook`
 
+    encryption_key = ''
     if 'extra-vars' in body:
         if type(body.get("extra-vars")) is list:
             extra_vars = {}
@@ -291,10 +292,16 @@ def get_command_args(payload=None, cwd=None):
                 try:
                     (key, val) = keyval.split("=", 1)
                     extra_vars[key] = val
+                    # get the non-empty encryption key value
+                    if key == 'encrypt' and val:
+                        encryption_key = val
                 except ValueError:
                     pass
             body["extra-vars"] = extra_vars
-
+        else:
+            # get the non-empty encryption key value
+            if 'encrypt' in body["extra-vars"]:
+                encryption_key = body["extra-vars"]['encrypt']
         # Convert to a json string
         body["extra-vars"] = json.dumps(body["extra-vars"])
 
@@ -317,10 +324,9 @@ def get_command_args(payload=None, cwd=None):
     # will now process the logs more intelligently, the need to supply
     # color-coded logs in the UI is diminished
 
-    # If encryption-key is specified, store it in a temp file and adjust the
+    # If have encryption_key, store it in a temp file and adjust the
     # args accordingly
-    if 'encryption-key' in body:
-        encryption_key = body.pop('encryption-key')
+    if encryption_key:
         with tempfile.NamedTemporaryFile(suffix='', prefix='.vault-pwd',
                                          dir=CONF.paths.playbooks_dir,
                                          delete=False) as f:
