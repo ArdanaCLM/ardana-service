@@ -55,7 +55,9 @@ rules = [
     policy.RuleDefault('lifecycle:get_deployed_servers',
                        'rule:admin_required'),
     policy.RuleDefault('lifecycle:update_compute', 'rule:admin_required'),
-    policy.RuleDefault('lifecycle:get_compute', 'rule:admin_required')
+    policy.RuleDefault('lifecycle:get_compute', 'rule:admin_required'),
+    policy.RuleDefault('lifecycle:update_network', 'rule:admin_required'),
+    policy.RuleDefault('lifecycle:get_network', 'rule:admin_required')
 ]
 
 enforcer.register_defaults(rules)
