@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from flask import abort
 from flask import Blueprint
 from flask import jsonify
 from flask import request
@@ -284,3 +285,39 @@ def add_key():
         response.status_code = status
         return response
     return jsonify('Success')
+
+
+@bp.route("/api/v2/known_hosts/<host>", methods=['DELETE'])
+@policy.enforce('lifecycle:run_playbook')
+def delete_known_host(host):
+    """Remove a host from the ssh known_hosts file
+
+    Removes the entry for the given host from the known_hosts file using
+    `ssh-keygen -R`
+
+    .. :quickref: SSH Agent; remove known hosts entry
+
+    **Example Request**:
+
+    .. sourcecode:: http
+
+       DELETE /api/v2/known_hosts/compute1 HTTP/1.1
+
+    **Example Response**:
+
+    .. sourcecode:: http
+
+       HTTP/1.1 200 OK
+
+    :status 200: Key is removed from the known_host file, or it never existed
+                 in the known_host file
+    :status 500: Error deleting the host
+    """
+
+    try:
+        subprocess.check_call(['ssh-keygen', '-R', host])
+        return jsonify('Success')
+    except subprocess.CalledProcessError:
+        err_msg = 'Unable to remove host %s from known_hosts' % host
+        LOG.warning(err_msg)
+        abort(500, err_msg)
