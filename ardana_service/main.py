@@ -19,6 +19,7 @@ if __name__ == "__main__":
     sys.path.append('.')
 
 from ardana_service import admin
+from ardana_service import cobbler
 from ardana_service import compute
 from ardana_service import config  # noqa: F401
 from ardana_service import config_processor
@@ -85,6 +86,8 @@ app.register_blueprint(sshagent.bp)
 app.register_blueprint(monasca.bp)
 app.register_blueprint(compute.bp)
 app.register_blueprint(network.bp)
+app.register_blueprint(cobbler.bp)
+
 # Flask logging is broken, and it is a time bomb: by default it does nothing,
 # but the first time an exception happens, it creates a new logger that
 # interferes with normal python logging, which messes up all subsequent log
