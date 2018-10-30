@@ -239,8 +239,9 @@ def run_playbook(name, payload=None, play_id=None):
     args = get_command_args(payload, cwd)
 
     # Prevent some special playbooks from multiple concurrent invocations
-    if name in (SITE_PLAYBOOK, CONFIG_PROCESSOR_RUN_PLAYBOOK, CONFIG_PROCESSOR_CLEAN_PLAYBOOK,
-                READY_DEPLOYMENT_PLAYBOOK, OS_PROVISION_PLAYBOOK, WIPE_DISKS_PLAYBOOK,
+    if name in (SITE_PLAYBOOK, CONFIG_PROCESSOR_RUN_PLAYBOOK,
+                CONFIG_PROCESSOR_CLEAN_PLAYBOOK, READY_DEPLOYMENT_PLAYBOOK,
+                OS_PROVISION_PLAYBOOK, WIPE_DISKS_PLAYBOOK,
                 ARDANA_GEN_HOSTS_FILE_PLAYBOOK, MONASCA_DEPLOY_PLAYBOOK):
         if get_running_playbook_id(name):
             abort(403, "Already running")
