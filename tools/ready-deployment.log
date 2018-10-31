@@ -1,0 +1,102 @@
+$$EVENT: start ready-deployment.yml
+
+$$113691:  /usr/bin/ansible-playbook -i hosts/localhost ready-deployment.yml
+$$113692:  
+$$113926:  PLAY [localhost] **************************************************************
+$$113927:  GATHERING FACTS ***************************************************************
+$$114504:  ok: [localhost]
+$$114505:  TASK: [guard-runtime-location | guard-runtime-location | main | Ensure we're running in an expected location.] ***
+$$114546:  skipping: [localhost]
+$$114547:  TASK: [package-constants | include_vars /home/stack/openstack/ardana/ansible/ardana_version.yml] ***
+$$114575:  ok: [localhost]
+$$114576:  TASK: [package-constants | include_vars {{ ansible_os_family | lower }}.yml] ***
+$$114602:  ok: [localhost]
+$$114603:  TASK: [git-operations | _ready-deployment-tree | Compute previously deployed version] ***
+$$114711:  changed: [localhost]
+$$114712:  TASK: [git-operations | _promote-from-staging | Evaluate git version] *********
+$$114809:  changed: [localhost]
+$$114810:  TASK: [git-operations | _promote-from-staging | Prepare git-merge command line] ***
+$$114822:  ok: [localhost]
+$$114822:  TASK: [git-operations | _promote-from-staging | Clear out working directory] ***
+$$114925:  ok: [localhost]
+$$114926:  TASK: [git-operations | _promote-from-staging | Clear out working directory] ***
+$$115008:  changed: [localhost]
+$$115008:  TASK: [git-operations | _promote-from-staging | Update branches] **************
+$$115321:  changed: [localhost]
+$$115322:  TASK: [git-operations | _assemble-working-directory | Clear out target directory] ***
+$$115415:  ok: [localhost]
+$$115415:  TASK: [git-operations | _assemble-working-directory | Create target directory] ***
+$$115505:  changed: [localhost]
+$$115505:  TASK: [git-operations | _assemble-working-directory | Assemble scratch content] ***
+$$116484:  changed: [localhost]
+$$116485:  TASK: [git-operations | _tag-branches-for-deployment | Lay down timestamped tags] ***
+$$116704:  changed: [localhost]
+$$116705:  TASK: [config-processor | configure | Make directories required for osconfig network configuration] ***
+$$116874:  changed: [localhost] => (item=etc)
+$$117041:  changed: [localhost] => (item=etc/network)
+$$117042:  TASK: [config-processor | configure | Copy hosts.hf for osconfig playbooks] ***
+$$117259:  changed: [localhost]
+$$117259:  TASK: [config-processor | configure | Sync ansible vars for cloud deployment] ***
+$$117540:  changed: [localhost -> 127.0.0.1] => (item=group_vars)
+$$117791:  changed: [localhost -> 127.0.0.1] => (item=host_vars)
+$$117792:  TASK: [config-processor | configure | Copy ansible hosts file for cloud deployment (verb_hosts)] ***
+$$118006:  changed: [localhost]
+$$118007:  TASK: [config-processor | configure | Sync ansible top-level playbooks for cloud deployment/update] ***
+$$118058:  skipping: [localhost]
+$$118059:  TASK: [config-processor | configure | Sync generated network artefacts for cloud deployment/update] ***
+$$118293:  changed: [localhost -> 127.0.0.1]
+$$118294:  TASK: [config-processor | configure | Make directories required for osconfig network configuration] ***
+$$118449:  ok: [localhost] => (item=etc)
+$$118586:  ok: [localhost] => (item=etc/network)
+$$118587:  TASK: [config-processor | configure | Copy hosts.hf for osconfig playbooks] ***
+$$118777:  ok: [localhost]
+$$118778:  TASK: [config-processor | configure | Sync ansible vars for cloud deployment] ***
+$$119022:  ok: [localhost -> 127.0.0.1] => (item=group_vars)
+$$119284:  ok: [localhost -> 127.0.0.1] => (item=host_vars)
+$$119285:  TASK: [config-processor | configure | Copy ansible hosts file for cloud deployment (verb_hosts)] ***
+$$119519:  ok: [localhost]
+$$119520:  TASK: [config-processor | configure | Sync ansible top-level playbooks for cloud deployment/update] ***
+$$119594:  skipping: [localhost]
+$$119594:  TASK: [config-processor | configure | Sync generated network artefacts for cloud deployment/update] ***
+$$119825:  ok: [localhost -> 127.0.0.1]
+$$119825:  TASK: [deployer-setup | ardana-hooks-configure | Find all hooks] **************
+$$119965:  ok: [localhost]
+$$119965:  TASK: [deployer-setup | ardana-hooks-configure | Build list of hooks] *********
+$$119976:  ok: [localhost]
+$$119977:  TASK: [deployer-setup | ardana-hooks-configure | Display hooks found] *********
+$$119985:  ok: [localhost] => {
+    "var": {
+        "deployer_setup_hooks": [
+            ""
+        ]
+    }
+}
+$$119986:  TASK: [deployer-setup | ardana-hooks-configure | Build ardana entry point playbooks] ***
+$$120147:  changed: [localhost] => (item=cloud-configure)
+$$120296:  changed: [localhost] => (item=cluster-credentials-change)
+$$120423:  changed: [localhost] => (item=deploy)
+$$120538:  changed: [localhost] => (item=keystone-credentials-change)
+$$120639:  changed: [localhost] => (item=other-credentials-change)
+$$120770:  changed: [localhost] => (item=rabbitmq-credentials-change)
+$$120927:  changed: [localhost] => (item=reconfigure)
+$$121089:  changed: [localhost] => (item=start)
+$$121240:  changed: [localhost] => (item=status)
+$$121352:  changed: [localhost] => (item=stop)
+$$121480:  changed: [localhost] => (item=upgrade)
+$$121481:  TASK: [git-operations | ready-deployment-tree-help | Tell the user what to expect] ***
+$$121520:  ok: [localhost] => {
+    "msg": "The directory /home/stack/scratch/ansible/next/ardana/ansible contains a prepared ansible tree ready to run your deployment. You should cd into that directory and run: ansible-playbook -i hosts/verb_hosts site.yml"
+}
+$$121520:  PLAY [localhost] **************************************************************
+$$121521:  TASK: [deployer-setup | configure-ansible | Check if verb_hosts file exists] ***
+$$121699:  ok: [localhost]
+$$121700:  TASK: [deployer-setup | configure-ansible | Create ansible.cfg] ***************
+$$121979:  changed: [localhost]
+$$121979:  TASK: [deployer-setup | configure-ansible | Check if verb_hosts file exists] ***
+$$122071:  ok: [localhost]
+$$122072:  TASK: [deployer-setup | configure-ansible | Create ansible.cfg] ***************
+$$122316:  changed: [localhost]
+$$122317:  PLAY RECAP ********************************************************************
+$$122317:  localhost                  : ok=32   changed=15   unreachable=0    failed=0
+
+$$EVENT: stop ready-deployment.yml
