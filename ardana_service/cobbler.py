@@ -16,12 +16,12 @@ from . import policy
 
 from flask import abort
 from flask import Blueprint
-from flask import json
 from flask import jsonify
 from oslo_config import cfg
 from oslo_log import log as logging
 
 import os
+import re
 import subprocess
 
 LOG = logging.getLogger(__name__)
@@ -32,9 +32,9 @@ CONF = cfg.CONF
 @bp.route("/api/v2/cobbler/servers", methods=['GET'])
 @policy.enforce('lifecycle:get_cobbler')
 def cobbler_get_servers():
-    """Get Server ids list from cobbler
+    """Get list of server ids and addresses from cobbler
 
-        .. :quickref: Cobbler; Get server ids
+        .. :quickref: Cobbler; Get server list
 
         **Example Request**:
 
@@ -49,34 +49,52 @@ def cobbler_get_servers():
 
             HTTP/1.1 200 OK
 
-            ['compute1', 'compute2', 'compute3']
+            [{
+               'name': 'MXQ51906R2',
+               'ip': '192.168.10.162'
+             },
+            {
+               'name': 'MXQ51906R2',
+               'ip': '192.168.10.163'
+             }]
     """
-    # mock for running sudo cobbler system list command
-    if cfg.CONF.testing.use_mock:
-
-        mock_json = "tools/cobbler_systems.json"
-        json_file = os.path.join(
-            os.path.dirname(os.path.dirname(__file__)), mock_json)
-        with open(json_file) as f:
-            return jsonify(json.load(f))
-
     servers = []
     try:
-        p = subprocess.Popen(
-            ['sudo', 'cobbler', 'system', 'list'],
-            stdout=subprocess.PIPE)
-        servers_lines = p.communicate()[0].decode('utf-8').split('\n')
-        # clean up the output
-        if servers_lines:
-            servers = \
-                [server.strip() for server in servers_lines
-                 if len(server) > 0]
+        # mock for running without cobbler
+        if cfg.CONF.testing.use_mock:
+            mock_output = "tools/cobbler_report.txt"
+            json_file = os.path.join(
+                os.path.dirname(os.path.dirname(__file__)), mock_output)
+            with open(json_file) as f:
+                servers_lines = f.readlines()
+
+        else:
+            p = subprocess.Popen(
+                ['sudo', 'cobbler', 'system', 'report'],
+                stdout=subprocess.PIPE)
+            servers_lines = p.communicate()[0].decode('utf-8').split('\n')
+
+        re_name = re.compile(r'^Name\s*:\s*(?P<name>\S+)')
+        re_ip = re.compile(r'^IP Address\s*:\s*(?P<ip>\S+)')
+
+        # extract the name and IP address from the output
+        for line in servers_lines:
+            name_match = re_name.match(line)
+            if name_match:
+                name = name_match.group('name')
+
+            ip_match = re_ip.match(line)
+            if ip_match:
+                ip = ip_match.group('ip')
+                if name:
+                    servers.append({'name': name, 'ip': ip})
+
         return jsonify(servers)
 
     except Exception as ex:
-        LOG.exception("Failed to run cobbler system list command")
+        LOG.exception("Failed to obtain system report from cobbler")
         LOG.exception(ex)
-        abort(500, "Failed to run cobbler system list command")
+        abort(500, "Failed to obtain system report from cobbler")
 
 
 @bp.route("/api/v2/cobbler/servers/<serverid>", methods=['DELETE'])
