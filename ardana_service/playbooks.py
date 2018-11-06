@@ -252,7 +252,9 @@ def run_playbook(name, payload=None, play_id=None):
             if filename == name:
                 break
         else:
-            abort(404, "Playbook not found")
+            # When testing, do not require the playbook file to exist
+            if not cfg.CONF.testing.use_mock:
+                abort(404, "Playbook not found")
 
         # If we created a vault password file (in get_commands_args), then make
         # sure that it gets cleaned up after the playbook has run.
