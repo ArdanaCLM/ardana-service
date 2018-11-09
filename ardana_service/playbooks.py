@@ -285,8 +285,6 @@ def get_command_args(payload=None, cwd=None):
     body = {k.lstrip('-'): v for k, v in body.items()}
 
     # Handle a couple of old key formats for backward compatibility
-    if 'extraVars' in body:
-        body['extra-vars'] = body.pop('extraVars')
     if 'inventoryFile' in body:
         body['inventory'] = body.pop('inventoryFile')
     if 'encryptionKey' in body:
