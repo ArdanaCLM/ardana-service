@@ -1,0 +1,17 @@
+{
+  "disable_network_agents": [{
+    "id": "60afd9e9-e2bf-4bf0-91ab-52187064206a",
+    "type": "Metadata agent"
+  }, {
+    "id": "972001b9-e402-42e6-88af-1713f7854599",
+    "type": "L3 agent"
+  }],
+  "delete_network_agents": [{
+    "id": "60afd9e9-e2bf-4bf0-91ab-52187064206a",
+    "type": "Metadata agent"
+  }, {
+    "id": "972001b9-e402-42e6-88af-1713f7854599",
+    "type": "L3 agent"
+  }],
+  "get_network_agents": []
+}

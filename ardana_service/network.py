@@ -18,9 +18,11 @@ from flask import abort
 from flask import Blueprint
 from flask import jsonify
 from flask import request
+import json
 from keystoneauth1 import loading
 from keystoneauth1 import session
 from neutronclient.v2_0 import client as neutronClient
+import os
 from oslo_config import cfg
 from oslo_log import log as logging
 
@@ -89,6 +91,13 @@ def network_disable_agents(hostname):
                 "type": "Loadbalancerv2 agent"
             }]
     """
+    # mock for running neutron disable network agents for a host
+    if cfg.CONF.testing.use_mock:
+        mock_json = "tools/network-mock-data.json"
+        json_file = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)), mock_json)
+        with open(json_file) as f:
+            return jsonify(json.load(f)['disable_network_agents'])
 
     network_client = get_network_client(request)
 
@@ -159,6 +168,14 @@ def network_delete_agents(hostname):
                 "type": "Loadbalancerv2 agent"
             }]
     """
+    # mock for running neutron delete network agents for a host
+    if cfg.CONF.testing.use_mock:
+        mock_json = "tools/network-mock-data.json"
+        json_file = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)), mock_json)
+        with open(json_file) as f:
+            return jsonify(json.load(f)['delete_network_agents'])
+
     network_client = get_network_client(request)
 
     response = network_client.list_agents(host=hostname)
@@ -235,6 +252,14 @@ def network_get_agents(hostname):
                 "id": "c2ddc4f0-6917-4a6f-9d79-5cf91d94240d"
             }]
     """
+    # mock for running neutron get network agents for a host
+    if cfg.CONF.testing.use_mock:
+        mock_json = "tools/network-mock-data.json"
+        json_file = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)), mock_json)
+        with open(json_file) as f:
+            return jsonify(json.load(f)['get_network_agents'])
+
     network_client = get_network_client(request)
     try:
         response = network_client.list_agents(host=hostname)
