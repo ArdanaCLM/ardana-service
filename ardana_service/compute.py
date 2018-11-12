@@ -18,9 +18,11 @@ from flask import abort
 from flask import Blueprint
 from flask import jsonify
 from flask import request
+import json
 from keystoneauth1 import loading
 from keystoneauth1 import session
 from novaclient import client as novaClient
+import os
 from oslo_config import cfg
 from oslo_log import log as logging
 
@@ -85,6 +87,13 @@ def compute_disable_services(hostname):
             }]
 
     """
+    # mock for running nova disable service for a compute host
+    if cfg.CONF.testing.use_mock:
+        mock_json = "tools/compute-mock-data.json"
+        json_file = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)), mock_json)
+        with open(json_file) as f:
+            return jsonify(json.load(f)['disable_compute_services'])
 
     compute_client = get_compute_client(request)
 
@@ -148,6 +157,13 @@ def compute_delete_services(hostname):
                 "id": 1
             }]
     """
+    # mock for running nova delete service for a compute host
+    if cfg.CONF.testing.use_mock:
+        mock_json = "tools/compute-mock-data.json"
+        json_file = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)), mock_json)
+        with open(json_file) as f:
+            return jsonify(json.load(f)['delete_compute_services'])
 
     compute_client = get_compute_client(request)
 
@@ -215,6 +231,14 @@ def compute_delete_aggregates(hostname):
                 "name": "agg_group2"
             }]
     """
+    # mock for running nova delete aggregates for a compute host
+    if cfg.CONF.testing.use_mock:
+        mock_json = "tools/compute-mock-data.json"
+        json_file = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)), mock_json)
+        with open(json_file) as f:
+            return jsonify(json.load(f)['delete_aggregates'])
+
     compute_client = get_compute_client(request)
 
     # list all the aggregates
@@ -298,9 +322,17 @@ def compute_migrate_instances(src_hostname, target_hostname):
                 "name": "test3"
             }, {
                 "id": "1d51f18f-27fd-4c34-a0aa-c07a5e9462e7",
-                "name": "testinst1"
+                "name": "test2"
             }]
     """
+    # mock for running  nova instance live migrating for a compute host
+    if cfg.CONF.testing.use_mock:
+        mock_json = "tools/compute-mock-data.json"
+        json_file = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)), mock_json)
+        with open(json_file) as f:
+            return jsonify(json.load(f)['migrate_instances'])
+
     compute_client = get_compute_client(request)
 
     search_opts = {
@@ -365,6 +397,15 @@ def compute_get_instances(hostname):
                 "status": "ACTIVE"
             }]
     """
+    # mock for running  nova instance list indicating whether all instances for
+    # a compute host are migrated
+    if cfg.CONF.testing.use_mock:
+        mock_json = "tools/compute-mock-data.json"
+        json_file = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)), mock_json)
+        with open(json_file) as f:
+            return jsonify(json.load(f)['get_instances'])
+
     compute_client = get_compute_client(request)
     try:
         search_opts = {
