@@ -104,9 +104,9 @@ def network_disable_agents(hostname):
     response = network_client.list_agents(host=hostname)
 
     if len(response['agents']) == 0:
-        msg = 'Unable to find network agents for %s' % hostname
+        msg = 'No network agents found for %s' % hostname
         LOG.error(msg)
-        abort(404, msg)
+        abort(410, msg)
 
     failed = []
     disabled = []
@@ -181,9 +181,9 @@ def network_delete_agents(hostname):
     response = network_client.list_agents(host=hostname)
 
     if len(response['agents']) == 0:
-        msg = 'Unable to find network agents for %s' % hostname
+        msg = 'No network agents found for %s' % hostname
         LOG.error(msg)
-        abort(404, msg)
+        abort(410, msg)
 
     failed = []
     deleted = []

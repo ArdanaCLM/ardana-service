@@ -100,9 +100,9 @@ def compute_disable_services(hostname):
     compute_services = compute_client.services.list(host=hostname)
 
     if len(compute_services) == 0:
-        msg = 'Unable to find compute service for %s' % hostname
+        msg = 'No compute service for %s' % hostname
         LOG.error(msg)
-        abort(404, msg)
+        abort(410, msg)
 
     failed = []
     disabled = []
@@ -170,9 +170,9 @@ def compute_delete_services(hostname):
     compute_services = compute_client.services.list(host=hostname)
 
     if len(compute_services) == 0:
-        msg = 'Unable to find compute service for %s' % hostname
+        msg = 'No compute service for %s' % hostname
         LOG.error(msg)
-        abort(404, msg)
+        abort(410, msg)
 
     failed = []
     deleted = []
