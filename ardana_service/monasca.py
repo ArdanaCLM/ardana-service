@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from . import keystone
 from . import policy
 from datetime import datetime
 from datetime import timedelta
@@ -45,9 +44,7 @@ def get_monasca_endpoint():
             # the endpoints object is a list of size 1 with the endpoint
             # dictionary inside of it
             endpoints = service['endpoints'][0]
-            monasca_endpoint = endpoints['internalURL']
-
-    return monasca_endpoint
+            return endpoints['internalURL']
 
 
 def get_monasca_client():
