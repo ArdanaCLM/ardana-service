@@ -1,0 +1,1 @@
+[{"name": "keystone", "type": "identity", "endpoints": [{"publicURL": "http://localhost:5000/v3", "internalURL": "http://localhost:5000/v3", "adminURL": "http://localhost:35357/v3", "region": "region1"}]}]
