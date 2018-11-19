@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from . import keystone
 from . import policy
 from datetime import datetime
 from datetime import timedelta
@@ -29,29 +28,34 @@ import requests
 LOG = logging.getLogger(__name__)
 bp = Blueprint('monasca', __name__)
 CONF = cfg.CONF
-mon_client = None
-monasca_endpoint = None
+
+
+def get_monasca_endpoint():
+    """Get the keystone endpoint for Monasca
+       the client in Pike won't self-discover, and
+       the endpoint is used for passthru calls as well
+    """
+
+    # load the service catalog listing out of the headers inserted
+    # by the keystone middleware
+    service_cat = json.loads(request.headers['X-Service-Catalog'])
+    for service in service_cat:
+        if service['name'] == 'monasca':
+            # the endpoints object is a list of size 1 with the endpoint
+            # dictionary inside of it
+            endpoints = service['endpoints'][0]
+            return endpoints['internalURL']
 
 
 def get_monasca_client():
-    global mon_client
-    global monasca_endpoint
-    if mon_client:
-        return mon_client
+    """Instantiates and returns an instance of the monasca python client
+    """
 
-    # Figure out the monasca-internal endpoint
-    service_list = json.loads(keystone.get_endpoints().data)
-    for service in service_list:
-        if service['name'] == 'monasca':
-            eps = service['endpoints']
-            for ep in eps:
-                if ep['interface'] == 'internal':
-                    monasca_endpoint = ep['url']
-    if not monasca_endpoint:
-        raise Exception("Unable to locate monasca internal endpoint")
-
+    monasca_endpoint = get_monasca_endpoint()
     # Monasca client v1.7.1 used in pike is old, so get its client via
     # old-fashioned way (credentials)
+    # the pike version also cannot reliably discover its own endpoint,
+    # so it is specified here
     mon_client = Mon_client(
         api_version="2_0",
         endpoint=monasca_endpoint,
@@ -63,6 +67,7 @@ def get_monasca_client():
         user_domain_name=CONF.keystone_authtoken.user_domain_name,
         insecure=CONF.keystone_authtoken.insecure
     )
+
     return mon_client
 
 
@@ -164,8 +169,7 @@ def passthru(url):
        GET /api/v2/monasca/passthru/alarms/count HTTP/1.1
     """
     # populate monasca_endpoint in case it has not yet been populated
-    get_monasca_client()
-    global monasca_endpoint
+    monasca_endpoint = get_monasca_endpoint()
     req_url = monasca_endpoint + "/" + url
 
     req = requests.Request(method=request.method, url=req_url,

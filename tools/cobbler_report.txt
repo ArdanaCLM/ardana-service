@@ -1,0 +1,340 @@
+Name                           : MXQ51906KN
+TFTP Boot Files                : {}
+Comment                        : 
+Enable gPXE?                   : 0
+Fetchable Files                : {}
+Gateway                        : 192.168.24.161
+Hostname                       : MXQ51906KN
+Image                          : 
+IPv6 Autoconfiguration         : False
+IPv6 Default Device            : 
+Kernel Options                 : {'ifcfg': '8c:dc:d4:b5:c5:4c=dhcp4,DHCLIENT_WAIT_AT_BOOT=240,WAIT_FOR_INTERFACES=240'}
+Kernel Options (Post Install)  : {}
+Kickstart                      : <<inherit>>
+Kickstart Metadata             : {}
+LDAP Enabled                   : False
+LDAP Management Type           : authconfig
+Management Classes             : <<inherit>>
+Management Parameters          : <<inherit>>
+Monit Enabled                  : False
+Name Servers                   : []
+Name Servers Search Path       : []
+Netboot Enabled                : False
+Owners                         : ['admin']
+Power Management Address       : 192.168.10.119
+Power Management ID            : 
+Power Management Password      : redacted
+Power Management Type          : ipmitool
+Power Management Username      : redacted
+Profile                        : sles12sp3-x86_64-MXQ51906KN
+Internal proxy                 : <<inherit>>
+Red Hat Management Key         : <<inherit>>
+Red Hat Management Server      : <<inherit>>
+Repos Enabled                  : False
+Server Override                : <<inherit>>
+Status                         : production
+Template Files                 : {}
+Virt Auto Boot                 : <<inherit>>
+Virt CPUs                      : <<inherit>>
+Virt Disk Driver Type          : <<inherit>>
+Virt File Size(GB)             : <<inherit>>
+Virt Path                      : <<inherit>>
+Virt PXE Boot                  : 0
+Virt RAM (MB)                  : <<inherit>>
+Virt Type                      : <<inherit>>
+Interface =====                : 8c:dc:d4:b5:c5:4c
+Bonding Opts                   : 
+Bridge Opts                    : 
+CNAMES                         : []
+DHCP Tag                       : 
+DNS Name                       : 
+Per-Interface Gateway          : 
+Master Interface               : 
+Interface Type                 : 
+IP Address                     : 192.168.24.164
+IPv6 Address                   : 
+IPv6 Default Gateway           : 
+IPv6 MTU                       : 
+IPv6 Prefix                    : 
+IPv6 Secondaries               : []
+IPv6 Static Routes             : []
+MAC Address                    : 8c:dc:d4:b5:c5:4c
+Management Interface           : False
+MTU                            : 
+Subnet Mask                    : 
+Static                         : False
+Static Routes                  : []
+Virt Bridge                    : 
+
+Name                           : MXQ51906KP
+TFTP Boot Files                : {}
+Comment                        : 
+Enable gPXE?                   : 0
+Fetchable Files                : {}
+Gateway                        : 192.168.24.161
+Hostname                       : MXQ51906KP
+Image                          : 
+IPv6 Autoconfiguration         : False
+IPv6 Default Device            : 
+Kernel Options                 : {'ifcfg': '8c:dc:d4:b5:c8:e8=dhcp4,DHCLIENT_WAIT_AT_BOOT=240,WAIT_FOR_INTERFACES=240'}
+Kernel Options (Post Install)  : {}
+Kickstart                      : <<inherit>>
+Kickstart Metadata             : {}
+LDAP Enabled                   : False
+LDAP Management Type           : authconfig
+Management Classes             : <<inherit>>
+Management Parameters          : <<inherit>>
+Monit Enabled                  : False
+Name Servers                   : []
+Name Servers Search Path       : []
+Netboot Enabled                : False
+Owners                         : ['admin']
+Power Management Address       : 192.168.10.120
+Power Management ID            : 
+Power Management Password      : redacted
+Power Management Type          : ipmitool
+Power Management Username      : redacted
+Profile                        : sles12sp3-x86_64-MXQ51906KP
+Internal proxy                 : <<inherit>>
+Red Hat Management Key         : <<inherit>>
+Red Hat Management Server      : <<inherit>>
+Repos Enabled                  : False
+Server Override                : <<inherit>>
+Status                         : production
+Template Files                 : {}
+Virt Auto Boot                 : <<inherit>>
+Virt CPUs                      : <<inherit>>
+Virt Disk Driver Type          : <<inherit>>
+Virt File Size(GB)             : <<inherit>>
+Virt Path                      : <<inherit>>
+Virt PXE Boot                  : 0
+Virt RAM (MB)                  : <<inherit>>
+Virt Type                      : <<inherit>>
+Interface =====                : 8c:dc:d4:b5:c8:e8
+Bonding Opts                   : 
+Bridge Opts                    : 
+CNAMES                         : []
+DHCP Tag                       : 
+DNS Name                       : 
+Per-Interface Gateway          : 
+Master Interface               : 
+Interface Type                 : 
+IP Address                     : 192.168.24.165
+IPv6 Address                   : 
+IPv6 Default Gateway           : 
+IPv6 MTU                       : 
+IPv6 Prefix                    : 
+IPv6 Secondaries               : []
+IPv6 Static Routes             : []
+MAC Address                    : 8c:dc:d4:b5:c8:e8
+Management Interface           : False
+MTU                            : 
+Subnet Mask                    : 
+Static                         : False
+Static Routes                  : []
+Virt Bridge                    : 
+
+Name                           : MXQ51906K3
+TFTP Boot Files                : {}
+Comment                        : 
+Enable gPXE?                   : 0
+Fetchable Files                : {}
+Gateway                        : 192.168.24.161
+Hostname                       : MXQ51906K3
+Image                          : 
+IPv6 Autoconfiguration         : False
+IPv6 Default Device            : 
+Kernel Options                 : {'ifcfg': '8c:dc:d4:b5:c8:1c=dhcp4,DHCLIENT_WAIT_AT_BOOT=240,WAIT_FOR_INTERFACES=240'}
+Kernel Options (Post Install)  : {}
+Kickstart                      : <<inherit>>
+Kickstart Metadata             : {}
+LDAP Enabled                   : False
+LDAP Management Type           : authconfig
+Management Classes             : <<inherit>>
+Management Parameters          : <<inherit>>
+Monit Enabled                  : False
+Name Servers                   : []
+Name Servers Search Path       : []
+Netboot Enabled                : False
+Owners                         : ['admin']
+Power Management Address       : 192.168.10.115
+Power Management ID            : 
+Power Management Password      : redacted
+Power Management Type          : ipmitool
+Power Management Username      : redacted
+Profile                        : sles12sp3-x86_64-MXQ51906K3
+Internal proxy                 : <<inherit>>
+Red Hat Management Key         : <<inherit>>
+Red Hat Management Server      : <<inherit>>
+Repos Enabled                  : False
+Server Override                : <<inherit>>
+Status                         : production
+Template Files                 : {}
+Virt Auto Boot                 : <<inherit>>
+Virt CPUs                      : <<inherit>>
+Virt Disk Driver Type          : <<inherit>>
+Virt File Size(GB)             : <<inherit>>
+Virt Path                      : <<inherit>>
+Virt PXE Boot                  : 0
+Virt RAM (MB)                  : <<inherit>>
+Virt Type                      : <<inherit>>
+Interface =====                : 8c:dc:d4:b5:c8:1c
+Bonding Opts                   : 
+Bridge Opts                    : 
+CNAMES                         : []
+DHCP Tag                       : 
+DNS Name                       : 
+Per-Interface Gateway          : 
+Master Interface               : 
+Interface Type                 : 
+IP Address                     : 192.168.24.163
+IPv6 Address                   : 
+IPv6 Default Gateway           : 
+IPv6 MTU                       : 
+IPv6 Prefix                    : 
+IPv6 Secondaries               : []
+IPv6 Static Routes             : []
+MAC Address                    : 8c:dc:d4:b5:c8:1c
+Management Interface           : False
+MTU                            : 
+Subnet Mask                    : 
+Static                         : False
+Static Routes                  : []
+Virt Bridge                    : 
+
+Name                           : MXQ51906R0
+TFTP Boot Files                : {}
+Comment                        : 
+Enable gPXE?                   : 0
+Fetchable Files                : {}
+Gateway                        : 192.168.24.161
+Hostname                       : MXQ51906R0
+Image                          : 
+IPv6 Autoconfiguration         : False
+IPv6 Default Device            : 
+Kernel Options                 : {'interface': '5c:b9:01:89:bf:e4', 'netcfg/dhcp_timeout': '240'}
+Kernel Options (Post Install)  : {}
+Kickstart                      : <<inherit>>
+Kickstart Metadata             : {}
+LDAP Enabled                   : False
+LDAP Management Type           : authconfig
+Management Classes             : <<inherit>>
+Management Parameters          : <<inherit>>
+Monit Enabled                  : False
+Name Servers                   : []
+Name Servers Search Path       : []
+Netboot Enabled                : False
+Owners                         : ['admin']
+Power Management Address       : 192.168.10.159
+Power Management ID            : 
+Power Management Password      : redacted
+Power Management Type          : ipmitool
+Power Management Username      : redacted
+Profile                        : rhel75-x86_64-MXQ51906R0
+Internal proxy                 : <<inherit>>
+Red Hat Management Key         : <<inherit>>
+Red Hat Management Server      : <<inherit>>
+Repos Enabled                  : False
+Server Override                : <<inherit>>
+Status                         : production
+Template Files                 : {}
+Virt Auto Boot                 : <<inherit>>
+Virt CPUs                      : <<inherit>>
+Virt Disk Driver Type          : <<inherit>>
+Virt File Size(GB)             : <<inherit>>
+Virt Path                      : <<inherit>>
+Virt PXE Boot                  : 0
+Virt RAM (MB)                  : <<inherit>>
+Virt Type                      : <<inherit>>
+Interface =====                : 5c:b9:01:89:bf:e4
+Bonding Opts                   : 
+Bridge Opts                    : 
+CNAMES                         : []
+DHCP Tag                       : 
+DNS Name                       : 
+Per-Interface Gateway          : 
+Master Interface               : 
+Interface Type                 : 
+IP Address                     : 192.168.24.166
+IPv6 Address                   : 
+IPv6 Default Gateway           : 
+IPv6 MTU                       : 
+IPv6 Prefix                    : 
+IPv6 Secondaries               : []
+IPv6 Static Routes             : []
+MAC Address                    : 5c:b9:01:89:bf:e4
+Management Interface           : False
+MTU                            : 
+Subnet Mask                    : 
+Static                         : False
+Static Routes                  : []
+Virt Bridge                    : 
+
+Name                           : MXQ51906R2
+TFTP Boot Files                : {}
+Comment                        : 
+Enable gPXE?                   : 0
+Fetchable Files                : {}
+Gateway                        : 192.168.24.161
+Hostname                       : MXQ51906R2
+Image                          : 
+IPv6 Autoconfiguration         : False
+IPv6 Default Device            : 
+Kernel Options                 : {'interface': '5c:b9:01:89:b4:58', 'netcfg/dhcp_timeout': '240'}
+Kernel Options (Post Install)  : {}
+Kickstart                      : <<inherit>>
+Kickstart Metadata             : {}
+LDAP Enabled                   : False
+LDAP Management Type           : authconfig
+Management Classes             : <<inherit>>
+Management Parameters          : <<inherit>>
+Monit Enabled                  : False
+Name Servers                   : []
+Name Servers Search Path       : []
+Netboot Enabled                : False
+Owners                         : ['admin']
+Power Management Address       : 192.168.10.161
+Power Management ID            : 
+Power Management Password      : redacted
+Power Management Type          : ipmitool
+Power Management Username      : redacted
+Profile                        : rhel75-x86_64-MXQ51906R2
+Internal proxy                 : <<inherit>>
+Red Hat Management Key         : <<inherit>>
+Red Hat Management Server      : <<inherit>>
+Repos Enabled                  : False
+Server Override                : <<inherit>>
+Status                         : production
+Template Files                 : {}
+Virt Auto Boot                 : <<inherit>>
+Virt CPUs                      : <<inherit>>
+Virt Disk Driver Type          : <<inherit>>
+Virt File Size(GB)             : <<inherit>>
+Virt Path                      : <<inherit>>
+Virt PXE Boot                  : 0
+Virt RAM (MB)                  : <<inherit>>
+Virt Type                      : <<inherit>>
+Interface =====                : 5c:b9:01:89:b4:58
+Bonding Opts                   : 
+Bridge Opts                    : 
+CNAMES                         : []
+DHCP Tag                       : 
+DNS Name                       : 
+Per-Interface Gateway          : 
+Master Interface               : 
+Interface Type                 : 
+IP Address                     : 192.168.24.170
+IPv6 Address                   : 
+IPv6 Default Gateway           : 
+IPv6 MTU                       : 
+IPv6 Prefix                    : 
+IPv6 Secondaries               : []
+IPv6 Static Routes             : []
+MAC Address                    : 5c:b9:01:89:b4:58
+Management Interface           : False
+MTU                            : 
+Subnet Mask                    : 
+Static                         : False
+Static Routes                  : []
+Virt Bridge                    : 
+

@@ -60,7 +60,7 @@ CONF.register_opts(main_opts)
 CONF.register_opts(path_opts, 'paths')
 CONF.register_opts(test_opts, 'testing')
 
-# strip off config file processing args from sys.argv sys.argv
+# strip off config file processing args from sys.argv
 conf_args = []
 
 while(len(sys.argv) > 1 and sys.argv[1] in ('--config-dir','--config-file')):
@@ -168,7 +168,11 @@ elif cmd_name == 'ansible-playbook':
             with open(log) as f:
                 lines = f.readlines()
         except:
-            lines = ["Playbook %s completed. (No replay log exists)" % playbook]
+            lines = [
+                 ' '.join(sys.argv[1:])+'\n',
+                "$$EVENT: start %s\n" % playbook,
+                "$$12345: Playbook %s completed. (No replay log exists)\n" % playbook,
+                "$$EVENT: stop %s\n" % playbook]
 
         last_time = 0
         pattern = re.compile(r'^\$\$(\w+): (.*)')

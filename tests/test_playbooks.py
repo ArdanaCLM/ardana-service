@@ -40,7 +40,7 @@ class TestArgProcessing(testtools.TestCase):
 
     def test_extra_vars_as_a_list(self):
         args = playbooks.get_command_args({
-            "extraVars": ["key1=var1", "key2=var2"]})
+            "extra-vars": ["key1=var1", "key2=var2"]})
 
         expected = json.loads('{"key1": "var1", "key2": "var2"}')
         actual = json.loads(args["--extra-vars"])
@@ -48,7 +48,7 @@ class TestArgProcessing(testtools.TestCase):
 
     def test_extra_vars_as_a_dict(self):
         d = {"key1": "var1", "key2": "var2"}
-        args = playbooks.get_command_args({"extraVars": d})
+        args = playbooks.get_command_args({"extra-vars": d})
         actual = json.loads(args["--extra-vars"])
         self.assertEqual(d, actual)
 
@@ -71,22 +71,22 @@ class TestArgProcessing(testtools.TestCase):
 
     def test_vault_pass_extra_vars_as_dict(self):
         dict = {"encrypt": "testdddd"}
-        args = playbooks.get_command_args({"extraVars": dict})
+        args = playbooks.get_command_args({"extra-vars": dict})
         self.assertIn('--vault-password-file', args)
 
     def test_no_vault_pass_extra_vars_as_dict(self):
         dict = {"encrypt": ""}
-        args = playbooks.get_command_args({"extraVars": dict})
+        args = playbooks.get_command_args({"extra-vars": dict})
         self.assertNotIn('--vault-password-file', args)
 
     def test_vault_pass_extra_vars_as_list(self):
         list = ["encrypt=testdddd"]
-        args = playbooks.get_command_args({"extraVars": list})
+        args = playbooks.get_command_args({"extra-vars": list})
         self.assertIn('--vault-password-file', args)
 
     def test_no_vault_pass_extra_vars_as_list(self):
         list = ["encrypt="]
-        args = playbooks.get_command_args({"extraVars": list})
+        args = playbooks.get_command_args({"extra-vars": list})
         self.assertNotIn('--vault-password-file', args)
 
     def test_has_no_verbose(self):

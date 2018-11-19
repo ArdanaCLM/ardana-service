@@ -1,0 +1,26 @@
+{
+  "disable_compute_services": [{
+    "binary": "nova-compute", "id": 1
+  }],
+  "delete_compute_services": [{
+    "binary": "nova-compute", "id": 1
+  }],
+  "delete_aggregates": {
+    "failed": [{
+      "availability_zone": "null",
+      "id": 1, "name": "agg_group1"
+    }],
+    "deleted": [{
+      "availability_zone": "test-az",
+      "id": 3, "name": "agg_group3"
+    }]
+  },
+  "migrate_instances": [{
+    "id": "8279e65d-6e87-4a50-b789-96edd753fbb2",
+    "name": "test3"
+  }, {
+    "id": "1d51f18f-27fd-4c34-a0aa-c07a5e9462e7",
+    "name": "test2"
+  }],
+  "get_instances": []
+}

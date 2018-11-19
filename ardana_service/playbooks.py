@@ -239,8 +239,9 @@ def run_playbook(name, payload=None, play_id=None):
     args = get_command_args(payload, cwd)
 
     # Prevent some special playbooks from multiple concurrent invocations
-    if name in (SITE_PLAYBOOK, CONFIG_PROCESSOR_RUN_PLAYBOOK, CONFIG_PROCESSOR_CLEAN_PLAYBOOK,
-                READY_DEPLOYMENT_PLAYBOOK, OS_PROVISION_PLAYBOOK, WIPE_DISKS_PLAYBOOK,
+    if name in (SITE_PLAYBOOK, CONFIG_PROCESSOR_RUN_PLAYBOOK,
+                CONFIG_PROCESSOR_CLEAN_PLAYBOOK, READY_DEPLOYMENT_PLAYBOOK,
+                OS_PROVISION_PLAYBOOK, WIPE_DISKS_PLAYBOOK,
                 ARDANA_GEN_HOSTS_FILE_PLAYBOOK, MONASCA_DEPLOY_PLAYBOOK):
         if get_running_playbook_id(name):
             abort(403, "Already running")
@@ -251,7 +252,9 @@ def run_playbook(name, payload=None, play_id=None):
             if filename == name:
                 break
         else:
-            abort(404, "Playbook not found")
+            # When testing, do not require the playbook file to exist
+            if not cfg.CONF.testing.use_mock:
+                abort(404, "Playbook not found")
 
         # If we created a vault password file (in get_commands_args), then make
         # sure that it gets cleaned up after the playbook has run.
@@ -284,8 +287,6 @@ def get_command_args(payload=None, cwd=None):
     body = {k.lstrip('-'): v for k, v in body.items()}
 
     # Handle a couple of old key formats for backward compatibility
-    if 'extraVars' in body:
-        body['extra-vars'] = body.pop('extraVars')
     if 'inventoryFile' in body:
         body['inventory'] = body.pop('inventoryFile')
     if 'encryptionKey' in body:
