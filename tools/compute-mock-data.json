@@ -2,6 +2,9 @@
   "disable_compute_services": [{
     "binary": "nova-compute", "id": 1
   }],
+  "enable_compute_services": [{
+    "binary": "nova-compute", "id": 1
+  }],
   "delete_compute_services": [{
     "binary": "nova-compute", "id": 1
   }],

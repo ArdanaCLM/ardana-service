@@ -132,6 +132,77 @@ def compute_disable_services(hostname):
     return jsonify(disabled)
 
 
+@bp.route("/api/v2/compute/services/<hostname>/enable", methods=['PUT'])
+@policy.enforce('lifecycle:update_compute')
+def compute_enable_services(hostname):
+    """Enable the compute services for a compute host
+
+        .. :quickref: Compute; Enable the compute services
+
+        **Example Request**:
+
+        .. sourcecode:: http
+
+           PUT /api/v2/compute/services/<hostname>/enable HTTP/1.1
+           Content-Type: application/json
+
+        **Example Response**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+
+            [{
+                "binary": "nova-compute",
+                "id": 1
+            }]
+
+    """
+    # mock for running nova disable service for a compute host
+    if cfg.CONF.testing.use_mock:
+        mock_json = "tools/compute-mock-data.json"
+        json_file = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)), mock_json)
+        with open(json_file) as f:
+            return jsonify(json.load(f)['enable_compute_services'])
+
+    compute_client = get_compute_client(request)
+
+    compute_services = compute_client.services.list(host=hostname)
+
+    if len(compute_services) == 0:
+        msg = 'No compute service for %s' % hostname
+        LOG.error(msg)
+        abort(410, msg)
+
+    failed = []
+    enabled = []
+    for service in compute_services:
+        binary = getattr(service, 'binary', '')
+        id = getattr(service, 'id')
+        status = getattr(service, 'status', '')
+        if status == 'disabled':
+            try:
+                compute_client.services.enable(hostname, binary)
+                enabled.append({'id': id, 'binary': binary})
+            except Exception as ex:
+                failed.append({'id': id, 'binary': binary, 'error': str(ex)})
+                LOG.error(
+                    'Failed to enable compute service for %s id = %s' +
+                    'binary = % s' % (hostname, id, binary))
+                LOG.error(ex)
+        else:
+            # already enabled, will not call
+            enabled.append({'id': id, 'binary': binary})
+
+    if len(failed) > 0:
+        return complete_with_errors_response(
+            'Completed enabling compute services with errors',
+            {'failed': failed, 'enabled': enabled})
+
+    return jsonify(enabled)
+
+
 @bp.route("/api/v2/compute/services/<hostname>", methods=['DELETE'])
 @policy.enforce('lifecycle:update_compute')
 def compute_delete_services(hostname):
