@@ -61,6 +61,58 @@ def complete_with_errors_response(msg, contents):
     return response
 
 
+@bp.route("/api/v2/compute/services/<hostname>", methods=['GET'])
+@policy.enforce('lifecycle:get_compute')
+def compute_services_status(hostname):
+    """Get the compute services status for a compute host
+
+        .. :quickref: Compute; Get the compute services status
+
+        **Example Request**:
+
+        .. sourcecode:: http
+
+           GET /api/v2/compute/services/<hostname> HTTP/1.1
+           Content-Type: application/json
+
+        **Example Response**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+
+            {
+                "nova-compute": "enabled"
+            }
+
+    """
+    # mock for getting nova service status for a compute host
+    if cfg.CONF.testing.use_mock:
+        mock_json = "tools/compute-mock-data.json"
+        json_file = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)), mock_json)
+        with open(json_file) as f:
+            return jsonify(json.load(f)['compute_services_status'])
+
+    compute_client = get_compute_client(request)
+
+    compute_services = compute_client.services.list(host=hostname)
+
+    if len(compute_services) == 0:
+        msg = 'No compute service for %s' % hostname
+        LOG.error(msg)
+        abort(410, msg)
+
+    services = dict()
+
+    for service in compute_services:
+        id = getattr(service, 'id', None)
+        if id:
+            services[id] = getattr(service, 'status', None)
+
+    return jsonify(services)
+
+
 @bp.route("/api/v2/compute/services/<hostname>/disable", methods=['PUT'])
 @policy.enforce('lifecycle:update_compute')
 def compute_disable_services(hostname):
