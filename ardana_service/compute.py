@@ -355,12 +355,15 @@ def compute_delete_aggregates(hostname):
             }]
     """
     # mock for running nova delete aggregates for a compute host
+    # mock contains partial failure
     if cfg.CONF.testing.use_mock:
         mock_json = "tools/compute-mock-data.json"
         json_file = os.path.join(
             os.path.dirname(os.path.dirname(__file__)), mock_json)
         with open(json_file) as f:
-            return jsonify(json.load(f)['delete_aggregates'])
+            return complete_with_errors_response(
+                'Completed deleting aggregates with errors',
+                json.load(f)['delete_aggregates'])
 
     compute_client = get_compute_client(request)
 

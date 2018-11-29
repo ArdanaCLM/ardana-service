@@ -14,7 +14,8 @@
   "delete_aggregates": {
     "failed": [{
       "availability_zone": "null",
-      "id": 1, "name": "agg_group1"
+      "id": 1, "name": "agg_group1",
+      "error": "Internal Errors"
     }],
     "deleted": [{
       "availability_zone": "test-az",
