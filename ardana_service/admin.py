@@ -27,6 +27,7 @@ import pbr.version
 import pwd
 import threading
 import time
+from util import ping
 
 
 from . import config
@@ -283,3 +284,14 @@ def get_secured():
     :status 200: success
     """
     return jsonify({'isSecured': config.requires_auth()})
+
+
+@bp.route("/api/v2/connection_test", methods=['POST'])
+def connection_test():
+    body = request.get_json() or {}
+    host = body['host']
+    try:
+        ping(host, 22)
+        return jsonify('Success')
+    except Exception as e:
+        return jsonify(error=str(e)), 404

@@ -30,10 +30,7 @@ parser.add_argument('-v', '--verify', action='store_true')
 parser.add_argument('playbook')
 args = parser.parse_args()
 
-if args.port == 9085:
-    base_url = "%s://%s:%d/api/v2" % (args.scheme, args.host, args.port)
-else:
-    base_url = "%s://%s:%d/api/v1/clm" % (args.scheme, args.host, args.port)
+base_url = "%s://%s:%d/api/v2" % (args.scheme, args.host, args.port)
 
 # Uncomment the next line to enable debugging messages
 logging.getLogger('socketIO-client').setLevel(logging.DEBUG)
