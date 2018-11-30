@@ -46,6 +46,7 @@ def get_compute_client(req):
         compute_client = novaClient.Client(
             # api version for live_migrate with block_migration='auto'
             '2.25',
+            endpoint_type="internalURL",
             session=sess
         )
         return compute_client
@@ -106,9 +107,9 @@ def compute_services_status(hostname):
     services = dict()
 
     for service in compute_services:
-        id = getattr(service, 'id', None)
-        if id:
-            services[id] = getattr(service, 'status', None)
+        binary = getattr(service, 'binary', None)
+        if binary:
+            services[binary] = getattr(service, 'status', None)
 
     return jsonify(services)
 
