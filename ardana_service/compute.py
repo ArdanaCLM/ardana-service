@@ -109,7 +109,9 @@ def compute_services_status(hostname):
     for service in compute_services:
         binary = getattr(service, 'binary', None)
         if binary:
-            services[binary] = getattr(service, 'status', None)
+            services[binary] = \
+                getattr(service, 'status', None) == 'enabled' and \
+                getattr(service, 'state', None) != 'down'
 
     return jsonify(services)
 
