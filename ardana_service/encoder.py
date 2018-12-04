@@ -12,7 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import datetime
 from flask.json import JSONEncoder
+import sys
+
+if sys.version_info.major < 3:
+    from xmlrpclib import DateTime
+else:
+    from xmlrpc.client import DateTime
 
 
 # Some python constructs (especially sets) cannot be encoded into JSON directly
@@ -21,11 +28,14 @@ from flask.json import JSONEncoder
 # http://flask.pocoo.org/docs/1.0/api/#flask.json.JSONEncoder will handle them,
 # presuming that an iterator can be made from them.
 class CustomJSONEncoder(JSONEncoder):
-    def default(self, o):
+    def default(self, obj):
         try:
-            iterable = iter(o)
+            if isinstance(obj, DateTime):
+                return datetime.datetime.strptime(
+                    obj.value, "%Y%m%dT%H:%M:%S").isoformat()
+            iterable = iter(obj)
         except TypeError:
             pass
         else:
             return list(iterable)
-        return JSONEncoder.default(self, o)
+        return JSONEncoder.default(self, obj)
