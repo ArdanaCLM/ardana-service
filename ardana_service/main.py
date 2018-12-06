@@ -62,6 +62,10 @@ LOG = logging.getLogger(PROGRAM)
 CONF = cfg.CONF
 logging.register_options(CONF)
 
+# Load config options any config files specified on the command line
+CONF()
+logging.setup(CONF, PROGRAM)
+
 # The default level of INFO for engineio and socketio yields messages
 # for every line of every log that is transferred through the socket.
 # WARN avoids that.
@@ -71,7 +75,6 @@ extra_log_level_defaults = [
 ]
 logging.set_defaults(default_log_levels=logging.get_default_log_levels() +
                      extra_log_level_defaults)
-
 
 app = Flask(PROGRAM,
             static_url_path='',
@@ -164,6 +167,7 @@ def enable_unsecured(handler):
         # user tries to explicitly set it to hack around the auth check)
         if (environ.get('HTTP_X_IDENTITY_STATUS') == 'Confirmed' or
            path in unsecured or
+           not path.startswith('/api') or    # permit all non-api requests
            environ.get('REQUEST_METHOD') == 'OPTIONS'):
 
             return handler(environ, start_fn)
@@ -185,10 +189,6 @@ def root():
 
 
 def main():
-
-    # Load config options any config files specified on the command line
-    CONF()
-    logging.setup(CONF, PROGRAM)
 
     if config.requires_auth():
         # Wrap with keystone middleware if configured to do so
