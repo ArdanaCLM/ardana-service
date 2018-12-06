@@ -167,10 +167,7 @@ def is_monasca_installed():
         this check can be used to evaluate whether further
         monasca calls are useful
     """
-    if get_monasca_endpoint():
-        return jsonify({'installed': 'true'})
-
-    return jsonify({'installed': 'false'})
+    return jsonify({'installed': get_monasca_endpoint() is not None})
 
 
 def get_parse_host_measurements_for_status(params, client):

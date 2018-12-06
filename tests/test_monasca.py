@@ -42,7 +42,7 @@ class TestMonasca(testtools.TestCase):
                             environ_base={'HTTP_X_SERVICE_CATALOG':
                                           cat_content})
         x = jsonutils.loads(resp.data)
-        self.assertEqual(x.get('installed'), 'false')
+        self.assertFalse(x.get('installed'))
 
         mock_catalog_file = 'X-Service-Catalog.json'
         file_path = os.path.join(self.TEST_DATA_DIR, mock_catalog_file)
@@ -54,4 +54,4 @@ class TestMonasca(testtools.TestCase):
                             environ_base={'HTTP_X_SERVICE_CATALOG':
                                           cat_content})
         x = jsonutils.loads(resp.data)
-        self.assertEqual(x.get('installed'), 'true')
+        self.assertTrue(x.get('installed'))
