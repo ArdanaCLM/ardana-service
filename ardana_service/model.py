@@ -670,6 +670,169 @@ def get_deployed_servers():
         abort(500, "Failed to get deployed servers")
 
 
+@bp.route("/api/v2/model/server_groups_in_use", methods=['GET'])
+@policy.enforce('lifecycle:get_model')
+def get_server_groups_in_use():
+    """Returns server-group list that are used by servers deployed
+
+    Returns the content as JSON.
+
+    .. :quickref: CloudModel; Returns the contents of a file from the config
+        processor internal directory
+
+    **Example Request**:
+
+    .. sourcecode:: http
+
+        GET /api/v2/model/server_groups_in_use  HTTP/1.1
+        Content-Type: application/json
+
+    **Example Response**:
+
+    .. sourcecode:: http
+
+        HTTP/1.1 200 OK
+        Content-Type: application/json
+
+        [{
+            "name":"CLOUD",
+            "network-groups":[
+            "INTERNAL-API-NET","CONF-NET","EXTERNAL-VM-NET","EXTERNAL-API-NET"],
+            "server-groups":["AZ1","AZ2","AZ3"]
+        }, {
+            "name":"rack1",
+            "network-groups":[
+            "GUEST-NET-RACK1","SWIFT-NET-RACK1","MANAGEMENT-NET-RACK1"],
+            "server-groups":null
+        }, {
+            "name":"rack2",
+            "network-groups":[
+            "GUEST-NET-RACK2","SWIFT-NET-RACK2","MANAGEMENT-NET-RACK2"],
+            "server-groups":null
+        }, {
+            "name":"rack3",
+            "network-groups":[
+            "GUEST-NET-RACK3","SWIFT-NET-RACK3","MANAGEMENT-NET-RACK3"],
+            "server-groups":null
+        }, {
+            "name":"AZ2",
+            "network-groups":null,
+            "server-groups":["rack2"]
+        }, {
+            "name":"AZ3",
+            "network-groups":null,
+            "server-groups":["rack3"]
+        }, {
+            "name":"AZ1",
+            "network-groups":null,
+            "server-groups":["rack1"]
+        }]
+    """
+
+    server_groups_in_use = []
+    try:
+        cloud_model = read_cp_internal_json('CloudModel.yaml')
+        if cloud_model:
+            hosts = cloud_model['internal']['servers']
+            deployed_names = get_deployed_hostnames()
+            if hosts and deployed_names:
+                cleaned_group_names = []
+                # find the server groups names that are used by deployed
+                # servers and remove the duplicates
+                for host in hosts:
+                    if host.get('ardana_ansible_host') in deployed_names:
+                        cleaned_group_names = \
+                            list(set(host['server-group-list'] + cleaned_group_names))
+                # get details for the server groups
+                server_groups_model = cloud_model['internal']['server-groups']
+                for server_group_name in cleaned_group_names:
+                    if server_group_name in server_groups_model:
+                        server_groups_in_use.append({
+                            'name': server_groups_model[server_group_name]['name'],
+                            'server-groups':
+                                server_groups_model[server_group_name].get('server-groups'),
+                            'networks':
+                                server_groups_model[server_group_name].get('networks')
+                        })
+
+            return jsonify(server_groups_in_use)
+    except Exception as e:
+        LOG.exception("Failed to get server groups in use")
+        LOG.exception(e)
+        abort(500, "Failed to get server groups in use")
+
+
+@bp.route("/api/v2/model/nic_mappings_in_use", methods=['GET'])
+@policy.enforce('lifecycle:get_model')
+def get_nic_mappings_in_use():
+    """Returns nic-mapping list that are used by servers deployed
+
+    Returns the content as JSON.
+
+    .. :quickref: CloudModel; Returns the contents of a file from the config
+        processor internal directory
+
+    **Example Request**:
+
+    .. sourcecode:: http
+
+        GET /api/v2/model/nic_mappings_in_use  HTTP/1.1
+        Content-Type: application/json
+
+    **Example Response**:
+
+    .. sourcecode:: http
+
+        HTTP/1.1 200 OK
+        Content-Type: application/json
+
+        [{
+            "name":"HP-DL360-6PORT",
+            "physical-ports":[{
+                "bus-address":"0000:02:00.0",
+                "logical-name":"hed0","type":"simple-port"
+            },{
+                "bus-address":"0000:02:00.1",
+                "logical-name":"hed1","type":"simple-port"
+            },{
+                "bus-address":"0000:02:00.2",
+                "logical-name":"hed2","type":"simple-port"
+            },{
+                "bus-address":"0000:02:00.3",
+                "logical-name":"hed3","type":"simple-port"
+            },{
+                "bus-address":"0000:04:00.0",
+                "logical-name":"hed4","type":"simple-port"
+            },{
+                "bus-address":"0000:04:00.1",
+                "logical-name":"hed5","type":"simple-port"
+            }]
+        }]
+    """
+
+    mic_mappings_in_use = []
+    try:
+        cloud_model = read_cp_internal_json('CloudModel.yaml')
+        if cloud_model:
+            hosts = cloud_model['internal']['servers']
+            deployed_names = get_deployed_hostnames()
+            if hosts and deployed_names:
+                nic_names = []
+                # clean up duplicates and get nic mappings used
+                # by deployed servers
+                for host in hosts:
+                    if host.get('ardana_ansible_host') in deployed_names \
+                    and not host['nic_map']['name'] in nic_names:
+                        nic_names.append(host['nic_map']['name'])
+                        mic_mappings_in_use.append(host['nic_map'])
+
+            return jsonify(mic_mappings_in_use)
+    except Exception as e:
+        LOG.exception("Failed to get nic-mappings in use")
+        LOG.exception(e)
+        abort(500, "Failed to get nic-mappings in use")
+
+
 # Given the name of the internal config-processor file, return
 # the absolute path of the internal dir, the new json filename it
 # created (or existing one), and the dictionary containing
