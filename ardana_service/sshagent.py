@@ -41,7 +41,7 @@ instance = None
 class sshagent(object):
     def __init__(self, agent_env):
         self.agent_env = agent_env
-        self.pid = agent_env['SSH_AGENT_PID']
+        self.pid = agent_env.get('SSH_AGENT_PID')
         self.environ = {}
         self.environ.update(os.environ)
         self.environ.update(agent_env)
@@ -49,16 +49,25 @@ class sshagent(object):
         self.key_path = DEFAULT_KEY_PATH
 
         # Set system env var so paramiko can be used as a proxy to the running
-        # ssh-agent
-        os.environ['SSH_AUTH_SOCK'] = agent_env['SSH_AUTH_SOCK']
+        # ssh-agent.
+        if not os.environ.get('SSH_AUTH_SOCK') and \
+                agent_env.get('SSH_AUTH_SOCK'):
+            os.environ['SSH_AUTH_SOCK'] = agent_env['SSH_AUTH_SOCK']
 
-        # Save off the pid of the started ssh-agent
-        try:
-            with open(self.pid_file, "w") as f:
-                f.write(self.pid)
-        except Exception as e:
-            LOG.error("Unable to save ssh-agent pid file at %s: %s" %
-                      (self.pid_file, e))
+        if self.pid:
+            # Save off the pid of the started ssh-agent
+            try:
+                with open(self.pid_file, "w") as f:
+                    f.write(self.pid)
+            except Exception as e:
+                LOG.error("Unable to save ssh-agent pid file at %s: %s" %
+                          (self.pid_file, e))
+        else:
+            # Remove any lingering pid file
+            try:
+                os.remove(self.pid_file)
+            except OSError:
+                pass
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         # On exit, such as a service stop, or a 'kill pid_of_ardana_service',
@@ -75,13 +84,19 @@ class sshagent(object):
         if instance:
             return instance
 
-        output = subprocess.check_output('ssh-agent')
-
-        # get env vars from ssh-agent
         agent_env = {}
-        for name, value in re.findall(r'([A-Z_]+)=([^;]+);', output.decode()):
-            agent_env[name] = value
-        LOG.info("Started ssh-agent at pid: %s" % agent_env['SSH_AGENT_PID'])
+
+        # Start an ssh agent if one is not already running
+        if not os.environ.get('SSH_AUTH_SOCK'):
+            output = subprocess.check_output('ssh-agent')
+
+            # get env vars from ssh-agent
+            for name, value in re.findall(r'([A-Z_]+)=([^;]+);',
+                                          output.decode()):
+                agent_env[name] = value
+
+            LOG.info("Started ssh-agent at pid: %s" %
+                     agent_env['SSH_AGENT_PID'])
 
         instance = cls(agent_env)
         return instance
@@ -149,10 +164,14 @@ class sshagent(object):
     # Stop the previously running instance of ssh-agent if it's still running.
     @staticmethod
     def stop_old_instance():
+
         # If the service is being reloaded by flask, we will hit the state
         # where ssh-agent is orphaned and no longer have context to it.
         # Therefore, we need to kill it from the pid in the saved pid file.
         pid_file = CONF.paths.ssh_agent_pid_file
+        if not os.path.exists(pid_file):
+            return
+
         try:
             with open(pid_file, "r") as f:
                 pid_to_kill = f.read()
