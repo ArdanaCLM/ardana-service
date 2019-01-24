@@ -18,7 +18,7 @@ git rev-parse || exit
 
 cd $(git rev-parse --show-toplevel)
 
-GIT_BASE=${GIT_BASE:-git://git.suse.provo.cloud}
+GIT_BASE=${GIT_BASE:-git://git.suse.provo.cloud/ardana}
 
 # Create dirs for customer data, scratch area
 mkdir -p \
@@ -34,7 +34,7 @@ cd data
 
 if [ ! -d my_cloud/.git ] ; then
     cd my_cloud
-    git init 
+    git init
     git commit --allow-empty -m "Initial commit"
     git checkout -b site
     cd -
@@ -43,7 +43,7 @@ fi
 config_repos="cinder heat keystone neutron nova"
 for repo in $config_repos ; do
     if [ ! -d ${repo}-ansible ]; then
-        git clone ${GIT_BASE}/ardana/${repo}-ansible
+        git clone ${GIT_BASE}/${repo}-ansible
     fi
     mkdir -p my_cloud/config/$repo
     cd ${repo}-ansible
@@ -52,11 +52,11 @@ for repo in $config_repos ; do
 done
 
 if [ ! -d ardana-ansible ] ; then
-    git clone ${GIT_BASE}/ardana/ardana-ansible
+    git clone ${GIT_BASE}/ardana-ansible
 fi
 
 if [ ! -d ardana-input-model ] ; then
-    git clone ${GIT_BASE}/ardana/ardana-input-model
+    git clone ${GIT_BASE}/ardana-input-model
 fi
 
 # Specify a directory for the config processor and the repos it needs
@@ -68,7 +68,7 @@ acp=ardana-configuration-processor
 if [ ! -d $DEST ] ; then
     mkdir $DEST
 
-    git clone ${GIT_BASE}/ardana/$acp $DEST/$acp
+    git clone ${GIT_BASE}/$acp $DEST/$acp
 
     # Prepare the dir for development, including checking out needed repos
     $DEST/$acp/Scripts/setup-ardana-cp.sh -n $DEST
