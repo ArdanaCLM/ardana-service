@@ -17,6 +17,7 @@ from . import policy
 from flask import abort
 from flask import Blueprint
 from flask import jsonify
+from distutils.spawn import find_executable
 from oslo_config import cfg
 from oslo_log import log as logging
 
@@ -27,6 +28,33 @@ import subprocess
 LOG = logging.getLogger(__name__)
 bp = Blueprint('cobbler', __name__)
 CONF = cfg.CONF
+
+
+@bp.route("/api/v2/cobbler", methods=['GET'])
+@policy.enforce('lifecycle:get_cobbler')
+def cobbler_is_installed():
+    """Get availavilty of cobbler on this host
+
+        .. :quickref: Cobbler is present
+
+        **Example Request**:
+
+        .. sourcecode:: http
+
+           GET /api/v2/cobbler HTTP/1.1
+           Content-Type: application/json
+
+        **Example Response**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+
+            {
+                "cobbler": true
+            }
+    """
+    return jsonify({'cobbler': find_executable('cobbler') is not None})
 
 
 @bp.route("/api/v2/cobbler/servers", methods=['GET'])
