@@ -341,11 +341,15 @@ def get_command_args(payload=None, cwd=None):
     # If have encryption_key, store it in a temp file and adjust the
     # args accordingly
     if encryption_key:
-        with tempfile.NamedTemporaryFile(suffix='', prefix='.vault-pwd',
-                                         dir=CONF.paths.playbooks_dir,
-                                         delete=False) as f:
-            f.write(encryption_key.encode('utf-8'))
-        body['vault-password-file'] = f.name
+        # In day0, before run ready-deployment CONF.paths.playbooks_dir
+        # doesn't exist. Only generate the temp file when regular
+        # playbooks dir exists.
+        if os.path.exists(CONF.paths.playbooks_dir):
+            with tempfile.NamedTemporaryFile(suffix='', prefix='.vault-pwd',
+                                             dir=CONF.paths.playbooks_dir,
+                                             delete=False) as f:
+                f.write(encryption_key.encode('utf-8'))
+            body['vault-password-file'] = f.name
 
     # Finally normalize all keys to have the leading --
     args = {'--' + k: v for k, v in body.items()}
