@@ -29,9 +29,15 @@ LOG = logging.getLogger(__name__)
 bp = Blueprint('monasca', __name__)
 CONF = cfg.CONF
 
+# STATUS constants for server and service status
+STATUS_UP = 'up'
+STATUS_DOWN = 'down'
+STATUS_UNKNOWN = 'unknown'
+
 
 def get_monasca_endpoint():
     """Get the keystone endpoint for Monasca
+
        the client in Pike won't self-discover, and
        the endpoint is used for passthru calls as well
     """
@@ -48,8 +54,7 @@ def get_monasca_endpoint():
 
 
 def get_monasca_client():
-    """Instantiates and returns an instance of the monasca python client
-    """
+    """Instantiates and returns an instance of the monasca python client"""
 
     monasca_endpoint = get_monasca_endpoint()
     # Monasca client v1.7.1 used in pike is old, so get its client via
@@ -152,6 +157,117 @@ def get_service_statuses():
         })
 
     return jsonify(statuses)
+
+
+@bp.route("/api/v2/monasca/is_installed", methods=['GET'])
+@policy.enforce('lifecycle:get_measurements')
+def is_monasca_installed():
+    """Checks to see if Monasca is installed on the environment
+
+        this check can be used to evaluate whether further
+        monasca calls are useful
+    """
+    return jsonify({'installed': get_monasca_endpoint() is not None})
+
+
+def get_parse_host_measurements_for_status(params, client):
+    """Makes the query to Monasca for the specified measurement
+
+        requires a set of parameters to define the metric and dimension
+        being queried, but assumes that the metric is compatible with
+        the ping_check/host_alive_status. Assumes the metric specified
+        is compatible with a ping_status check (validates against
+        0.0 for 'up' , 1.0 for 'down', consistent with Monasca ping checks)
+
+        the monasca client may optionally be provided to avoid loading
+        a fresh monasca client instance for each call in a loop
+    """
+    status = STATUS_UNKNOWN
+    if not client:
+        client = get_monasca_client()
+    ping_measurements = client.metrics.list_measurements(**params)
+    for per_host_meas in ping_measurements:
+        # check if there are any valid measurements
+        # and if they show the host to be up
+        (time, ping_value, value_meta) = per_host_meas['measurements'][-1]
+        if ping_value == 0.0:
+            status = STATUS_UP
+        elif ping_value == 1.0 and status == STATUS_UNKNOWN:
+            # if a previous check found the host to be up,
+            # don't change it to down
+            status = STATUS_DOWN
+
+    return status
+
+
+@bp.route("/api/v2/monasca/server_status/<path:name>", methods=['GET'])
+@policy.enforce('lifecycle:get_measurements')
+def get_server_status(name):
+    """Get the latest monasca host_alive_status for the specified host
+
+    Provides the result of the most recent host_alive_status for the host .  It
+    gets the last measurement in the list of measurements and uses that value
+    as the status for the host. If the host does not have a status as
+    a target host, then a fallback check will be made to see if the host
+    observed any other hosts for ping status successfully
+
+    .. :quickref: monasca; Get a single host status
+
+    **Example Request**:
+
+    .. sourcecode:: http
+
+       GET /api/v2/monasca/server_status/host001 HTTP/1.1
+       Content-Type: application/json
+
+    **Example Response**:
+
+    .. sourcecode:: http
+
+       HTTP/1.1 200 OK
+
+
+       {
+           "status": "up"
+       }
+    """
+    if not name:
+        return jsonify({})
+
+    client = get_monasca_client()
+    # get the ping measurements for the host in question
+    # for the last 5 minutes
+    start_time = (datetime.utcnow() - timedelta(minutes=5)) \
+        .strftime("%Y-%m-%dT%H:%M:%SZ")
+    meas_parms = {
+        'name': 'host_alive_status',
+        "start_time": start_time,
+        'group_by': "*",
+        'dimensions': {
+            'test_type': 'ping',
+            'hostname': name
+        }
+    }
+
+    status = get_parse_host_measurements_for_status(meas_parms, client)
+
+    # if the host didnt have direct ping checks, see if
+    # it observed any other hosts, as that necessitates being
+    # up as well
+    meas_parms = {
+        'name': 'host_alive_status',
+        "start_time": start_time,
+        'group_by': "*",
+        'dimensions': {
+            'test_type': 'ping',
+            'observer_host': name
+        }
+    }
+
+    if status == STATUS_UNKNOWN:
+        status = get_parse_host_measurements_for_status(meas_parms, client)
+
+    return jsonify({'status': status})
 
 
 @bp.route("/api/v2/monasca/passthru/<path:url>",

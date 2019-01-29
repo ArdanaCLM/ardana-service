@@ -2,13 +2,20 @@
   "disable_compute_services": [{
     "binary": "nova-compute", "id": 1
   }],
+  "enable_compute_services": [{
+    "binary": "nova-compute", "id": 1
+  }],
   "delete_compute_services": [{
     "binary": "nova-compute", "id": 1
+  }],
+  "compute_services_status": [{
+    "binary": "nova-compute", "id": 1, "enabled": false
   }],
   "delete_aggregates": {
     "failed": [{
       "availability_zone": "null",
-      "id": 1, "name": "agg_group1"
+      "id": 1, "name": "agg_group1",
+      "error": "Internal Errors"
     }],
     "deleted": [{
       "availability_zone": "test-az",

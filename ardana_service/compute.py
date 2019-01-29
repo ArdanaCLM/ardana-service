@@ -46,6 +46,7 @@ def get_compute_client(req):
         compute_client = novaClient.Client(
             # api version for live_migrate with block_migration='auto'
             '2.25',
+            endpoint_type="internalURL",
             session=sess
         )
         return compute_client
@@ -59,6 +60,60 @@ def complete_with_errors_response(msg, contents):
     response = jsonify({'error_msg': msg, 'contents': contents})
     response.status_code = 500
     return response
+
+
+@bp.route("/api/v2/compute/services/<hostname>", methods=['GET'])
+@policy.enforce('lifecycle:get_compute')
+def compute_services_status(hostname):
+    """Get the compute services status for a compute host
+
+        .. :quickref: Compute; Get the compute services status
+
+        **Example Request**:
+
+        .. sourcecode:: http
+
+           GET /api/v2/compute/services/<hostname> HTTP/1.1
+           Content-Type: application/json
+
+        **Example Response**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+
+            {
+                "nova-compute": "enabled"
+            }
+
+    """
+    # mock for getting nova service status for a compute host
+    if cfg.CONF.testing.use_mock:
+        mock_json = "tools/compute-mock-data.json"
+        json_file = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)), mock_json)
+        with open(json_file) as f:
+            return jsonify(json.load(f)['compute_services_status'])
+
+    compute_client = get_compute_client(request)
+
+    compute_services = compute_client.services.list(host=hostname)
+
+    if len(compute_services) == 0:
+        msg = 'No compute service for %s' % hostname
+        LOG.error(msg)
+        abort(410, msg)
+
+    services = dict()
+
+    for service in compute_services:
+        binary = getattr(service, 'binary', None)
+        if binary:
+            services[binary] = \
+                getattr(service, 'status', None) == 'enabled' and \
+                getattr(service, 'state', None) != 'down'
+
+    return jsonify(services)
 
 
 @bp.route("/api/v2/compute/services/<hostname>/disable", methods=['PUT'])
@@ -130,6 +185,77 @@ def compute_disable_services(hostname):
             {'failed': failed, 'disabled': disabled})
 
     return jsonify(disabled)
+
+
+@bp.route("/api/v2/compute/services/<hostname>/enable", methods=['PUT'])
+@policy.enforce('lifecycle:update_compute')
+def compute_enable_services(hostname):
+    """Enable the compute services for a compute host
+
+        .. :quickref: Compute; Enable the compute services
+
+        **Example Request**:
+
+        .. sourcecode:: http
+
+           PUT /api/v2/compute/services/<hostname>/enable HTTP/1.1
+           Content-Type: application/json
+
+        **Example Response**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+
+            [{
+                "binary": "nova-compute",
+                "id": 1
+            }]
+
+    """
+    # mock for running nova disable service for a compute host
+    if cfg.CONF.testing.use_mock:
+        mock_json = "tools/compute-mock-data.json"
+        json_file = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)), mock_json)
+        with open(json_file) as f:
+            return jsonify(json.load(f)['enable_compute_services'])
+
+    compute_client = get_compute_client(request)
+
+    compute_services = compute_client.services.list(host=hostname)
+
+    if len(compute_services) == 0:
+        msg = 'No compute service for %s' % hostname
+        LOG.error(msg)
+        abort(410, msg)
+
+    failed = []
+    enabled = []
+    for service in compute_services:
+        binary = getattr(service, 'binary', '')
+        id = getattr(service, 'id')
+        status = getattr(service, 'status', '')
+        if status == 'disabled':
+            try:
+                compute_client.services.enable(hostname, binary)
+                enabled.append({'id': id, 'binary': binary})
+            except Exception as ex:
+                failed.append({'id': id, 'binary': binary, 'error': str(ex)})
+                LOG.error(
+                    'Failed to enable compute service for %s id = %s' +
+                    'binary = % s' % (hostname, id, binary))
+                LOG.error(ex)
+        else:
+            # already enabled, will not call
+            enabled.append({'id': id, 'binary': binary})
+
+    if len(failed) > 0:
+        return complete_with_errors_response(
+            'Completed enabling compute services with errors',
+            {'failed': failed, 'enabled': enabled})
+
+    return jsonify(enabled)
 
 
 @bp.route("/api/v2/compute/services/<hostname>", methods=['DELETE'])
@@ -232,12 +358,15 @@ def compute_delete_aggregates(hostname):
             }]
     """
     # mock for running nova delete aggregates for a compute host
+    # mock contains partial failure
     if cfg.CONF.testing.use_mock:
         mock_json = "tools/compute-mock-data.json"
         json_file = os.path.join(
             os.path.dirname(os.path.dirname(__file__)), mock_json)
         with open(json_file) as f:
-            return jsonify(json.load(f)['delete_aggregates'])
+            return complete_with_errors_response(
+                'Completed deleting aggregates with errors',
+                json.load(f)['delete_aggregates'])
 
     compute_client = get_compute_client(request)
 

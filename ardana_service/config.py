@@ -28,6 +28,15 @@ flask_opts = [
     cfg.BoolOpt('pretty_json',
                 default=False,
                 help='Format json responses in a pretty way'),
+    cfg.StrOpt('db_file',
+               default='/tmp/db.json',
+               help='Location of database for discovered servers'),
+    cfg.StrOpt('progress_file',
+               default='/tmp/progress.json',
+               help='Location of file to track progress through UI'),
+    cfg.StrOpt('ui_home',
+               default='web',
+               help='Location of static files to serve'),
 ]
 
 path_opts = [
@@ -106,9 +115,21 @@ path_opts = [
                help='Temporary file containing all hosts\' packages data'),
 ]
 
+url_opts = [
+    cfg.StrOpt('horizon',
+               help='Location of horizon UI'),
+    cfg.StrOpt('opsconsole',
+               help='Location of operations console UI'),
+]
+
+url_group = cfg.OptGroup(name='urls',
+                         title='URLs to be displayed on the completion page')
+
 CONF = cfg.CONF
 CONF.register_opts(flask_opts)
 CONF.register_opts(path_opts, 'paths')
+CONF.register_group(url_group)
+CONF.register_opts(url_opts, url_group)
 
 
 # This function is used by "tox -e genopts" to generate a config file

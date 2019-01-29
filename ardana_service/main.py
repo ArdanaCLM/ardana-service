@@ -18,6 +18,11 @@ if __name__ == "__main__":
     import sys
     sys.path.append('.')
 
+from flask import Flask
+from flask import jsonify
+from flask import request
+from flask_cors import CORS
+
 from ardana_service import admin
 from ardana_service import cobbler
 from ardana_service import compute
@@ -29,6 +34,7 @@ from ardana_service import listener
 from ardana_service import model
 from ardana_service import monasca
 from ardana_service import network
+from ardana_service import oneview
 from ardana_service import packages
 from ardana_service import playbooks
 from ardana_service import plays
@@ -36,13 +42,11 @@ from ardana_service import servers
 from ardana_service import service
 from ardana_service import socketio
 from ardana_service import sshagent
+from ardana_service import suse_manager
 from ardana_service import templates
+from ardana_service import ui
 from ardana_service import versions
 
-from flask import Flask
-from flask import jsonify
-from flask import request
-from flask_cors import CORS
 from keystonemiddleware import auth_token
 # Load keystone options into global config object
 from keystonemiddleware import opts  # noqa: F401
@@ -58,6 +62,10 @@ LOG = logging.getLogger(PROGRAM)
 CONF = cfg.CONF
 logging.register_options(CONF)
 
+# Load config options any config files specified on the command line
+CONF()
+logging.setup(CONF, PROGRAM)
+
 # The default level of INFO for engineio and socketio yields messages
 # for every line of every log that is transferred through the socket.
 # WARN avoids that.
@@ -68,25 +76,29 @@ extra_log_level_defaults = [
 logging.set_defaults(default_log_levels=logging.get_default_log_levels() +
                      extra_log_level_defaults)
 
-
-app = Flask(PROGRAM)
+app = Flask(PROGRAM,
+            static_url_path='',
+            static_folder=CONF.ui_home)
 app.register_blueprint(admin.bp)
+app.register_blueprint(cobbler.bp)
+app.register_blueprint(compute.bp)
 app.register_blueprint(config_processor.bp)
-app.register_blueprint(packages.bp)
-app.register_blueprint(playbooks.bp)
-app.register_blueprint(plays.bp)
 app.register_blueprint(keystone.bp)
 app.register_blueprint(listener.bp)
 app.register_blueprint(model.bp)
+app.register_blueprint(monasca.bp)
+app.register_blueprint(network.bp)
+app.register_blueprint(oneview.bp)
+app.register_blueprint(packages.bp)
+app.register_blueprint(playbooks.bp)
+app.register_blueprint(plays.bp)
 app.register_blueprint(servers.bp)
 app.register_blueprint(service.bp)
-app.register_blueprint(templates.bp)
-app.register_blueprint(versions.bp)
 app.register_blueprint(sshagent.bp)
-app.register_blueprint(monasca.bp)
-app.register_blueprint(compute.bp)
-app.register_blueprint(network.bp)
-app.register_blueprint(cobbler.bp)
+app.register_blueprint(suse_manager.bp)
+app.register_blueprint(templates.bp)
+app.register_blueprint(ui.bp)
+app.register_blueprint(versions.bp)
 
 # Flask logging is broken, and it is a time bomb: by default it does nothing,
 # but the first time an exception happens, it creates a new logger that
@@ -148,26 +160,35 @@ def enable_unsecured(handler):
                      '/api/v2/login']
         path = environ.get('PATH_INFO')
 
-        if environ.get('HTTP_X_IDENTITY_STATUS') != 'Confirmed' and \
-                path not in unsecured:
+        # The UI does not send auth tokens on OPTIONS requests, so always
+        # accept these.  The keystone middleware populates
+        # HTTP_X_IDENTITY_STATUS when a valid token has been sent (and ensures
+        # it is not present when it has not been validated, in case the end
+        # user tries to explicitly set it to hack around the auth check)
+        if (environ.get('HTTP_X_IDENTITY_STATUS') == 'Confirmed' or
+           path in unsecured or
+           not path.startswith('/api') or    # permit all non-api requests
+           environ.get('REQUEST_METHOD') == 'OPTIONS'):
 
+            return handler(environ, start_fn)
+
+        else:
             LOG.info("Rejecting unauthorized call to %s", path)
 
             # Set response headers to signal to the keystone middleware that
             # this REST api must be authorized.  See
             # https://wiki.openstack.org/wiki/Openstack-authn
             start_fn('401 Unauthorized', [('WWW-Authenticate', 'Delegated')])
-        else:
-            return handler(environ, start_fn)
+
     return _inner
 
 
-def main():
+@app.route('/')
+def root():
+    return app.send_static_file('index.html')
 
-    # Load config options any config files specified on the command line
-    CONF()
-    logging.setup(CONF, PROGRAM)
-    CORS(app)
+
+def main():
 
     if config.requires_auth():
         # Wrap with keystone middleware if configured to do so
@@ -184,6 +205,8 @@ def main():
         app.wsgi_app = enable_unsecured(app.wsgi_app)
         app.wsgi_app = auth_token.AuthProtocol(app.wsgi_app,
                                                {'oslo_config_config': CONF})
+
+    CORS(app)
 
     # Use oslo healthcheck, which does not log its requests
     app.wsgi_app = healthcheck.Healthcheck(app.wsgi_app)
