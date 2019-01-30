@@ -8,9 +8,9 @@
   "delete_compute_services": [{
     "binary": "nova-compute", "id": 1
   }],
-  "compute_services_status": [{
-    "binary": "nova-compute", "id": 1, "enabled": false
-  }],
+  "compute_services_status": {
+    "nova-compute": true
+  },
   "delete_aggregates": {
     "failed": [{
       "availability_zone": "null",

@@ -43,7 +43,8 @@ def get_network_client(req):
         )
         sess = session.Session(auth=auth,
                                verify=not CONF.keystone_authtoken.insecure)
-        network_client = neutronClient.Client(session=sess)
+        network_client = neutronClient.Client(session=sess,
+                                              endpoint_type="internalURL")
         return network_client
 
     except Exception as e:
