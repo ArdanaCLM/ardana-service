@@ -1,4 +1,4 @@
-# (c) Copyright 2017-2018 SUSE LLC
+# (c) Copyright 2017-2019 SUSE LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from flask import abort
+from functools import reduce
+import operator
 import requests
 import socket
 
@@ -36,3 +38,7 @@ def ping(host, port):
         s.connect((host, port))
     except Exception:
         abort(404)
+
+
+def find(element, dictionary):
+    return reduce(operator.getitem, element.split('.'), dictionary)

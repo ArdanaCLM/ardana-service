@@ -1,4 +1,4 @@
-# (c) Copyright 2017-2018 SUSE LLC
+# (c) Copyright 2017-2019 SUSE LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,7 +22,9 @@ import subprocess
 from tinydb import Query
 from tinydb import TinyDB
 
+from . import model
 from . import policy
+from . import util
 
 bp = Blueprint('ui', __name__)
 SUCCESS = {"success": True}
@@ -255,6 +257,19 @@ def get_ips():
     return jsonify(ips)
 
 
+def _read_url(name, internal_model):
+    control_planes = util.find('internal.control-planes', internal_model)
+    for _, control_plane in control_planes.items():
+        if name in control_plane['advertises'].keys():
+            url = util.find('advertises.%s.public.url' % (name), control_plane)
+            if 'myardana.test' in url:
+                url = util.find(
+                    'advertises.%s.admin.url' % (name),
+                    control_plane
+                )
+            return url
+
+
 @bp.route("/api/v2/external_urls", methods=['GET'])
 @policy.enforce('lifecycle:get_endpoints')
 def get_external_urls():
@@ -276,9 +291,16 @@ def get_external_urls():
 
     {
         "horizon": "https://192.168.245.6:443",
-        "opsconsole": "https://192.168.245.5:9095"
+        "opsconsole": "https://192.168.245.5:9095",
+        "ardana-service": "https://192.168.245.5:9085"
     }
     """
-    cfg.CONF.reload_config_files()
+    internal_model = model.read_cp_internal_json('CloudModel.yaml')
 
-    return jsonify(dict(cfg.CONF.urls.items()))
+    result = {
+        'opsconsole': _read_url('ops-console-web', internal_model),
+        'horizon': _read_url('horizon', internal_model),
+        'ardana-service': _read_url('ardana-service', internal_model)
+    }
+
+    return jsonify(result)
