@@ -1,4 +1,4 @@
-# (c) Copyright 2017-2018 SUSE LLC
+# (c) Copyright 2017-2019 SUSE LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -432,6 +432,9 @@ def get_encrypted():
             marker = f.read(len(VAULT_MARKER))
         encrypted = (marker == VAULT_MARKER)
         return jsonify({"isEncrypted": encrypted})
+
+    except FileNotFoundError:
+        return jsonify({"isEncrypted": False})
 
     except Exception as e:
         LOG.exception(e)
