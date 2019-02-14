@@ -53,6 +53,10 @@ test_opts = [
     cfg.IntOpt('mock_cmd_exit',
                default=0,
                help='Return value of this program'),
+
+    cfg.ListOpt('mock_playbook_fail',
+                default=[],
+                help='Emulate failure of specific playbook(s)'),
 ]
 
 CONF = cfg.CONF
@@ -160,19 +164,27 @@ elif cmd_name == 'ansible-playbook':
                 playbook = os.path.basename(arg)
                 break
 
-
         log = os.path.normpath(os.path.join(os.path.dirname(__file__),
                             playbook.replace('yml', 'log')))
 
-        try:
-            with open(log) as f:
-                lines = f.readlines()
-        except:
+        if playbook in CONF.testing.mock_playbook_fail:
             lines = [
                  ' '.join(sys.argv[1:])+'\n',
                 "$$EVENT: start %s\n" % playbook,
-                "$$12345: Playbook %s completed. (No replay log exists)\n" % playbook,
-                "$$EVENT: stop %s\n" % playbook]
+                "$$12345: Playbook %s configured to fail at %s\n" % (
+                    playbook, time.strftime("%c", time.localtime())),
+                "$$EVENT: error %s\n" % playbook]
+
+        else:
+            try:
+                with open(log) as f:
+                    lines = f.readlines()
+            except:
+                lines = [
+                    ' '.join(sys.argv[1:])+'\n',
+                    "$$EVENT: start %s\n" % playbook,
+                    "$$12345: Playbook %s completed. (No replay log exists)\n" % playbook,
+                    "$$EVENT: stop %s\n" % playbook]
 
         last_time = 0
         pattern = re.compile(r'^\$\$(\w+): (.*)')
