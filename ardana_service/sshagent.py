@@ -249,6 +249,8 @@ def requires_password():
         return jsonify({"requires_password": False})
     except paramiko.ssh_exception.PasswordRequiredException:
         return jsonify({"requires_password": True})
+    except FileNotFoundError:
+        return jsonify({"requires_password": True})
 
 
 @bp.route("/api/v2/sshagent/key", methods=['POST'])
