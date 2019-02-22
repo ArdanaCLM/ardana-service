@@ -1,4 +1,4 @@
-# (c) Copyright 2018 SUSE LLC
+# (c) Copyright 2018-2019 SUSE LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ from .plays import get_metadata_file
 from flask import abort
 from flask import Blueprint
 from flask import jsonify
+from flask import request
 import itertools
 import json
 import os
@@ -96,6 +97,12 @@ def get_packages():
                 "host_pkgs_file": HOST_PKGS_FILE
             }
         }
+        # encrypt is needed to run playbook if cloud config is encrypted.
+        # It is passed in as a header because there is no body in HTTP GET
+        # API.
+        encrypt = request.headers.get('encrypt')
+        if encrypt:
+            vars['extra-vars']['encrypt'] = encrypt
         play_id = run_playbook(PACKAGES_PLAY, vars)["id"]
         # Poll for "code" and ignore its value because some hosts may be down.
         while 'code' not in proc_info:
