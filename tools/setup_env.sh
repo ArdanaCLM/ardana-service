@@ -35,6 +35,7 @@ cd data
 if [ ! -d my_cloud/.git ] ; then
     cd my_cloud
     git init
+    git config commit.gpgsign false
     git commit --allow-empty -m "Initial commit"
     git checkout -b site
     cd -
@@ -87,5 +88,6 @@ if [ ! -d $DEST ] ; then
     cd $DEST/$acp
     $VENV/bin/python setup.py sdist
     $VENV/bin/pip install dist/ardana-configurationprocessor-*.tar.gz
+    $VENV/bin/pip install jsonschema==2.6.0
 fi
 
