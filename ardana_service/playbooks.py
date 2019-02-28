@@ -289,8 +289,13 @@ def get_command_args(payload=None, cwd=None):
     # Handle a couple of old key formats for backward compatibility
     if 'inventoryFile' in body:
         body['inventory'] = body.pop('inventoryFile')
+
+    encryption_key = ''
+    # check for deprecated versions of encryption key
     if 'encryptionKey' in body:
-        body['encryption-key'] = body.pop('encryptionKey')
+        encryption_key = body.pop('encryptionKey')
+    if 'encryption-key' in body:
+        encryption_key = body.pop('encryption-key')
 
     # The value of the extra-vars can be supplied either as a list of key-value
     # pairs, e.g.  ["key1=val1", "key2=val2"], or a nested object,
@@ -298,7 +303,6 @@ def get_command_args(payload=None, cwd=None):
     # convert it to the latter.  In either case, the final version is
     # converted into a string for passing to `ansible-playbook`
 
-    encryption_key = ''
     if 'extra-vars' in body:
         if type(body.get("extra-vars")) is list:
             extra_vars = {}
@@ -318,6 +322,9 @@ def get_command_args(payload=None, cwd=None):
                 encryption_key = body["extra-vars"]['encrypt']
         # Convert to a json string
         body["extra-vars"] = json.dumps(body["extra-vars"])
+    elif encryption_key:
+        # there is an encryption key, but no extra-vars
+        body["extra-vars"] = {'encrypt': encryption_key}
 
     # Permit inventory file to be overriden
     if 'inventory' in body:
