@@ -89,6 +89,22 @@ class TestArgProcessing(testtools.TestCase):
         args = playbooks.get_command_args({"extra-vars": list})
         self.assertNotIn('--vault-password-file', args)
 
+    def test_vault_pass_deprecated_0(self):
+        args = playbooks.get_command_args({"encryptionKey": "testabcd"})
+        self.assertIn('--vault-password-file', args)
+
+    def test_vault_pass_deprecated_1(self):
+        args = playbooks.get_command_args({"encryption-key": "testabce"})
+        self.assertIn('--vault-password-file', args)
+
+    def test_vault_pass_deprecated_empty_0(self):
+        args = playbooks.get_command_args({"encryptionKey": ""})
+        self.assertNotIn('--vault-password-file', args)
+
+    def test_vault_pass_deprecated_empty_1(self):
+        args = playbooks.get_command_args({"encryption-key": ""})
+        self.assertNotIn('--vault-password-file', args)
+
     def test_has_no_verbose(self):
         args = playbooks.get_command_args({"verbose": "0"})
         self.assertNotIn("--verbose", args)
