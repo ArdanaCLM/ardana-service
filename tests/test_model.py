@@ -54,6 +54,14 @@ class TestReadInvalidModels(testtools.TestCase):
         self.assertRaises(IOError, model.read_model, model_dir)
 
 
+class TestReadModels(testtools.TestCase):
+
+    def test_read_empty_section(self):
+        model_dir = os.path.join(TEST_DATA_DIR, 'empty_section')
+        model.read_model(model_dir)
+        # No exceptions should be thrown
+
+
 # Note that this class does not inherit from TestCase, but its descendants do
 class TestWriteModels(object):
 

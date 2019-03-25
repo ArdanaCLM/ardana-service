@@ -14,10 +14,10 @@
 
 from . import policy
 
+from distutils.spawn import find_executable
 from flask import abort
 from flask import Blueprint
 from flask import jsonify
-from distutils.spawn import find_executable
 from oslo_config import cfg
 from oslo_log import log as logging
 

@@ -190,13 +190,13 @@ def get_parse_host_measurements_for_status(params, client):
         # check if there are any valid measurements
         # and if they show the host to be up
         if len(per_host_meas['measurements']) > 0:
-          (time, ping_value, value_meta) = per_host_meas['measurements'][-1]
-          if ping_value == 0.0:
-              status = STATUS_UP
-          elif ping_value == 1.0 and status == STATUS_UNKNOWN:
-              # if a previous check found the host to be up,
-              # don't change it to down
-              status = STATUS_DOWN
+            (time, ping_value, value_meta) = per_host_meas['measurements'][-1]
+            if ping_value == 0.0:
+                status = STATUS_UP
+            elif ping_value == 1.0 and status == STATUS_UNKNOWN:
+                # if a previous check found the host to be up,
+                # don't change it to down
+                status = STATUS_DOWN
 
     return status
 

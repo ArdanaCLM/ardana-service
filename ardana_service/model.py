@@ -745,17 +745,21 @@ def get_server_groups_in_use():
                 for host in hosts:
                     if host.get('ardana_ansible_host') in deployed_names:
                         cleaned_group_names = \
-                            list(set(host['server-group-list'] + cleaned_group_names))
+                            list(set(host['server-group-list'] +
+                                     cleaned_group_names))
                 # get details for the server groups
                 server_groups_model = cloud_model['internal']['server-groups']
                 for server_group_name in cleaned_group_names:
                     if server_group_name in server_groups_model:
                         server_groups_in_use.append({
-                            'name': server_groups_model[server_group_name]['name'],
+                            'name':
+                                server_groups_model[server_group_name]['name'],
                             'server-groups':
-                                server_groups_model[server_group_name].get('server-groups'),
+                                server_groups_model[server_group_name].\
+                                get('server-groups'),
                             'networks':
-                                server_groups_model[server_group_name].get('networks')
+                                server_groups_model[server_group_name].\
+                                get('networks')
                         })
 
             return jsonify(server_groups_in_use)
@@ -825,7 +829,7 @@ def get_nic_mappings_in_use():
                 # by deployed servers
                 for host in hosts:
                     if host.get('ardana_ansible_host') in deployed_names \
-                    and not host['nic_map']['name'] in nic_names:
+                            and not host['nic_map']['name'] in nic_names:
                         nic_names.append(host['nic_map']['name'])
                         mic_mappings_in_use.append(host['nic_map'])
 
@@ -1064,6 +1068,9 @@ def add_doc_to_model(model, doc, relname):
         model['fileInfo']['sections'][section].append(relname)
 
         if isinstance(value, list):
+            if not value:
+                continue
+
             # Add to fileInfo / fileSectionMap
             key_field = get_key_field(value[0])
             mapping = {

@@ -27,8 +27,8 @@ import pbr.version
 import pwd
 import threading
 import time
-from util import ping
 
+from .util import ping
 
 from . import config
 from . import policy
