@@ -54,6 +54,7 @@ done
 
 if [ ! -d ardana-ansible ] ; then
     git clone ${GIT_BASE}/ardana-ansible
+    touch ardana-ansible/keystone-status.yml
 fi
 
 if [ ! -d ardana-input-model ] ; then
