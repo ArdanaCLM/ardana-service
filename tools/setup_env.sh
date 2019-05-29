@@ -18,7 +18,7 @@ git rev-parse || exit
 
 cd $(git rev-parse --show-toplevel)
 
-GIT_BASE=${GIT_BASE:-git://git.suse.provo.cloud/ardana}
+GIT_BASE=${GIT_BASE:-git://git.ci.prv.suse.net/ardana}
 
 # Create dirs for customer data, scratch area
 mkdir -p \
