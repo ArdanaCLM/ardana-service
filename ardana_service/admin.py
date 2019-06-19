@@ -1,4 +1,4 @@
-# (c) Copyright 2017-2018 SUSE LLC
+# (c) Copyright 2017-2019 SUSE LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -206,6 +206,9 @@ def _authenticate(auth_url, username=None, password=None,
 
     except exc.connection.ConnectFailure as e:
         abort(503, str(e))
+
+    except exc.http.HttpError as e:
+        abort(e.http_status, e.message)
 
     except exc.ClientException as e:
         abort(401, str(e))
