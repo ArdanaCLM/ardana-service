@@ -14,11 +14,11 @@
 from flask import Blueprint
 from flask import jsonify
 from flask import request
-import socket
 import ssl
 import sys
 
 from . import policy
+from .util import ping, url_address
 
 if sys.version_info.major < 3:
     from xmlrpclib import ServerProxy
@@ -55,19 +55,19 @@ def connection_test():
 
     creds = request.get_json() or {}
     port = "443"
-    if creds['port'] and creds['port'] != 0:
+    if 'port' in creds and creds['port'] != 0:
         port = creds['port']
+
     # check the host and port first before login
     try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.settimeout(TIMEOUT)
-        s.connect((creds['host'], int(port)))
+        ping(creds['host'], int(port))
     except Exception as e:
         return jsonify(error=str(e)), 404
 
     # login
     try:
-        suma_url = "https://" + creds['host'] + ":" + str(port) + "/rpc/api"
+        suma_url = "https://" + url_address(creds['host']) + ":" + \
+            str(port) + "/rpc/api"
         suma_username = creds['username']
         suma_password = creds['password']
         client = ServerProxy(suma_url, verbose=0, context=context)

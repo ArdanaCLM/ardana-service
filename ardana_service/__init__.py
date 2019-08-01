@@ -13,13 +13,17 @@
 # limitations under the License.
 
 from eventlet import monkey_patch as monkey_patch
-from flask_socketio import SocketIO
 # IMPORTANT!
 # When using eventlet, monkey_patch is needed in order to properly handle
 # IO asynchronously.  Without this, the reading of stdout from the playbook
 # run will block until after that playbook has finished.
+
+# The monkey_patch call must be made before importing SocketIO or else
+# the requests library may end up in an infinite recursion, as documented
+# here: https://github.com/gevent/gevent/issues/941
 monkey_patch()
 
+from flask_socketio import SocketIO   # noqa: E402
 
 # When using eventlet, it is important to monkey_patch so I/O does not
 # hang.  When using the "threading" model, long polling is used instead of

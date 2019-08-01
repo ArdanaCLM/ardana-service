@@ -11,11 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from flask import abort
 from functools import reduce
+import ipaddress
 import operator
 import requests
 import socket
+import sys
 
 TIMEOUT = 2
 
@@ -32,13 +33,50 @@ def forward(url, request):
 
 
 def ping(host, port):
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # Use getaddrinfo to properly and automatically handle both ipv4 and v6
+    for res in socket.getaddrinfo(
+            host, port, socket.AF_UNSPEC, socket.SOCK_STREAM):
+
+        af, socktype, proto, canonname, sa = res
+        try:
+            s = socket.socket(af, socktype, proto)
+        except OSError as msg:
+            s = None
+            continue
+
         s.settimeout(TIMEOUT)
-        s.connect((host, port))
-    except Exception:
-        abort(404)
+        try:
+            s.connect(sa)
+            return
+
+        except OSError as e:
+            last_error = e
+
+    if last_error:
+        raise last_error
 
 
 def find(element, dictionary):
     return reduce(operator.getitem, element.split('.'), dictionary)
+
+
+def is_ipv6(address):
+
+    # ipaddress requires unicode arguments (all strings in python3 are already
+    # unicode)
+    addr = address
+    if sys.version_info.major == 2:
+        addr = unicode(address)    # noqa: F821
+
+    try:
+        ipaddress.IPv6Address(addr)
+        return True
+    except Exception:
+        return False
+
+
+def url_address(host_or_ip):
+    if ':' in host_or_ip and is_ipv6(host_or_ip):
+        return '[' + host_or_ip + ']'
+
+    return host_or_ip

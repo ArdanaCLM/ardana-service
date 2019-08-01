@@ -17,7 +17,7 @@ from flask import jsonify
 from flask import request
 import json
 import requests
-from util import ping
+from util import url_address, ping
 
 from . import policy
 
@@ -43,7 +43,7 @@ def connection_test():
     if secured == 'false':
         verify = False
     try:
-        url = "https://" + host + "/rest/login-sessions"
+        url = "https://" + url_address(host) + "/rest/login-sessions"
         headers = {'X-Api-Version': '200', 'Content-Type': 'application/json'}
         data = {'userName': creds['username'], 'password': creds['password']}
         response = requests.post(url, data=json.dumps(data), headers=headers,
