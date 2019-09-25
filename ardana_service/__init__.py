@@ -28,7 +28,7 @@ from flask_socketio import SocketIO   # noqa: E402
 # When using eventlet, it is important to monkey_patch so I/O does not
 # hang.  When using the "threading" model, long polling is used instead of
 # WebSockets, and its performance is a bit lower
-socketio = SocketIO(async_mode="eventlet")
+socketio = SocketIO(async_mode="eventlet", cors_allowed_origins="*")
 
 # Import any modules that refer to socketio here (after socketio has been
 # created)
